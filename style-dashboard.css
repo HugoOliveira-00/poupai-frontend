@@ -6,6 +6,15 @@
             --optical-shift: -6%;
         }
 
+        /* ✅ FORÇAR ELEMENTOS DE FORMULÁRIO A MANTEREM CORES PERSONALIZADAS */
+        /* Sobrescreve o comportamento automático do navegador de aplicar modo escuro */
+        input,
+        textarea,
+        select,
+        button {
+            color-scheme: light !important;
+        }
+
         /* Reset e scroll customizado */
         * {
             margin: 0;
