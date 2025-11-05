@@ -1992,15 +1992,33 @@
             document.getElementById('securityQuestionsStep3').style.display = 'none';
             clearSecurityError();
             
-            //Preenche as 3 perguntas
-            document.getElementById('securityQuestion1').textContent = `1. ${recoveryState.questions[0]}`;
-            document.getElementById('securityQuestion2').textContent = `2. ${recoveryState.questions[1]}`;
-            document.getElementById('securityQuestion3').textContent = `3. ${recoveryState.questions[2]}`;
+            // ✅ MOSTRAR APENAS AS PERGUNTAS QUE O USUÁRIO TEM
+            const totalQuestions = recoveryState.questions.length;
             
-            //Limpa respostas
-            document.getElementById('securityAnswer1').value = '';
-            document.getElementById('securityAnswer2').value = '';
-            document.getElementById('securityAnswer3').value = '';
+            // Preenche e mostra as perguntas disponíveis
+            for (let i = 0; i < 3; i++) {
+                const questionLabel = document.getElementById(`securityQuestion${i + 1}`);
+                const answerInput = document.getElementById(`securityAnswer${i + 1}`);
+                const questionGroup = answerInput.closest('.input-group');
+                
+                if (i < totalQuestions) {
+                    // Mostra a pergunta
+                    questionLabel.textContent = `${i + 1}. ${recoveryState.questions[i]}`;
+                    answerInput.value = '';
+                    answerInput.required = true;
+                    questionGroup.style.display = 'block';
+                } else {
+                    // Esconde perguntas extras
+                    questionGroup.style.display = 'none';
+                    answerInput.required = false;
+                }
+            }
+            
+            // Atualiza o subtítulo com a quantidade de perguntas
+            const subtitle = document.querySelector('#securityQuestionsStep2 .auth-subtitle');
+            if (subtitle) {
+                subtitle.textContent = `Responda ${totalQuestions === 1 ? 'a pergunta' : `as ${totalQuestions} perguntas`} para continuar`;
+            }
         }
 
         function goBackToEmailStep() {
@@ -2015,13 +2033,17 @@
             event.preventDefault();
             clearSecurityError();
             
-            const answer1 = document.getElementById('securityAnswer1').value.trim();
-            const answer2 = document.getElementById('securityAnswer2').value.trim();
-            const answer3 = document.getElementById('securityAnswer3').value.trim();
+            // ✅ COLETAR APENAS AS RESPOSTAS DAS PERGUNTAS QUE EXISTEM
+            const answers = [];
+            const totalQuestions = recoveryState.questions.length;
             
-            if (!answer1 || !answer2 || !answer3) {
-                showSecurityError('Por favor, responda todas as perguntas.');
-                return;
+            for (let i = 0; i < totalQuestions; i++) {
+                const answer = document.getElementById(`securityAnswer${i + 1}`).value.trim();
+                if (!answer) {
+                    showSecurityError('Por favor, responda todas as perguntas.');
+                    return;
+                }
+                answers.push(answer);
             }
             
             const submitButton = event.target.querySelector('button[type="submit"]');
@@ -2036,7 +2058,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: recoveryState.email,
-                        answers: [answer1, answer2, answer3]
+                        answers: answers // Envia apenas as respostas que o usuário tem
                     })
                 });
                 
@@ -2548,21 +2570,6 @@
                 //Pergunta de segurança (apenas 1 no onboarding)
                 onboardingData.securityQuestion1 = document.getElementById('onboardingQuestion1').value;
                 onboardingData.securityAnswer1 = document.getElementById('onboardingAnswer1').value;
-                onboardingData.passwordConfirm = document.getElementById('onboardingPasswordConfirm').value;
-            }
-        }
-
-        //Toggle senha no onboarding
-        function toggleOnboardingPassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-            } else {
-                input.type = 'password';
-                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
             }
         }
 
