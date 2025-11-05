@@ -7793,7 +7793,29 @@
             //Padrão 2: Horário de maior gasto
             const expensesByHour = {};
             currentTransactions.filter(t => t.tipo === 'despesa').forEach(t => {
-                const hour = new Date(t.data).getHours();
+                // Corrigir parsing de data para pegar hora local correta
+                let hour;
+                if (t.data.includes('T') || t.data.includes('Z')) {
+                    // Se é ISO string, converter para hora local
+                    const date = new Date(t.data);
+                    hour = date.getHours();
+                } else if (t.data.includes('/')) {
+                    // Formato DD/MM/YYYY ou DD/MM/YYYY HH:mm
+                    const parts = t.data.split(' ');
+                    if (parts.length > 1) {
+                        // Tem horário
+                        const timeParts = parts[1].split(':');
+                        hour = parseInt(timeParts[0]);
+                    } else {
+                        // Não tem horário, considerar meio-dia como padrão
+                        hour = 12;
+                    }
+                } else {
+                    // Formato YYYY-MM-DD ou outro
+                    const date = new Date(t.data + 'T12:00:00'); // Adiciona horário padrão para evitar conversão UTC
+                    hour = date.getHours();
+                }
+                
                 expensesByHour[hour] = (expensesByHour[hour] || 0) + 1;
             });
             const peakHour = Object.entries(expensesByHour).sort((a, b) => b[1] - a[1])[0];
