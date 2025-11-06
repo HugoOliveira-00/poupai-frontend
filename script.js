@@ -3315,30 +3315,75 @@
         //=== Investment Portfolio Functions ===
 
         function updateDashboardStats() {
+            console.log('[DASHBOARD][STATS] === Iniciando updateDashboardStats ===');
+            console.log('[DASHBOARD][STATS] Total de transações no array:', transactions.length);
+            
             //✅ CORREÇÃO: Filtra apenas transações cuja data já passou (não conta agendadas/futuras)
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0); //Zera horas para comparar só a data
             
-            const income = transactions.filter(t => {
+            const incomeTransactions = transactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
                 return t.tipo === 'receita' && dataTransacao <= hoje;
-            }).reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            });
             
-            const expenses = transactions.filter(t => {
+            const income = incomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            
+            const expenseTransactions = transactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
                 return t.tipo === 'despesa' && dataTransacao <= hoje;
-            }).reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            });
+            
+            const expenses = expenseTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
             
             const balance = income - expenses;
+            
+            console.log('[DASHBOARD][STATS] Receitas encontradas:', incomeTransactions.length, '- Total:', formatCurrency(income));
+            console.log('[DASHBOARD][STATS] Despesas encontradas:', expenseTransactions.length, '- Total:', formatCurrency(expenses));
+            console.log('[DASHBOARD][STATS] Saldo calculado:', formatCurrency(balance));
+            
+            if (incomeTransactions.length > 0) {
+                console.log('[DASHBOARD][STATS] Primeira receita:', {
+                    descricao: incomeTransactions[0].descricao,
+                    valor: incomeTransactions[0].valor,
+                    data: incomeTransactions[0].data,
+                    categoria: incomeTransactions[0].categoria
+                });
+            }
             
             //Verifica se os elementos existem antes de atualizar
             const totalBalance = document.getElementById('totalBalance');
             const totalIncome = document.getElementById('totalIncome');
             const totalExpenses = document.getElementById('totalExpenses');
             
-            if (totalBalance) totalBalance.textContent = formatCurrency(balance);
-            if (totalIncome) totalIncome.textContent = formatCurrency(income);
-            if (totalExpenses) totalExpenses.textContent = formatCurrency(expenses);
+            console.log('[DASHBOARD][STATS] Elementos DOM:', {
+                totalBalance: !!totalBalance,
+                totalIncome: !!totalIncome,
+                totalExpenses: !!totalExpenses
+            });
+            
+            if (totalBalance) {
+                totalBalance.textContent = formatCurrency(balance);
+                console.log('[DASHBOARD][STATS] Saldo atualizado no DOM:', totalBalance.textContent);
+            } else {
+                console.error('[DASHBOARD][STATS] ❌ Elemento totalBalance não encontrado!');
+            }
+            
+            if (totalIncome) {
+                totalIncome.textContent = formatCurrency(income);
+                console.log('[DASHBOARD][STATS] Receita atualizada no DOM:', totalIncome.textContent);
+            } else {
+                console.error('[DASHBOARD][STATS] ❌ Elemento totalIncome não encontrado!');
+            }
+            
+            if (totalExpenses) {
+                totalExpenses.textContent = formatCurrency(expenses);
+                console.log('[DASHBOARD][STATS] Despesa atualizada no DOM:', totalExpenses.textContent);
+            } else {
+                console.error('[DASHBOARD][STATS] ❌ Elemento totalExpenses não encontrado!');
+            }
+            
+            console.log('[DASHBOARD][STATS] === Fim updateDashboardStats ===');
 
             //Atualiza card de meta mensal de gastos
             updateMonthlyLimitCard();
@@ -3354,12 +3399,21 @@
         }
 
         function updateExpenseTypeReport() {
+            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999);
+            
+            const validTransactions = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+            
             //Pega transações do mês atual
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
             
-            const currentMonthTransactions = transactions.filter(t => {
+            const currentMonthTransactions = validTransactions.filter(t => {
                 const tDate = parseLocalDate(t.data);
                 return t.tipo === 'despesa' && 
                        tDate.getMonth() === currentMonth && 
@@ -3665,9 +3719,18 @@
                 last7Days.push(date);
             }
 
+            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999);
+            
+            const validTransactions = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+
             //Calcular gastos por dia
             const dailyExpenses = last7Days.map(day => {
-                return transactions.filter(t => {
+                return validTransactions.filter(t => {
                     const tDate = parseLocalDate(t.data);
                     tDate.setHours(0, 0, 0, 0);
                     return t.tipo === 'despesa' && tDate.getTime() === day.getTime();
@@ -4798,7 +4861,16 @@
                 return;
             }
             
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico MENSAL com', transactions.length, 'transações');
+            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999); // Inclui até o final do dia de hoje
+            
+            const validTransactions = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+            
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico MENSAL com', validTransactions.length, 'transações válidas (de', transactions.length, 'totais)');
             
             //=== GRÁFICO MENSAL: DIA 1 ATÉ O ÚLTIMO DIA DO MÊS ===
             const today = new Date();
@@ -4858,7 +4930,7 @@
                     week.start.toLocaleDateString(), 'até', week.end.toLocaleDateString());
                 
                 //Filtra receitas da semana
-                const weekIncomeTransactions = transactions.filter(t => {
+                const weekIncomeTransactions = validTransactions.filter(t => {
                     const tDate = parseLocalDate(t.data);
                     const isInWeek = t.tipo === 'receita' && tDate >= week.start && tDate <= week.end;
                     if (isInWeek) {
@@ -4869,7 +4941,7 @@
                 const weekIncome = weekIncomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
                 
                 //Filtra despesas da semana
-                const weekExpenseTransactions = transactions.filter(t => {
+                const weekExpenseTransactions = validTransactions.filter(t => {
                     const tDate = parseLocalDate(t.data);
                     const isInWeek = t.tipo === 'despesa' && tDate >= week.start && tDate <= week.end;
                     if (isInWeek) {
@@ -8602,7 +8674,16 @@
                 return;
             }
             
-            const expensesOnly = transactions.filter(t => t.tipo === 'despesa');
+            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999);
+            
+            const validTransactions = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+            
+            const expensesOnly = validTransactions.filter(t => t.tipo === 'despesa');
             if (expensesOnly.length === 0) {
                 container.innerHTML = `
                     <div class="category-empty-message">
@@ -8672,7 +8753,16 @@
                 return;
             }
             
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico mensal com', transactions.length, 'transações');
+            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999);
+            
+            const validTransactions = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+            
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico mensal com', validTransactions.length, 'transações válidas (de', transactions.length, 'totais)');
             
             const labels = [];
             const incomeData = [];
@@ -8687,14 +8777,14 @@
                 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
                 labels.push(monthNames[monthDate.getMonth()]);
                 
-                const monthIncome = transactions
+                const monthIncome = validTransactions
                     .filter(t => {
                         const tDate = parseLocalDate(t.data);
                         return t.tipo === 'receita' && tDate >= monthDate && tDate <= monthEnd;
                     })
                     .reduce((sum, t) => sum + Math.abs(t.valor), 0);
                 
-                const monthExpense = transactions
+                const monthExpense = validTransactions
                     .filter(t => {
                         const tDate = parseLocalDate(t.data);
                         return t.tipo === 'despesa' && tDate >= monthDate && tDate <= monthEnd;
