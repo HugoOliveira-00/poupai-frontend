@@ -2196,8 +2196,23 @@
          <i class="ph ph-calendar-blank"></i>
          Data
         </label>
-        <input id="transactionDate" type="date"/>
+        <input id="transactionDate" type="date" onchange="checkIfFutureDate()"/>
         <small class="form-hint">Quando essa transação ocorreu ou ocorrerá</small>
+       </div>
+       
+       <!-- ✅ NOVO: Checkbox de agendamento (aparece só em datas futuras) -->
+       <div class="form-group" id="scheduleCheckboxGroup" style="display: none;">
+        <div class="checkbox-wrapper">
+         <label class="checkbox-label">
+          <input type="checkbox" id="scheduleTransaction" checked onchange="toggleScheduleInfo()"/>
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-text">
+           <i class="ph ph-clock"></i>
+           Agendar esta transação
+          </span>
+         </label>
+         <small class="form-hint" id="scheduleHint">Marcado: a transação só será contabilizada na data selecionada</small>
+        </div>
        </div>
       </div>
 

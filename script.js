@@ -244,6 +244,29 @@
         }
         
         /**
+         * ✅ NOVA FUNÇÃO: Verifica se uma transação deve ser exibida (considera flag agendada)
+         * @param {Object} transaction - Transação a verificar
+         * @param {Date} referenceDate - Data de referência (hoje por padrão)
+         * @returns {boolean} - true se deve exibir, false se não
+         */
+        function shouldShowTransaction(transaction, referenceDate = null) {
+            if (!referenceDate) {
+                referenceDate = new Date();
+                referenceDate.setHours(23, 59, 59, 999);
+            }
+            
+            const dataTransacao = parseLocalDate(transaction.data);
+            
+            //Se tem flag agendada=true, só mostra quando a data chegar
+            if (transaction.agendada === true) {
+                return dataTransacao <= referenceDate;
+            }
+            
+            //Se não tem flag agendada (ou é false), mostra sempre (comportamento padrão)
+            return true;
+        }
+        
+        /**
          * Formata Date para string "YYYY-MM-DD" sem problemas de timezone
          * @param {Date} date - Objeto Date
          * @returns {string} - Data formatada "YYYY-MM-DD"
@@ -3324,14 +3347,22 @@
             
             const incomeTransactions = transactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
-                return t.tipo === 'receita' && dataTransacao <= hoje;
+                //✅ Considera flag agendada
+                if (t.agendada === true) {
+                    return t.tipo === 'receita' && dataTransacao <= hoje;
+                }
+                return t.tipo === 'receita';
             });
             
             const income = incomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
             
             const expenseTransactions = transactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
-                return t.tipo === 'despesa' && dataTransacao <= hoje;
+                //✅ Considera flag agendada
+                if (t.agendada === true) {
+                    return t.tipo === 'despesa' && dataTransacao <= hoje;
+                }
+                return t.tipo === 'despesa';
             });
             
             const expenses = expenseTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
@@ -4861,13 +4892,20 @@
                 return;
             }
             
-            //✅ CORREÇÃO: Filtra apenas transações que já aconteceram (não futuras/agendadas)
+            //✅ CORREÇÃO: Filtra transações agendadas
             const hoje = new Date();
-            hoje.setHours(23, 59, 59, 999); // Inclui até o final do dia de hoje
+            hoje.setHours(23, 59, 59, 999);
             
             const validTransactions = transactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
-                return dataTransacao <= hoje;
+                
+                //Se tem flag agendada=true, só mostra quando a data chegar
+                if (t.agendada === true) {
+                    return dataTransacao <= hoje;
+                }
+                
+                //Se não tem flag agendada (ou é false), mostra sempre
+                return true;
             });
             
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico MENSAL com', validTransactions.length, 'transações válidas (de', transactions.length, 'totais)');
@@ -5045,16 +5083,23 @@
             
             let filteredTransactions = [...transactions];
             
-            //✅ CORREÇÃO: Filtra transações futuras (agendadas) - não aparecem no dashboard
+            //✅ CORREÇÃO: Filtra transações agendadas - não aparecem no dashboard
             const hoje = new Date();
             hoje.setHours(23, 59, 59, 999);
             
             filteredTransactions = filteredTransactions.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
-                return dataTransacao <= hoje;
+                
+                //Se tem flag agendada=true, só mostra quando a data chegar
+                if (t.agendada === true) {
+                    return dataTransacao <= hoje;
+                }
+                
+                //Se não tem flag agendada (ou é false), mostra sempre (comportamento antigo)
+                return true;
             });
             
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🎨 Transações filtradas (sem futuras):', filteredTransactions.length, 'de', transactions.length);
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🎨 Transações filtradas (sem agendadas):', filteredTransactions.length, 'de', transactions.length);
             
             //Filtro por período
             if (filterStartDate && filterEndDate) {
@@ -6447,6 +6492,48 @@
             closeModal('newCategoryModal');
         }
 
+        //✅ NOVA FUNÇÃO: Verifica se a data selecionada é futura
+        function checkIfFutureDate() {
+            const dateInput = document.getElementById('transactionDate');
+            const scheduleGroup = document.getElementById('scheduleCheckboxGroup');
+            const scheduleCheckbox = document.getElementById('scheduleTransaction');
+            
+            if (!dateInput || !scheduleGroup || !scheduleCheckbox) return;
+            
+            const selectedDate = new Date(dateInput.value + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const isFuture = selectedDate > today;
+            
+            if (isFuture) {
+                //Mostra o checkbox e marca como agendado por padrão
+                scheduleGroup.style.display = 'block';
+                scheduleCheckbox.checked = true;
+                toggleScheduleInfo(); //Atualiza a mensagem
+            } else {
+                //Esconde o checkbox para datas passadas/hoje
+                scheduleGroup.style.display = 'none';
+                scheduleCheckbox.checked = false;
+            }
+        }
+
+        //✅ NOVA FUNÇÃO: Atualiza a mensagem do checkbox
+        function toggleScheduleInfo() {
+            const scheduleCheckbox = document.getElementById('scheduleTransaction');
+            const scheduleHint = document.getElementById('scheduleHint');
+            
+            if (!scheduleCheckbox || !scheduleHint) return;
+            
+            if (scheduleCheckbox.checked) {
+                scheduleHint.textContent = 'Marcado: a transação só será contabilizada na data selecionada';
+                scheduleHint.style.color = '#3b82f6';
+            } else {
+                scheduleHint.textContent = 'Desmarcado: a transação será registrada imediatamente';
+                scheduleHint.style.color = '#f59e0b';
+            }
+        }
+
         async function handleAddTransaction(event) {
             event.preventDefault();
             
@@ -6534,15 +6621,35 @@
 
         //Função para criar transação única
         async function handleSingleTransaction(amount, type) {
+            const transactionDate = document.getElementById('transactionDate').value;
+            const scheduleCheckbox = document.getElementById('scheduleTransaction');
+            
+            //✅ NOVO: Verifica se é data futura E se o checkbox está marcado
+            const selectedDate = new Date(transactionDate + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const isFuture = selectedDate > today;
+            const isScheduled = isFuture && scheduleCheckbox && scheduleCheckbox.checked;
+            
             const newTransaction = {
                 descricao: correctPortuguese(document.getElementById('transactionDescription').value),
                 valor: type === 'income' ? amount : -amount,
                 tipo: type === 'income' ? 'receita' : 'despesa',
                 categoria: selectedCategory,
-                data: document.getElementById('transactionDate').value,
+                data: transactionDate,
                 usuarioId: currentUser.id,
-                despesaTipo: 'unica'
+                despesaTipo: 'unica',
+                agendada: isScheduled // ✅ NOVA FLAG
             };
+            
+            console.log('[TRANSACTION] Criando transação:', {
+                descricao: newTransaction.descricao,
+                data: transactionDate,
+                isFuture: isFuture,
+                checkboxChecked: scheduleCheckbox?.checked,
+                isScheduled: isScheduled
+            });
             
             try {
                 showLoading('Salvando transação...');

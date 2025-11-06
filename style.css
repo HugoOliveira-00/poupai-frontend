@@ -3532,7 +3532,7 @@
 
         /* DASHBOARD */
         .dashboard {
-            display: none;
+            display: none !important;
             position: fixed;
             top: 0;
             left: 0;
@@ -3542,6 +3542,17 @@
             background: #FFFFFF;
             overflow-y: auto;
             z-index: 1;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .dashboard[style*="display: block"],
+        .dashboard[style*="display:block"] {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
         }
 
         .app {
@@ -7629,6 +7640,83 @@
     font-size: 0.85rem;
     margin-top: 0.5rem;
     font-style: italic;
+}
+
+/* ========================================
+   CHECKBOX DE AGENDAMENTO
+   ======================================== */
+
+.checkbox-wrapper {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.checkbox-wrapper:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    background: white;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.checkbox-text i {
+    font-size: 1.25rem;
+    color: #3b82f6;
+}
+
+#scheduleCheckboxGroup .form-hint {
+    margin-left: 2.25rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
 }
 
 .input-with-icon {
