@@ -5045,6 +5045,17 @@
             
             let filteredTransactions = [...transactions];
             
+            //✅ CORREÇÃO: Filtra transações futuras (agendadas) - não aparecem no dashboard
+            const hoje = new Date();
+            hoje.setHours(23, 59, 59, 999);
+            
+            filteredTransactions = filteredTransactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                return dataTransacao <= hoje;
+            });
+            
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🎨 Transações filtradas (sem futuras):', filteredTransactions.length, 'de', transactions.length);
+            
             //Filtro por período
             if (filterStartDate && filterEndDate) {
                 filteredTransactions = filteredTransactions.filter(t => {
@@ -5170,12 +5181,6 @@
             const renderTransaction = (t) => {
                 const isIncome = t.tipo === 'receita';
                 
-                //Verifica se é transação futura
-                const transactionDate = parseLocalDate(t.data);
-                const now = new Date();
-                now.setHours(0, 0, 0, 0); //Remove hora para comparar apenas data
-                const isFuture = transactionDate > now;
-                
                 //Busca o ícone da categoria no objeto categories (suporta categorias personalizadas)
                 const categoryType = isIncome ? 'income' : 'expense';
                 const category = categories[categoryType].find(c => c.name === t.categoria);
@@ -5192,12 +5197,6 @@
                 //Badge para tipo de despesa
                 let typeBadge = '';
                 let clickHandler = '';
-                
-                //Badge de agendamento (futuro)
-                let scheduledBadge = '';
-                if (isFuture) {
-                    scheduledBadge = `<span class="scheduled-badge">${renderIcon('clock')} Agendado</span>`;
-                }
                 
                 //Define a legenda de tipo baseado no tipo de transação
                 let typeLabel = '';
@@ -5234,18 +5233,14 @@
                 //Detecta se é mobile
                 const isMobile = window.innerWidth <= 768;
                 
-                //Adiciona classe 'scheduled' se for futuro
-                const scheduledClass = isFuture ? 'transfer-scheduled' : '';
-                
                 //No mobile, remove o ícone e a tag de tipo
                 return `
-                    <div class="transfer ${scheduledClass} ${t.isGrouped ? 'transfer-grouped' : ''}" ${clickHandler}>
+                    <div class="transfer ${t.isGrouped ? 'transfer-grouped' : ''}" ${clickHandler}>
                         ${!isMobile ? `<div class="transfer-logo ${isIncome ? 'income' : 'expense'}">${renderIcon(iconClass)}</div>` : ''}
                         <div class="transfer-details ${isMobile ? 'transfer-details-mobile' : ''}">
                             <h4>
                                 ${t.descricao}
                                 ${typeBadge}
-                                ${scheduledBadge}
                             </h4>
                             <p>
                                 ${renderIcon('calendar-blank')}
