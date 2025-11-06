@@ -2464,17 +2464,20 @@
           <div class="form-group">
             <label>
               <i class="ph ph-money"></i>
-              Renda Mensal
+              Renda Mensal *
             </label>
-            <input type="text" id="onboardingIncome" placeholder="0,00">
+            <input type="number" inputmode="decimal" id="onboardingIncome" placeholder="0.00" min="50" step="0.01" required>
+            <small style="color: #64748b; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+              Mínimo: R$ 50,00
+            </small>
           </div>
 
           <div class="form-group">
             <label>
               <i class="ph ph-calendar"></i>
-              Dia do Recebimento
+              Dia do Recebimento *
             </label>
-            <input type="number" id="onboardingPaymentDay" min="1" max="31" placeholder="Ex: 5">
+            <input type="number" inputmode="numeric" id="onboardingPaymentDay" min="1" max="31" placeholder="Ex: 5" required>
           </div>
 
           <div class="form-group">
@@ -2522,9 +2525,9 @@
               <i class="ph ph-chart-line"></i>
               Meta Mensal de Gastos (opcional)
             </label>
-            <input type="number" id="onboardingMonthlyLimit" step="0.01" placeholder="0.00">
+            <input type="number" inputmode="decimal" id="onboardingMonthlyLimit" step="0.01" placeholder="0.00" min="25">
             <small style="color: #64748b; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
-              Você receberá alertas ao se aproximar deste valor
+              Você receberá alertas ao se aproximar deste valor (mínimo: R$ 25,00)
             </small>
           </div>
 

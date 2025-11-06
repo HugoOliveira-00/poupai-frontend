@@ -2458,6 +2458,40 @@
         }
 
         function nextOnboardingStep() {
+            //VALIDAÇÃO: Verifica campos obrigatórios antes de avançar
+            if (currentOnboardingStep === 2) {
+                const income = document.getElementById('onboardingIncome').value;
+                const paymentDay = document.getElementById('onboardingPaymentDay').value;
+                const selectedGoal = document.querySelector('input[name="goalOption"]:checked');
+                
+                //Remove formatação para validar
+                const incomeValue = parseFloat(income.replace(/[^\d,]/g, '').replace(',', '.'));
+                
+                if (!income || incomeValue < 50) {
+                    showWarningNotification('O salário deve ser de no mínimo R$ 50,00');
+                    return;
+                }
+                
+                if (!paymentDay || paymentDay < 1 || paymentDay > 31) {
+                    showWarningNotification('Informe o dia do recebimento (1 a 31)');
+                    return;
+                }
+                
+                if (!selectedGoal) {
+                    showWarningNotification('Selecione seu objetivo financeiro principal');
+                    return;
+                }
+            }
+            
+            if (currentOnboardingStep === 3) {
+                const monthlyLimit = document.getElementById('onboardingMonthlyLimit').value;
+                
+                if (monthlyLimit && parseFloat(monthlyLimit) < 25) {
+                    showWarningNotification('A meta de despesa deve ser de no mínimo R$ 25,00');
+                    return;
+                }
+            }
+            
             //Adiciona indicador de processamento no botão
             const btnNext = document.getElementById('nextButton');
             if (btnNext) {
@@ -2550,8 +2584,30 @@
                 onboardingData.nome = capitalizeWords(document.getElementById('onboardingName').value.trim());
                 onboardingData.ocupacao = capitalizeWords(document.getElementById('onboardingOccupation').value.trim());
             } else if (currentOnboardingStep === 2) {
-                onboardingData.rendaMensal = parseFloat(document.getElementById('onboardingIncome').value) || null;
-                onboardingData.diaRecebimento = parseInt(document.getElementById('onboardingPaymentDay').value) || null;
+                const incomeValue = parseFloat(document.getElementById('onboardingIncome').value) || null;
+                const paymentDay = parseInt(document.getElementById('onboardingPaymentDay').value) || null;
+                
+                onboardingData.rendaMensal = incomeValue;
+                onboardingData.diaRecebimento = paymentDay;
+                
+                //Verifica se data é futura para agendar
+                if (paymentDay) {
+                    const today = new Date();
+                    const currentDay = today.getDate();
+                    const currentMonth = today.getMonth();
+                    const currentYear = today.getFullYear();
+                    
+                    //Se o dia configurado for maior que hoje, é um agendamento futuro
+                    if (paymentDay > currentDay) {
+                        const futureDate = new Date(currentYear, currentMonth, paymentDay);
+                        onboardingData.salarioAgendado = true;
+                        onboardingData.dataSalarioAgendado = futureDate.toISOString();
+                        console.log('[ONBOARDING] Salário agendado para:', futureDate.toLocaleDateString());
+                    } else {
+                        onboardingData.salarioAgendado = false;
+                        onboardingData.dataSalarioAgendado = null;
+                    }
+                }
                 
                 //Pega o valor do radio button selecionado
                 const selectedGoal = document.querySelector('input[name="goalOption"]:checked');
@@ -2618,6 +2674,7 @@
                 currentUser.objetivoPrincipal = onboardingData.objetivoPrincipal;
                 currentUser.metaMensal = onboardingData.metaMensal;
                 currentUser.categoriasFoco = onboardingData.categoriasFoco;
+                currentUser.onboardingCompleto = true; //Marca como completo
 
                 console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SAVE] Salvando dados do onboarding no backend:', currentUser);
 
@@ -2742,7 +2799,8 @@
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Dados do salário:', {
                         rendaMensal: currentUser.rendaMensal,
                         diaRecebimento: currentUser.diaRecebimento,
-                        usuarioId: currentUser.id
+                        usuarioId: currentUser.id,
+                        salarioAgendado: onboardingData.salarioAgendado
                     });
                     
                     //VALIDAÇÃO CRÍTICA: Verifica se o ID existe
@@ -2755,28 +2813,44 @@
                     
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] ID do usuário validado, prosseguindo com adição de salário...');
                     
-                    try {
-                        await checkAndAddMonthlySalary(true);
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Processo de salário concluído com sucesso');
+                    //Se for salário agendado para o futuro, não adiciona agora
+                    if (onboardingData.salarioAgendado) {
+                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][INFO] Salário agendado para:', onboardingData.dataSalarioAgendado);
+                        showInfoNotification(`Salário agendado para dia ${currentUser.diaRecebimento}`);
                         
-                        //CRÍTICO: Aguarda um pouco mais para garantir que tudo foi salvo
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        
-                        //FORÇA atualização completa após adicionar salário
-                        await loadTransactions();
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHARTS] Renderizando todos os gráficos após onboarding...');
-                        renderTransactions();
-                        renderChart();
-                        renderMonthlyChart();
-                        renderCategoryReport();
-                        renderCalendar();
-                        updateDashboardStats();
-                        updateInsights();
-                        updateDashboardMiniCards();
-                        
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Todos os gráficos e dashboard atualizados com o salário');
-                    } catch (error) {
-                        console.error('[ERROR][ERROR] Erro ao adicionar salário:', error);
+                        //Salva no localStorage para processar depois
+                        const scheduledSalary = {
+                            userId: currentUser.id,
+                            amount: currentUser.rendaMensal,
+                            day: currentUser.diaRecebimento,
+                            scheduledDate: onboardingData.dataSalarioAgendado
+                        };
+                        localStorage.setItem('scheduled_salary', JSON.stringify(scheduledSalary));
+                    } else {
+                        //Adiciona o salário normalmente
+                        try {
+                            await checkAndAddMonthlySalary(true);
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Processo de salário concluído com sucesso');
+                            
+                            //CRÍTICO: Aguarda um pouco mais para garantir que tudo foi salvo
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            //FORÇA atualização completa após adicionar salário
+                            await loadTransactions();
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHARTS] Renderizando todos os gráficos após onboarding...');
+                            renderTransactions();
+                            renderChart();
+                            renderMonthlyChart();
+                            renderCategoryReport();
+                            renderCalendar();
+                            updateDashboardStats();
+                            updateInsights();
+                            updateDashboardMiniCards();
+                            
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Todos os gráficos e dashboard atualizados com o salário');
+                        } catch (error) {
+                            console.error('[ERROR][ERROR] Erro ao adicionar salário:', error);
+                        }
                     }
                 } else {
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][WARNING] Salário NÃO será adicionado. Dados faltando:', {
@@ -2900,6 +2974,27 @@
             if (!isDashboard || !hasCompletedOnboarding) {
                 console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Abortado: não está no dashboard ou onboarding não completo');
                 return;
+            }
+            
+            //NOVO: Verifica se há salário agendado pendente
+            const scheduledSalary = localStorage.getItem('scheduled_salary');
+            if (scheduledSalary) {
+                const scheduled = JSON.parse(scheduledSalary);
+                const scheduledDate = new Date(scheduled.scheduledDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                scheduledDate.setHours(0, 0, 0, 0);
+                
+                //Se a data agendada ainda não chegou, não adiciona o salário
+                if (scheduledDate > today) {
+                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][INFO] Salário agendado para', scheduled.scheduledDate, '- não processado ainda');
+                    return;
+                }
+                
+                //Se a data agendada chegou, processa o salário e remove do localStorage
+                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Data agendada chegou! Processando salário...');
+                localStorage.removeItem('scheduled_salary');
+                //Continua com o fluxo normal
             }
             
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Função checkAndAddMonthlySalary chamada');
