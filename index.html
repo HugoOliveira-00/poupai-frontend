@@ -130,52 +130,22 @@
   
   <!-- Initial screen visibility control - JavaScript will determine which screen to show -->
   <script>
-    // 🔧 CONTROLE INICIAL DE VISIBILIDADE - Executa ANTES do DOM carregar
-    (function() {
-      console.log('🚀 [INIT] Iniciando controle de visibilidade...');
+    document.addEventListener('DOMContentLoaded', function() {
+      const userString = localStorage.getItem('user');
       
-      // Verifica se há usuário logado
-      const hasUser = localStorage.getItem('user');
-      console.log('👤 [INIT] Usuário no localStorage:', hasUser ? 'SIM' : 'NÃO');
-      
-      // Aplica estilos inline para controle imediato
-      window.addEventListener('DOMContentLoaded', function() {
-        console.log('📄 [INIT] DOM carregado, aplicando visibilidade...');
-        
-        const landing = document.getElementById('landingPage');
-        const auth = document.getElementById('authScreen');
-        const dash = document.getElementById('dashboard');
-        
-        console.log('🔍 [INIT] Elementos encontrados:', {
-          landing: !!landing,
-          auth: !!auth,
-          dashboard: !!dash
-        });
-        
-        if (hasUser) {
-          // Usuário logado: mostra dashboard
-          console.log('✅ [INIT] Mostrando DASHBOARD (usuário logado)');
-          if (landing) landing.style.display = 'none';
-          if (auth) auth.style.display = 'none';
-          if (dash) dash.style.display = 'block';
-        } else {
-          // Sem usuário: mostra landing page
-          console.log('✅ [INIT] Mostrando LANDING PAGE (sem usuário)');
-          if (landing) landing.style.display = 'block';
-          if (auth) auth.style.display = 'none';
-          if (dash) dash.style.display = 'none';
-        }
-      });
-    })();
+      if (userString) {
+        // User is logged in, hide landing and auth, show dashboard
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'none';
+        // Dashboard will be shown by checkAuthentication function
+      } else {
+        // No user, show landing page
+        document.getElementById('landingPage').style.display = 'block';
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+      }
+    });
   </script>
-  
-  <!-- Fallback CSS: Garante que landing page apareça se JS falhar -->
-  <noscript>
-    <style>
-      #landingPage { display: block !important; }
-      #authScreen, #dashboard { display: none !important; }
-    </style>
-  </noscript>
   
   <!-- LANDING PAGE -->
   <div class="landing-page" id="landingPage">
@@ -394,149 +364,153 @@
 
   <!-- SECTION: Security Questions Password Recovery -->
   <!-- Three-step password recovery flow using security questions authentication -->
-  <div id="securityQuestionsScreen" class="auth-container" style="display: none;">
-    
-    <!-- STEP 1: Email identification for recovery process -->
-    <div id="securityQuestionsStep1" class="security-step">
-        <div class="auth-form">
-            <div class="auth-header">
-                <h2>Recuperar Senha</h2>
-                <p class="auth-subtitle">Responda suas perguntas de segurança</p>
-            </div>
-            
-            <form onsubmit="handleRecoveryEmailSubmit(event)">
-                <div class="input-group">
-                    <label for="recoveryEmail">Email cadastrado</label>
-                    <input 
-                        type="email" 
-                        id="recoveryEmail" 
-                        placeholder="seu@email.com" 
-                        required
-                        autocomplete="email"
-                    >
-                </div>
-                
-                <div id="securityQuestionsError"></div>
-                
-                <button type="submit" class="auth-button">
-                    <span>Continuar</span>
-                </button>
-                
-                <div class="auth-footer">
-                    <a href="#" onclick="backToLogin(); return false;">← Voltar para o login</a>
-                </div>
-            </form>
-        </div>
+  <div id="securityQuestionsScreen" class="auth-screen" style="display: none;">
+   <button class="auth-back-btn" onclick="backToLogin()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Voltar
+   </button>
+   
+   <!-- STEP 1: Email identification for recovery process -->
+   <div id="securityQuestionsStep1" class="auth-box">
+    <div class="auth-header">
+     <h2>Recuperar Senha</h2>
+     <p id="authSubtitle">Responda suas perguntas de segurança</p>
     </div>
-    
-    <!-- STEP 2: Security questions validation -->
-    <div id="securityQuestionsStep2" class="security-step" style="display: none;">
-        <div class="auth-form">
-            <div class="auth-header">
-                <h2>Perguntas de Segurança</h2>
-                <p class="auth-subtitle">Responda as 3 perguntas para continuar</p>
-            </div>
-            
-            <form onsubmit="handleSecurityAnswersSubmit(event)">
-                <div class="input-group">
-                    <label id="securityQuestion1">1. Pergunta 1</label>
-                    <input 
-                        type="text" 
-                        id="securityAnswer1" 
-                        placeholder="Sua resposta" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-                
-                <div class="input-group">
-                    <label id="securityQuestion2">2. Pergunta 2</label>
-                    <input 
-                        type="text" 
-                        id="securityAnswer2" 
-                        placeholder="Sua resposta" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-                
-                <div class="input-group">
-                    <label id="securityQuestion3">3. Pergunta 3</label>
-                    <input 
-                        type="text" 
-                        id="securityAnswer3" 
-                        placeholder="Sua resposta" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-                
-                <div id="securityQuestionsError"></div>
-                
-                <button type="submit" class="auth-button">
-                    <span>Verificar Respostas</span>
-                </button>
-                
-                <div class="auth-footer">
-                    <a href="#" onclick="goBackToEmailStep(); return false;">← Voltar</a>
-                </div>
-            </form>
-        </div>
+    <div id="securityQuestionsError1"></div>
+    <form onsubmit="handleRecoveryEmailSubmit(event)">
+     <div class="form-group">
+      <label for="recoveryEmail">Email cadastrado</label>
+      <input 
+       type="email" 
+       id="recoveryEmail" 
+       placeholder="seu@email.com" 
+       required
+       autocomplete="email"
+      />
+     </div>
+     
+     <button class="btn-primary-large" style="width: 100%; margin-top: 1rem;" type="submit">
+      <span>Continuar</span>
+     </button>
+    </form>
+    <div class="auth-switch">
+     <p style="text-align: center; margin-top: 1rem;">
+      <button type="button" onclick="backToLogin()" style="background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 0.95rem; text-decoration: underline; padding: 0.5rem;">
+       ← Voltar para o login
+      </button>
+     </p>
     </div>
-    
-    <!-- STEP 3: Password reset after successful validation -->
-    <div id="securityQuestionsStep3" class="security-step" style="display: none;">
-        <div class="auth-form">
-            <div class="auth-header">
-                <h2>Respostas Corretas</h2>
-                <p class="auth-subtitle">Agora crie sua nova senha</p>
-            </div>
-            
-            <form onsubmit="handleNewPasswordSubmit(event)">
-                <div class="input-group">
-                    <label for="newPassword">Nova senha</label>
-                    <div class="password-input-wrapper">
-                        <input 
-                            type="password" 
-                            id="newPassword" 
-                            placeholder="Mínimo 6 caracteres" 
-                            required
-                            oninput="updatePasswordStrength()"
-                            autocomplete="new-password"
-                        >
-                        <span class="password-toggle" onclick="toggleNewPassword('newPassword')">👁️‍🗨️</span>
-                    </div>
-                    <div class="password-strength-container">
-                        <div class="password-strength-bar-bg">
-                            <div id="newPasswordStrength" class="password-strength-bar"></div>
-                        </div>
-                        <span id="newPasswordStrengthText" class="password-strength-text"></span>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="confirmNewPassword">Confirme a nova senha</label>
-                    <div class="password-input-wrapper">
-                        <input 
-                            type="password" 
-                            id="confirmNewPassword" 
-                            placeholder="Digite novamente" 
-                            required
-                            autocomplete="new-password"
-                        >
-                        <span class="password-toggle" onclick="toggleNewPassword('confirmNewPassword')">👁️‍🗨️</span>
-                    </div>
-                </div>
-                
-                <div id="securityQuestionsError"></div>
-                
-                <button type="submit" class="auth-button">
-                    <span>Redefinir Senha</span>
-                </button>
-            </form>
-        </div>
+   </div>
+   
+   <!-- STEP 2: Security questions validation -->
+   <div id="securityQuestionsStep2" class="auth-box" style="display: none;">
+    <div class="auth-header">
+     <h2>Perguntas de Segurança</h2>
+     <p id="authSubtitle">Responda as 3 perguntas para continuar</p>
     </div>
-    
+    <div id="securityQuestionsError2"></div>
+    <form onsubmit="handleSecurityAnswersSubmit(event)">
+     <div class="form-group">
+      <label id="securityQuestion1">1. Pergunta 1</label>
+      <input 
+       type="text" 
+       id="securityAnswer1" 
+       placeholder="Sua resposta" 
+       required
+       autocomplete="off"
+      />
+     </div>
+     
+     <div class="form-group">
+      <label id="securityQuestion2">2. Pergunta 2</label>
+      <input 
+       type="text" 
+       id="securityAnswer2" 
+       placeholder="Sua resposta" 
+       required
+       autocomplete="off"
+      />
+     </div>
+     
+     <div class="form-group">
+      <label id="securityQuestion3">3. Pergunta 3</label>
+      <input 
+       type="text" 
+       id="securityAnswer3" 
+       placeholder="Sua resposta" 
+       required
+       autocomplete="off"
+      />
+     </div>
+     
+     <button class="btn-primary-large" style="width: 100%; margin-top: 1rem;" type="submit">
+      <span>Verificar Respostas</span>
+     </button>
+    </form>
+    <div class="auth-switch">
+     <p style="text-align: center; margin-top: 1rem;">
+      <button type="button" onclick="goBackToEmailStep()" style="background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 0.95rem; text-decoration: underline; padding: 0.5rem;">
+       ← Voltar
+      </button>
+     </p>
+    </div>
+   </div>
+   
+   <!-- STEP 3: Password reset after successful validation -->
+   <div id="securityQuestionsStep3" class="auth-box" style="display: none;">
+    <div class="auth-header">
+     <h2>Respostas Corretas</h2>
+     <p id="authSubtitle">Agora crie sua nova senha</p>
+    </div>
+    <div id="securityQuestionsError3"></div>
+    <form onsubmit="handleNewPasswordSubmit(event)">
+     <div class="form-group">
+      <label for="newPassword">Nova senha</label>
+      <div class="password-input-wrapper">
+       <input 
+        type="password" 
+        id="newPassword" 
+        placeholder="Mínimo 6 caracteres" 
+        required
+        oninput="updatePasswordStrength()"
+        autocomplete="new-password"
+       />
+       <button type="button" class="toggle-password" onclick="toggleNewPassword('newPassword')" aria-label="Mostrar senha">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+         <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+       </button>
+      </div>
+     </div>
+     
+     <div class="form-group">
+      <label for="confirmNewPassword">Confirme a nova senha</label>
+      <div class="password-input-wrapper">
+       <input 
+        type="password" 
+        id="confirmNewPassword" 
+        placeholder="Digite novamente" 
+        required
+        autocomplete="new-password"
+       />
+       <button type="button" class="toggle-password" onclick="toggleNewPassword('confirmNewPassword')" aria-label="Mostrar senha">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+         <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+       </button>
+      </div>
+     </div>
+     
+     <button class="btn-primary-large" style="width: 100%; margin-top: 1rem;" type="submit">
+      <span>Redefinir Senha</span>
+     </button>
+    </form>
+   </div>
+   
   </div>  
   <!-- DASHBOARD -->
   <div class="dashboard" id="dashboard">
@@ -625,7 +599,7 @@
        <i class="ph ph-list"></i>
       </button>
       <h1 class="header-title" id="headerTitle">
-       Dashboard
+       Visão Geral
       </h1>
             <div class="header-actions">
         <!-- Botão de Privacidade -->
@@ -647,7 +621,7 @@
       <section id="sectionOverview">
        <div class="section-header">
         <h2>
-         Dashboard
+         Panorama Financeiro
         </h2>
         <p>
          Visão geral das suas finanças e acompanhamento de metas
@@ -998,6 +972,9 @@
           </span>
           <input id="filterEndDate" type="date" placeholder="Data final"/>
          </div>
+         <small class="form-hint" style="display: block; margin-top: 0.5rem; color: #64748b; font-size: 0.85rem;">
+          <i class="ph ph-info"></i> Ex: 01/01/2025 até 31/01/2025
+         </small>
         </div>
         <div class="filter-actions">
          <button class="btn-filter" onclick="filterTransactions()">
@@ -1521,23 +1498,25 @@
            <p class="calculator-description">
              Descubra quanto tempo levará para atingir seu objetivo financeiro.
            </p>
-           <div class="form-group">
-             <label>Valor da Meta</label>
-             <input id="targetAmount" placeholder="10000" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Valor Inicial</label>
-             <input id="targetInitialAmount" placeholder="0" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Quanto pode Guardar por Mês</label>
-             <input id="targetMonthlyAmount" placeholder="500" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Taxa de Juros (% ao mês)</label>
-             <input id="targetInterestRate" placeholder="0.5" step="0.1" type="number"/>
-           </div>
-           <button class="btn-primary-large" onclick="calculateTimeToTarget()">Calcular</button>
+           <form onsubmit="event.preventDefault(); calculateTimeToTarget();">
+             <div class="form-group">
+               <label>Valor da Meta</label>
+               <input id="targetAmount" placeholder="10000" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Valor Inicial</label>
+               <input id="targetInitialAmount" placeholder="0" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Quanto pode Guardar por Mês</label>
+               <input id="targetMonthlyAmount" placeholder="500" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Taxa de Juros (% ao mês)</label>
+               <input id="targetInterestRate" placeholder="0.5" step="0.1" type="number" required/>
+             </div>
+             <button class="btn-primary-large" type="submit">Calcular</button>
+           </form>
            <div id="targetResults" style="margin-top: 2rem;"></div>
          </div>
        </div>
@@ -1547,39 +1526,43 @@
          <div class="simulator-modal-content">
            <div class="simulator-modal-header">
              <div>
-               <span class="simulator-modal-icon"><i class="ph ph-house"></i></span>
-               <h3>Simulador de Financiamento</h3>
+               <span class="simulator-modal-icon"><i class="ph ph-calculator"></i></span>
+               <h3>Calculadora de Parcelas</h3>
              </div>
              <button class="close-simulator" onclick="closeSimulator('financing')">×</button>
            </div>
            <p class="calculator-description">
-             Calcule as parcelas e o custo total de um financiamento.
+             Descubra quantas parcelas cabem no seu bolso para um financiamento ou compra parcelada.
            </p>
-           <div class="rates-banner">
-             <h4>Taxas de Financiamento (2025)</h4>
-             <ul class="rates-list">
-               <li>Imóvel: ~0,75-0,95%</li>
-               <li>Veículo: ~1,5-2,5%</li>
-               <li>Rotativo: ~10-15%</li>
-             </ul>
-           </div>
-           <div class="form-group">
-             <label>Valor do Bem</label>
-             <input id="financingAmount" placeholder="300000" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Entrada (%)</label>
-             <input id="financingDownPayment" placeholder="20" type="number" min="0" max="100"/>
-           </div>
-           <div class="form-group">
-             <label>Taxa de Juros (% ao mês)</label>
-             <input id="financingRate" placeholder="0.75" step="0.01" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Prazo (meses)</label>
-             <input id="financingPeriod" placeholder="360" type="number"/>
-           </div>
-           <button class="btn-primary-large" onclick="calculateFinancing()">Calcular</button>
+           <form onsubmit="event.preventDefault(); calculateFinancing();">
+             <div class="form-group">
+               <label>💰 Valor Total do Bem</label>
+               <input id="financingAmount" placeholder="Ex: 30000" type="number" required/>
+               <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                 Valor total que você precisa financiar ou parcelar
+               </small>
+             </div>
+             <div class="form-group">
+               <label>💳 Valor que Cabe no Orçamento (por mês)</label>
+               <input id="financingMonthlyBudget" placeholder="Ex: 1200" type="number" required/>
+               <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                 Quanto você consegue pagar confortavelmente por mês
+               </small>
+             </div>
+             <div class="form-group">
+               <label>📅 Prazo Máximo Desejado (meses)</label>
+               <select id="financingMaxPeriod" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+                 <option value="12">12 meses (1 ano)</option>
+                 <option value="24" selected>24 meses (2 anos)</option>
+                 <option value="36">36 meses (3 anos)</option>
+                 <option value="48">48 meses (4 anos)</option>
+                 <option value="60">60 meses (5 anos)</option>
+               </select>
+             </div>
+             <button class="btn-primary-large" type="submit">
+               <i class="ph ph-calculator"></i> Calcular Parcelas
+             </button>
+           </form>
            <div id="financingResults" style="margin-top: 2rem;"></div>
          </div>
        </div>
@@ -1597,27 +1580,29 @@
            <p class="calculator-description">
              Calcule quanto você precisa economizar mensalmente para se aposentar confortavelmente.
            </p>
-           <div class="form-group">
-             <label>Idade Atual</label>
-             <input id="retirementCurrentAge" placeholder="30" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Idade para Aposentadoria</label>
-             <input id="retirementTargetAge" placeholder="65" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Renda Mensal Desejada na Aposentadoria</label>
-             <input id="retirementMonthlyIncome" placeholder="5000" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Patrimônio Atual</label>
-             <input id="retirementCurrentWealth" placeholder="0" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Rentabilidade Esperada (% ao ano)</label>
-             <input id="retirementReturnRate" placeholder="8" step="0.1" type="number"/>
-           </div>
-           <button class="btn-primary-large" onclick="calculateRetirement()">Calcular</button>
+           <form onsubmit="event.preventDefault(); calculateRetirement();">
+             <div class="form-group">
+               <label>Idade Atual</label>
+               <input id="retirementCurrentAge" placeholder="30" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Idade para Aposentadoria</label>
+               <input id="retirementTargetAge" placeholder="65" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Renda Mensal Desejada na Aposentadoria</label>
+               <input id="retirementMonthlyIncome" placeholder="5000" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Patrimônio Atual</label>
+               <input id="retirementCurrentWealth" placeholder="0" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>Rentabilidade Esperada (% ao ano)</label>
+               <input id="retirementReturnRate" placeholder="8" step="0.1" type="number" required/>
+             </div>
+             <button class="btn-primary-large" type="submit">Calcular</button>
+           </form>
            <div id="retirementResults" style="margin-top: 2rem;"></div>
          </div>
        </div>
@@ -1633,50 +1618,43 @@
              <button class="close-simulator" onclick="closeSimulator('emergency')">×</button>
            </div>
            <p class="calculator-description">
-             A reserva de emergência é essencial para sua segurança financeira. Calcule quanto você precisa guardar.
+             Descubra quanto você precisa guardar e em quanto tempo conseguirá construir sua reserva de emergência.
            </p>
-           <div class="form-group">
-             <label>Gastos Mensais Essenciais</label>
-             <input id="emergencyMonthlyExpenses" placeholder="3000" type="number"/>
-             <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
-               Considere apenas gastos essenciais: moradia, alimentação, transporte, saúde
-             </small>
-           </div>
-           <div class="form-group">
-             <label>Meses de Cobertura Desejados</label>
-             <select id="emergencyMonths" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
-               <option value="3">3 meses (Mínimo recomendado)</option>
-               <option value="6" selected>6 meses (Ideal)</option>
-               <option value="12">12 meses (Conservador)</option>
-               <option value="custom">Personalizado</option>
-             </select>
-           </div>
-           <div class="form-group" id="customMonthsGroup" style="display: none;">
-             <label>Número de Meses</label>
-             <input id="customEmergencyMonths" placeholder="6" type="number" min="1" max="24"/>
-           </div>
-           <div class="form-group">
-             <label>Valor Já Guardado</label>
-             <input id="emergencyCurrentAmount" placeholder="0" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Quanto Pode Guardar por Mês</label>
-             <input id="emergencyMonthlySavings" placeholder="500" type="number"/>
-           </div>
-           <div class="form-group">
-             <label>Onde vai investir?</label>
-             <select id="emergencyInvestmentType" onchange="updateEmergencyRate()" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
-               <option value="0.50">Poupança (≈0,50% a.m.)</option>
-               <option value="0.75" selected>CDB Liquidez Diária (≈0,75% a.m.)</option>
-               <option value="0.80">Fundo DI (≈0,80% a.m.)</option>
-               <option value="custom">Taxa Personalizada</option>
-             </select>
-           </div>
-           <div class="form-group" id="customRateGroup" style="display: none;">
-             <label>Taxa Mensal (%)</label>
-             <input id="customEmergencyRate" placeholder="0.70" step="0.01" type="number"/>
-           </div>
-           <button class="btn-primary-large" onclick="calculateEmergencyFund()">Calcular</button>
+           <form onsubmit="event.preventDefault(); calculateEmergencyFund();">
+             <div class="form-group">
+               <label>💸 Gastos Mensais Essenciais</label>
+               <input id="emergencyMonthlyExpenses" placeholder="Ex: 3000" type="number" required/>
+               <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                 Considere: moradia, alimentação, transporte, saúde, contas básicas
+               </small>
+             </div>
+             <div class="form-group">
+               <label>📅 Meses de Cobertura Desejados</label>
+               <select id="emergencyMonths" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+                 <option value="3">3 meses - Mínimo recomendado</option>
+                 <option value="6" selected>6 meses - Ideal para a maioria</option>
+                 <option value="9">9 meses - Conservador</option>
+                 <option value="12">12 meses - Extra seguro</option>
+               </select>
+               <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                 Recomendação: 6 meses para empregados CLT, 12 meses para autônomos
+               </small>
+             </div>
+             <div class="form-group">
+               <label>💰 Valor Já Guardado</label>
+               <input id="emergencyCurrentAmount" placeholder="Ex: 5000 (ou 0 se começando do zero)" type="number" required/>
+             </div>
+             <div class="form-group">
+               <label>🏦 Quanto Consegue Guardar por Mês</label>
+               <input id="emergencyMonthlySavings" placeholder="Ex: 500" type="number" required/>
+               <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                 Valor que você consegue destinar mensalmente para a reserva
+               </small>
+             </div>
+             <button class="btn-primary-large" type="submit">
+               <i class="ph ph-calculator"></i> Calcular Reserva
+             </button>
+           </form>
            <div id="emergencyResults" style="margin-top: 2rem;"></div>
          </div>
        </div>

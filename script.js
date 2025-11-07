@@ -1,5 +1,112 @@
 
         //========================================
+        //✅ ISSUE #15: SEGURANÇA - ANONIMIZAÇÃO DE LOGS
+        //========================================
+        
+        //Configuração global de segurança de logs
+        const LOG_SECURITY = {
+            enabled: true, // Set false apenas para debug em desenvolvimento
+            maskSensitiveData: true
+        };
+        
+        //Função para sanitizar objetos antes de logar
+        function sanitizeForLog(obj) {
+            if (!LOG_SECURITY.enabled || !LOG_SECURITY.maskSensitiveData) {
+                return obj; // Modo desenvolvimento - mostra tudo
+            }
+            
+            if (!obj || typeof obj !== 'object') {
+                return obj;
+            }
+            
+            const sanitized = Array.isArray(obj) ? [] : {};
+            
+            for (const key in obj) {
+                const lowerKey = key.toLowerCase();
+                
+                // Campos que devem ser completamente mascarados
+                if (lowerKey.includes('password') || 
+                    lowerKey.includes('senha') || 
+                    lowerKey.includes('token') ||
+                    lowerKey.includes('secret') ||
+                    lowerKey.includes('cpf') ||
+                    lowerKey.includes('credit') ||
+                    lowerKey.includes('card')) {
+                    sanitized[key] = '***';
+                    continue;
+                }
+                
+                // IDs - mostra apenas últimos 4 caracteres
+                if (lowerKey === 'id' || lowerKey.includes('userid') || lowerKey.includes('usuarioid')) {
+                    const value = String(obj[key]);
+                    sanitized[key] = value.length > 4 ? `***${value.slice(-4)}` : '***';
+                    continue;
+                }
+                
+                // Email - mostra apenas domínio
+                if (lowerKey.includes('email')) {
+                    const email = String(obj[key]);
+                    const parts = email.split('@');
+                    if (parts.length === 2) {
+                        sanitized[key] = `***@${parts[1]}`;
+                    } else {
+                        sanitized[key] = '***';
+                    }
+                    continue;
+                }
+                
+                // Nome - mostra apenas iniciais
+                if (lowerKey === 'nome' || lowerKey === 'name') {
+                    const name = String(obj[key]);
+                    const words = name.split(' ');
+                    sanitized[key] = words.map(w => w.charAt(0).toUpperCase() + '.').join(' ');
+                    continue;
+                }
+                
+                // Valores monetários - mostra apenas faixa
+                if (lowerKey.includes('valor') || 
+                    lowerKey.includes('renda') || 
+                    lowerKey.includes('salario') ||
+                    lowerKey.includes('limite')) {
+                    const value = parseFloat(obj[key]);
+                    if (!isNaN(value)) {
+                        if (value < 1000) sanitized[key] = '<R$1k';
+                        else if (value < 5000) sanitized[key] = 'R$1k-5k';
+                        else if (value < 10000) sanitized[key] = 'R$5k-10k';
+                        else sanitized[key] = '>R$10k';
+                    } else {
+                        sanitized[key] = obj[key];
+                    }
+                    continue;
+                }
+                
+                // Recursão para objetos aninhados
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    sanitized[key] = sanitizeForLog(obj[key]);
+                } else {
+                    sanitized[key] = obj[key];
+                }
+            }
+            
+            return sanitized;
+        }
+        
+        //Função helper para logs seguros
+        function secureLog(level, message, data = null) {
+            if (!LOG_SECURITY.enabled) return;
+            
+            const timestamp = new Date().toISOString();
+            const prefix = `[${timestamp}][${level.toUpperCase()}]`;
+            
+            if (data) {
+                const sanitizedData = sanitizeForLog(data);
+                console.log(prefix, message, sanitizedData);
+            } else {
+                console.log(prefix, message);
+            }
+        }
+
+        //========================================
         //MOBILE/TABLET DEVICE DETECTION
         //========================================
         
@@ -772,6 +879,10 @@
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('aboutPage').classList.remove('active');
             
+            // Esconde o footer da landing page quando auth está visível
+            const landingFooter = document.querySelector('.landing-footer');
+            if (landingFooter) landingFooter.style.display = 'none';
+            
             //Atualiza cor da navigation bar para preto (auth screen)
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
             if (metaThemeColor) {
@@ -860,6 +971,10 @@
             if (sectionOverview) {
                 sectionOverview.classList.remove('hidden');
             }
+            
+            //🔒 PRIVACIDADE: Define classe do body como overview (dashboard inicial)
+            document.body.className = document.body.className.replace(/section-\w+/g, '');
+            document.body.classList.add('section-overview');
             
             //Remove active de todos os links de navegação
             document.querySelectorAll('.navigation a').forEach(a => {
@@ -1429,6 +1544,10 @@
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'none';
             
+            // Mostra o footer quando volta para landing page
+            const landingFooter = document.querySelector('.landing-footer');
+            if (landingFooter) landingFooter.style.display = 'flex';
+            
             //Atualiza cor da navigation bar para preto (landing page)
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
             if (metaThemeColor) {
@@ -1481,6 +1600,10 @@
             //Fecha o menu mobile ao selecionar uma seção
             closeMobileMenu();
             
+            //🔒 PRIVACIDADE: Adiciona classe no body para controlar visibilidade do botão
+            document.body.className = document.body.className.replace(/section-\w+/g, '');
+            document.body.classList.add(`section-${section}`);
+            
             const titles = {
                 overview: 'Dashboard', //✅ REVERTIDO: Voltou para Dashboard no header
                 transactions: 'Transações',
@@ -1529,6 +1652,7 @@
                 // document.getElementById('password').focus();
             }
             clearAuthError();
+            checkPasswordStrength(); //Esconde indicador ao trocar para login
         }
 
         function switchToRegister() {
@@ -1702,6 +1826,135 @@
             }
         }
 
+        //✅ ISSUE #3: Função de validação de nomes inadequados
+        function validateName(name) {
+            if (!name || name.trim().length === 0) {
+                return { valid: false, message: 'Nome não pode estar vazio.' };
+            }
+            
+            const nameLower = name.toLowerCase().trim();
+            
+            //Lista de termos bloqueados (primeira camada - frontend)
+            const blockedTerms = [
+                // Termos explícitos e inadequados
+                'porno', 'porn', 'xxx', 'sexo', 'sex', 'putaria', 'puta', 'prostituta',
+                'vagabunda', 'vadia', 'cu', 'merda', 'caralho', 'porra', 'buceta',
+                'dick', 'pussy', 'cock', 'bitch', 'shit', 'fuck', 'ass',
+                
+                // Termos relacionados a drogas
+                'droga', 'maconha', 'cocaina', 'crack', 'heroina', 'traficante',
+                'cocaine', 'heroin', 'meth', 'drug',
+                
+                // Termos relacionados a terrorismo e violência
+                'terrorista', 'terrorist', 'bomba', 'bomb', 'ataque', 'attack',
+                'isis', 'alqaeda', 'taliban', 'jihad', 'matador', 'killer',
+                
+                // Termos ofensivos raciais e discriminatórios
+                'negro', 'preto', 'macaco', 'nigger', 'racist', 'racista',
+                'gay', 'viado', 'bicha', 'sapatao', 'fag',
+                
+                // Nomes conhecidos de terroristas/criminosos (exemplos)
+                'bin laden', 'hitler', 'stalin', 'escobar', 'guzman',
+                
+                // Termos relacionados a crimes
+                'assassino', 'estuprador', 'pedofilo', 'pedophile', 'rapist',
+                'murderer', 'ladrão', 'thief'
+            ];
+            
+            //Verifica se algum termo bloqueado está presente
+            for (const term of blockedTerms) {
+                if (nameLower.includes(term)) {
+                    return { 
+                        valid: false, 
+                        message: 'Nome contém termos inadequados. Por favor, use seu nome real.' 
+                    };
+                }
+            }
+            
+            //Validação de comprimento
+            if (name.trim().length < 2) {
+                return { valid: false, message: 'Nome deve ter pelo menos 2 caracteres.' };
+            }
+            
+            if (name.trim().length > 100) {
+                return { valid: false, message: 'Nome muito longo (máximo 100 caracteres).' };
+            }
+            
+            //Validação de caracteres especiais excessivos
+            const specialCharsCount = (name.match(/[^a-zA-ZÀ-ÿ\s]/g) || []).length;
+            if (specialCharsCount > 3) {
+                return { 
+                    valid: false, 
+                    message: 'Nome contém muitos caracteres especiais. Use apenas letras.' 
+                };
+            }
+            
+            //Validação de números excessivos
+            const numbersCount = (name.match(/\d/g) || []).length;
+            if (numbersCount > 2) {
+                return { 
+                    valid: false, 
+                    message: 'Nome contém muitos números. Use seu nome real.' 
+                };
+            }
+            
+            return { valid: true };
+        }
+
+        //Valida ocupação contra termos inadequados
+        function validateOccupation(occupation) {
+            if (!occupation || occupation.trim().length === 0) {
+                return { valid: false, message: 'Ocupação não pode estar vazia.' };
+            }
+            
+            const occupationLower = occupation.toLowerCase().trim();
+            
+            //Lista de termos bloqueados para ocupação
+            const blockedTerms = [
+                // Termos explícitos e inadequados
+                'porno', 'porn', 'xxx', 'sexo', 'sex', 'putaria', 'puta', 'prostituta',
+                'vagabunda', 'vadia', 'cu', 'merda', 'caralho', 'porra', 'buceta',
+                'dick', 'pussy', 'cock', 'bitch', 'shit', 'fuck', 'ass',
+                
+                // Termos relacionados a drogas
+                'droga', 'maconha', 'cocaina', 'crack', 'heroina', 'traficante',
+                'cocaine', 'heroin', 'meth', 'drug',
+                
+                // Termos relacionados a terrorismo e violência
+                'terrorista', 'terrorist', 'bomba', 'bomb', 'ataque', 'attack',
+                'isis', 'alqaeda', 'taliban', 'jihad', 'matador', 'killer',
+                
+                // Termos ofensivos raciais e discriminatórios
+                'negro', 'preto', 'macaco', 'nigger', 'racist', 'racista',
+                'gay', 'viado', 'bicha', 'sapatao', 'fag',
+                
+                // Termos relacionados a crimes
+                'assassino', 'estuprador', 'pedofilo', 'pedophile', 'rapist',
+                'murderer', 'ladrão', 'thief'
+            ];
+            
+            //Verifica se algum termo bloqueado está presente
+            for (const term of blockedTerms) {
+                if (occupationLower.includes(term)) {
+                    return { 
+                        valid: false, 
+                        message: 'Ocupação contém termos inadequados. Por favor, use uma ocupação real.' 
+                    };
+                }
+            }
+            
+            //Validação de comprimento
+            if (occupation.trim().length < 2) {
+                return { valid: false, message: 'Ocupação deve ter pelo menos 2 caracteres.' };
+            }
+            
+            if (occupation.trim().length > 100) {
+                return { valid: false, message: 'Ocupação muito longa (máximo 100 caracteres).' };
+            }
+            
+            return { valid: true };
+        }
+
         async function handleAuth(event) {
             event.preventDefault();
             clearAuthError();
@@ -1746,6 +1999,16 @@
                 if (authMode === 'register') {
                     if (!name) {
                         showAuthError('Por favor, insira seu nome.');
+                        authButton.disabled = false;
+                        authButton.style.opacity = '1';
+                        authButton.style.cursor = 'pointer';
+                        return;
+                    }
+                    
+                    //✅ ISSUE #3: Valida nome contra termos inadequados
+                    const nameValidation = validateName(name);
+                    if (!nameValidation.valid) {
+                        showAuthError(nameValidation.message);
                         authButton.disabled = false;
                         authButton.style.opacity = '1';
                         authButton.style.cursor = 'pointer';
@@ -1821,8 +2084,10 @@
                     
                     //Atribui o novo usuário criado
                     currentUser = newUserData;
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🔍 Usuário criado:', currentUser);
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🔍 ID do usuário:', currentUser.id);
+                    
+                    //✅ ISSUE #15: Log seguro - dados sensíveis mascarados
+                    secureLog('info', '🔍 Usuário criado com sucesso', currentUser);
+                    secureLog('info', '🔍 Conta ativada', { userId: currentUser.id });
                     
                     //Verifica se o ID está presente
                     if (!currentUser.id) {
@@ -1846,7 +2111,8 @@
                     showWelcomeModalBeforeDashboard(userName);
                     return; //Para aqui e não chama showDashboard()
                 } else {
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]Tentando login com:', { email });
+                    //✅ ISSUE #15: Log seguro - não expõe email completo
+                    secureLog('info', 'Tentando login', { email });
                     
                     //Mensagem de login
                     authButtonText.textContent = 'Entrando...';
@@ -1873,7 +2139,9 @@
                     }
                     
                     const userData = await response.json();
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]Login bem-sucedido:', userData);
+                    
+                    //✅ ISSUE #15: Log seguro - dados sensíveis mascarados
+                    secureLog('info', 'Login bem-sucedido', userData);
                     
                     //✅ CORREÇÃO: Limpa dados do usuário anterior ANTES de atribuir novo usuário
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🧹 Limpando dados do usuário anterior...');
@@ -1886,7 +2154,9 @@
                     
                     //Atribui o novo usuário
                     currentUser = userData;
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]✅ Novo usuário carregado:', currentUser.id, currentUser.nome);
+                    
+                    //✅ ISSUE #15: Log seguro - dados sensíveis mascarados
+                    secureLog('info', '✅ Novo usuário carregado', currentUser);
                     
                     //Salva no localStorage
                     localStorage.setItem('user', JSON.stringify(currentUser));
@@ -1931,8 +2201,12 @@
 
         //===== STEP 1: INSERIR EMAIL =====
         function showForgotPasswordScreen() {
+            const securityScreen = document.getElementById('securityQuestionsScreen');
             document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('securityQuestionsScreen').style.display = 'flex';
+            
+            // Remove os estilos inline e aplica display flex
+            securityScreen.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important;';
+            
             document.getElementById('securityQuestionsStep1').style.display = 'block';
             document.getElementById('securityQuestionsStep2').style.display = 'none';
             document.getElementById('securityQuestionsStep3').style.display = 'none';
@@ -1945,10 +2219,17 @@
         }
 
         function backToLogin() {
-            document.getElementById('securityQuestionsScreen').style.display = 'none';
+            const securityScreen = document.getElementById('securityQuestionsScreen');
+            securityScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+            
             document.getElementById('authScreen').style.display = 'flex';
             authMode = 'login';
             updateAuthUI();
+            checkPasswordStrength(); //Esconde indicador ao voltar para login
+            
+            // Esconde o footer quando volta para login
+            const landingFooter = document.querySelector('.landing-footer');
+            if (landingFooter) landingFooter.style.display = 'none';
         }
 
         function clearSecurityError() {
@@ -2314,12 +2595,18 @@
             const btn = document.querySelector('.btn-logout-confirm');
             if (btn && btn.disabled) return;
             
-            //Desabilita botão e fecha modal
+            //Desabilita botão
             if (btn) {
                 btn.disabled = true;
                 btn.textContent = 'Processando...';
             }
+            
+            //🔧 CORREÇÃO: Fecha AMBOS os modais (logout E perfil)
             closeModal('logoutModal');
+            
+            //Pequeno delay antes de fechar o perfil para animação suave
+            await new Promise(resolve => setTimeout(resolve, 100));
+            closeModal('profileModal');
             
             //Mostra loading
             showLoading('Saindo...');
@@ -2372,6 +2659,13 @@
             
             //Remove loading
             hideLoading();
+            
+            //CRÍTICO: Esconde a bottom nav antes de voltar para landing
+            const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
+            if (mobileBottomNav) {
+                mobileBottomNav.classList.add('hidden');
+                mobileBottomNav.style.display = 'none';
+            }
             
             //Volta para landing
             showLanding();
@@ -2437,23 +2731,31 @@
                 return;
             }
 
-            //Verifica se é um novo usuário OU se o perfil está incompleto
+            //✅ CORREÇÃO: Verifica se já completou onboarding ANTES DE TUDO
+            const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
+            
+            //Se já completou, NÃO mostra de jeito nenhum
+            if (hasCompletedOnboarding) {
+                console.log('[ONBOARDING] ✅ Usuário já completou onboarding anteriormente');
+                return;
+            }
+            
+            //Só verifica se é novo usuário OU perfil incompleto se NÃO completou onboarding
             const isNewUser = localStorage.getItem('isNewUser') === 'true';
             const isProfileIncomplete = !currentUser.ocupacao || !currentUser.rendaMensal;
             
-            //Verifica se já completou onboarding antes
-            const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
-            
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]=== VERIFICANDO ONBOARDING ===');
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]isNewUser:', isNewUser);
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]ocupacao:', currentUser.ocupacao);
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]rendaMensal:', currentUser.rendaMensal);
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]isProfileIncomplete:', isProfileIncomplete);
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]hasCompletedOnboarding:', hasCompletedOnboarding);
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]currentUser completo:', currentUser);
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]Deve mostrar?', (isNewUser || isProfileIncomplete) && !hasCompletedOnboarding);
+            //✅ ISSUE #15: Log seguro - não expõe dados sensíveis
+            secureLog('info', 'Verificando perfil do usuário', { 
+                ocupacao: currentUser.ocupacao ? 'SET' : 'NOT_SET',
+                rendaMensal: currentUser.rendaMensal ? 'SET' : 'NOT_SET'
+            });
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]Deve mostrar?', (isNewUser || isProfileIncomplete));
             
-            if ((isNewUser || isProfileIncomplete) && !hasCompletedOnboarding) {
+            if (isNewUser || isProfileIncomplete) {
                 //🧹 LIMPEZA EXTRA: Garante que não há lembretes gerados antes do onboarding
                 console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🧹 Limpando lembretes antes de mostrar onboarding...');
                 window.allReminders = [];
@@ -2482,6 +2784,35 @@
 
         function nextOnboardingStep() {
             //VALIDAÇÃO: Verifica campos obrigatórios antes de avançar
+            if (currentOnboardingStep === 1) {
+                const name = document.getElementById('onboardingName').value.trim();
+                const occupation = document.getElementById('onboardingOccupation').value.trim();
+                
+                //✅ VALIDAÇÃO DE NOME INDEVIDO NO ONBOARDING
+                if (!name) {
+                    showWarningNotification('Por favor, informe seu nome');
+                    return;
+                }
+                
+                const nameValidation = validateName(name);
+                if (!nameValidation.valid) {
+                    showWarningNotification(nameValidation.message);
+                    return;
+                }
+                
+                if (!occupation) {
+                    showWarningNotification('Por favor, informe sua ocupação');
+                    return;
+                }
+                
+                //✅ VALIDAÇÃO DE OCUPAÇÃO INDEVIDA NO ONBOARDING
+                const occupationValidation = validateOccupation(occupation);
+                if (!occupationValidation.valid) {
+                    showWarningNotification(occupationValidation.message);
+                    return;
+                }
+            }
+            
             if (currentOnboardingStep === 2) {
                 const income = document.getElementById('onboardingIncome').value;
                 const paymentDay = document.getElementById('onboardingPaymentDay').value;
@@ -8949,6 +9280,7 @@
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.remove('show');
+                modal.classList.remove('active'); // Remove classe para controle CSS
                 
                 //Mostrar AppBar novamente no mobile quando QUALQUER modal fechar
                 const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
@@ -9276,8 +9608,54 @@
             const monthlyAmount = parseFloat(document.getElementById('targetMonthlyAmount').value) || 0;
             const interestRate = parseFloat(document.getElementById('targetInterestRate').value) || 0;
 
-            if (targetAmount <= 0 || monthlyAmount <= 0) {
-                showErrorNotification('Informe valores válidos');
+            //🔴 VALIDAÇÕES COM MENSAGENS DE ERRO VERMELHO
+            if (!targetAmount || targetAmount <= 0) {
+                document.getElementById('targetResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor da meta deve ser maior que zero</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!monthlyAmount || monthlyAmount <= 0) {
+                document.getElementById('targetResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor mensal deve ser maior que zero</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (initialAmount < 0) {
+                document.getElementById('targetResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor inicial não pode ser negativo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (interestRate < 0 || interestRate > 100) {
+                document.getElementById('targetResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A taxa de juros deve estar entre 0% e 100%</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (targetAmount > 1000000000) {
+                document.getElementById('targetResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor da meta não pode ultrapassar R$ 1 bilhão</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -9324,9 +9702,13 @@
                             <div class="stat-value">${formatCurrency(totalInterest)}</div>
                         </div>
                     </div>
-                    <div style="margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">
-                        <p>💰 Total acumulado: ${formatCurrency(currentAmount)}</p>
-                        <p>📈 Os juros representarão ${((totalInterest/currentAmount) * 100).toFixed(1)}% do montante final</p>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border-left: 3px solid #3b82f6;">
+                        <p style="margin: 0 0 0.5rem 0; color: #1e293b; font-weight: 500;">
+                            Total acumulado: ${formatCurrency(currentAmount)}
+                        </p>
+                        <p style="margin: 0; color: #64748b; font-size: 0.9rem;">
+                            Os juros representarão ${((totalInterest/currentAmount) * 100).toFixed(1)}% do montante final
+                        </p>
                     </div>
                 `;
             }
@@ -10581,51 +10963,148 @@
             }
         });
 
-        //Simulador de Financiamento
+        //Calculadora de Parcelas (Versão Simplificada)
         function calculateFinancing() {
             const totalValue = parseFloat(document.getElementById('financingAmount').value) || 0;
-            const downPaymentPercent = parseFloat(document.getElementById('financingDownPayment').value) || 0;
-            const monthlyRate = parseFloat(document.getElementById('financingRate').value) || 0;
-            const months = parseFloat(document.getElementById('financingPeriod').value) || 0;
+            const monthlyBudget = parseFloat(document.getElementById('financingMonthlyBudget').value) || 0;
+            const maxPeriod = parseInt(document.getElementById('financingMaxPeriod').value) || 24;
 
-            if (totalValue <= 0 || months <= 0 || monthlyRate <= 0) {
-                showErrorNotification('Informe valores válidos');
+            //🔴 VALIDAÇÕES COM MENSAGENS DE ERRO VERMELHO
+            if (!totalValue || totalValue <= 0) {
+                document.getElementById('financingResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">Informe o valor total do bem</p>
+                    </div>
+                `;
                 return;
             }
 
-            const downPayment = totalValue * (downPaymentPercent / 100);
-            const financedAmount = totalValue - downPayment;
-            const rate = monthlyRate / 100;
+            if (totalValue > 10000000) {
+                document.getElementById('financingResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor não pode ultrapassar R$ 10 milhões</p>
+                    </div>
+                `;
+                return;
+            }
 
-            //Fórmula Price (Sistema Francês de Amortização)
-            const monthlyPayment = financedAmount * (rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
-            const totalPaid = monthlyPayment * months;
-            const totalInterest = totalPaid - financedAmount;
-            const totalCost = downPayment + totalPaid;
+            if (!monthlyBudget || monthlyBudget <= 0) {
+                document.getElementById('financingResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">Informe quanto você pode pagar por mês</p>
+                    </div>
+                `;
+                return;
+            }
 
-            const resultsHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4 style="color: #1e40af;">Parcela Mensal</h4>
-                        <div class="stat-value">${formatCurrency(monthlyPayment)}</div>
+            //Calcula quantas parcelas seriam necessárias (divisão simples)
+            const idealMonths = Math.ceil(totalValue / monthlyBudget);
+            
+            let resultsHTML = '';
+
+            if (idealMonths <= maxPeriod) {
+                //CABE no prazo escolhido
+                const finalPayment = totalValue - (monthlyBudget * (idealMonths - 1));
+                
+                resultsHTML = `
+                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 16px; border: 2px solid #86efac; margin-bottom: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            <i class="ph ph-check-circle" style="color: #059669;"></i>
+                        </div>
+                        <h3 style="color: #059669; margin-bottom: 1rem; font-size: 1.5rem;">Cabe no Seu Orçamento! ✅</h3>
+                        <p style="color: #047857; font-size: 1.1rem; line-height: 1.6;">
+                            Você consegue parcelar ${formatCurrency(totalValue)} em <strong>${idealMonths}x de ${formatCurrency(monthlyBudget)}</strong>
+                        </p>
                     </div>
-                    <div class="stat-card">
-                        <h4 style="color: #059669;">Entrada</h4>
-                        <div class="stat-value">${formatCurrency(downPayment)}</div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                <i class="ph ph-calendar"></i> NÚMERO DE PARCELAS
+                            </div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #1e3a8a;">${idealMonths}x</div>
+                        </div>
+                        
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                <i class="ph ph-credit-card"></i> VALOR DA PARCELA
+                            </div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #059669;">${formatCurrency(monthlyBudget)}</div>
+                        </div>
+                        
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                <i class="ph ph-coins"></i> VALOR TOTAL
+                            </div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #7c3aed;">${formatCurrency(totalValue)}</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <h4 style="color: #dc2626;">Juros Totais</h4>
-                        <div class="stat-value">${formatCurrency(totalInterest)}</div>
+
+                    <div style="background: #eff6ff; padding: 1.25rem; border-radius: 12px; border: 2px solid #bfdbfe;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="ph ph-info" style="font-size: 1.5rem; color: #1e40af; flex-shrink: 0;"></i>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.4rem; font-size: 0.95rem;">Detalhes do Parcelamento</div>
+                                <div style="color: #1e40af; font-size: 0.9rem; line-height: 1.7;">
+                                    • ${idealMonths - 1} parcelas de ${formatCurrency(monthlyBudget)}<br>
+                                    ${finalPayment !== monthlyBudget ? `• 1 parcela final de ${formatCurrency(finalPayment)}<br>` : ''}
+                                    • Prazo total: ${Math.floor(idealMonths / 12) > 0 ? Math.floor(idealMonths / 12) + ' ano' + (Math.floor(idealMonths / 12) > 1 ? 's' : '') + ' e ' : ''}${idealMonths % 12} mês(es)
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div style="margin-top: 1.5rem; padding: 1.5rem; background: #f1f5f9; border-radius: 12px;">
-                    <p style="margin: 0.5rem 0; color: #1e293b;"><strong>${renderIcon('coins')} Valor do bem:</strong> ${formatCurrency(totalValue)}</p>
-                    <p style="margin: 0.5rem 0; color: #1e293b;"><strong>${renderIcon('chart-line')} Valor financiado:</strong> ${formatCurrency(financedAmount)}</p>
-                    <p style="margin: 0.5rem 0; color: #1e293b;"><strong>${renderIcon('credit-card')} Total a pagar:</strong> ${formatCurrency(totalPaid)}</p>
-                    <p style="margin: 0.5rem 0; color: #1e293b;"><strong>${renderIcon('bank')} Custo total (entrada + parcelas):</strong> ${formatCurrency(totalCost)}</p>
-                    <p style="margin: 0.5rem 0; color: #64748b; font-size: 0.9rem;">Os juros representam ${((totalInterest/totalPaid) * 100).toFixed(1)}% do valor financiado</p>
-                </div>
-            `;
+                `;
+            } else {
+                //NÃO CABE no prazo escolhido
+                const minMonthlyNeeded = Math.ceil(totalValue / maxPeriod);
+                const difference = minMonthlyNeeded - monthlyBudget;
+                
+                resultsHTML = `
+                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 16px; border: 2px solid #fca5a5; margin-bottom: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            <i class="ph ph-warning-circle" style="color: #dc2626;"></i>
+                        </div>
+                        <h3 style="color: #dc2626; margin-bottom: 1rem; font-size: 1.4rem;">Não Cabe no Orçamento ⚠️</h3>
+                        <p style="color: #991b1b; font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
+                            Para parcelar ${formatCurrency(totalValue)} em até <strong>${maxPeriod}x</strong>, você precisaria pagar <strong>${formatCurrency(minMonthlyNeeded)}/mês</strong>
+                        </p>
+                        <div style="background: white; padding: 1.25rem; border-radius: 12px; display: inline-block;">
+                            <p style="color: #dc2626; font-size: 0.95rem; margin: 0;">
+                                💸 <strong>Faltam ${formatCurrency(difference)}</strong> por mês no seu orçamento
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff7ed; padding: 1.5rem; border-radius: 12px; border: 2px solid #fed7aa; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="ph ph-lightbulb" style="font-size: 1.5rem; color: #ea580c; flex-shrink: 0;"></i>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #ea580c; margin-bottom: 0.8rem; font-size: 1rem;">Opções para Você:</div>
+                                <div style="color: #9a3412; font-size: 0.9rem; line-height: 1.8;">
+                                    1️⃣ <strong>Aumentar orçamento:</strong> Pagar ${formatCurrency(minMonthlyNeeded)}/mês (${formatCurrency(difference)} a mais)<br>
+                                    2️⃣ <strong>Estender prazo:</strong> Parcelar em ${idealMonths}x de ${formatCurrency(monthlyBudget)}/mês<br>
+                                    3️⃣ <strong>Dar entrada:</strong> Reduzir o valor financiado dando uma entrada maior<br>
+                                    4️⃣ <strong>Rever compra:</strong> Considerar um bem de menor valor
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div style="background: white; padding: 1.25rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="color: #6b7280; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600;">SEU ORÇAMENTO</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">${formatCurrency(monthlyBudget)}/mês</div>
+                        </div>
+                        <div style="background: white; padding: 1.25rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="color: #6b7280; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600;">NECESSÁRIO</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">${formatCurrency(minMonthlyNeeded)}/mês</div>
+                        </div>
+                    </div>
+                `;
+            }
 
             document.getElementById('financingResults').innerHTML = resultsHTML;
         }
@@ -10638,13 +11117,74 @@
             const currentWealth = parseFloat(document.getElementById('retirementCurrentWealth').value) || 0;
             const annualReturn = parseFloat(document.getElementById('retirementReturnRate').value) / 100;
 
-            if (!currentAge || !targetAge || !monthlyIncome || !annualReturn) {
-                showErrorNotification('Preencha todos os campos obrigatórios');
+            //🔴 VALIDAÇÕES COM MENSAGENS DE ERRO VERMELHO
+            if (!currentAge || currentAge < 18) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A idade atual deve ser no mínimo 18 anos</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentAge > 100) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A idade atual não pode ser maior que 100 anos</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!targetAge || targetAge < 18) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A idade de aposentadoria deve ser no mínimo 18 anos</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!monthlyIncome || monthlyIncome <= 0) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A renda mensal desejada deve ser maior que zero</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentWealth < 0) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O patrimônio atual não pode ser negativo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!annualReturn || annualReturn < 0 || annualReturn > 1) {
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A taxa de retorno anual deve estar entre 0% e 100%</p>
+                    </div>
+                `;
                 return;
             }
 
             if (currentAge >= targetAge) {
-                showErrorNotification('A idade de aposentadoria deve ser maior que a idade atual');
+                document.getElementById('retirementResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A idade de aposentadoria deve ser maior que a idade atual</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -10788,29 +11328,48 @@
 
         function calculateEmergencyFund() {
             const monthlyExpenses = parseFloat(document.getElementById('emergencyMonthlyExpenses').value) || 0;
-            const monthsSelect = document.getElementById('emergencyMonths').value;
-            let months;
-            
-            if (monthsSelect === 'custom') {
-                months = parseFloat(document.getElementById('customEmergencyMonths').value) || 6;
-            } else {
-                months = parseFloat(monthsSelect);
-            }
-
+            const months = parseFloat(document.getElementById('emergencyMonths').value) || 6;
             const currentAmount = parseFloat(document.getElementById('emergencyCurrentAmount').value) || 0;
             const monthlySavings = parseFloat(document.getElementById('emergencyMonthlySavings').value) || 0;
-            
-            const investmentType = document.getElementById('emergencyInvestmentType').value;
-            let monthlyRate;
-            
-            if (investmentType === 'custom') {
-                monthlyRate = parseFloat(document.getElementById('customEmergencyRate').value) || 0.70;
-            } else {
-                monthlyRate = parseFloat(investmentType);
+
+            //🔴 VALIDAÇÕES COM MENSAGENS DE ERRO VERMELHO
+            if (!monthlyExpenses || monthlyExpenses <= 0) {
+                document.getElementById('emergencyResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">Informe seus gastos mensais essenciais</p>
+                    </div>
+                `;
+                return;
             }
 
-            if (monthlyExpenses <= 0) {
-                showErrorNotification('Informe seus gastos mensais essenciais');
+            if (months < 1 || months > 24) {
+                document.getElementById('emergencyResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">A reserva deve cobrir entre 1 e 24 meses</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentAmount < 0) {
+                document.getElementById('emergencyResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O valor já guardado não pode ser negativo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (monthlySavings < 0) {
+                document.getElementById('emergencyResults').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                        <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">O aporte mensal não pode ser negativo</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -10820,102 +11379,155 @@
             let resultsHTML = '';
 
             if (stillNeeded <= 0) {
+                const surplus = currentAmount - targetAmount;
                 resultsHTML = `
-                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 12px;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">${renderIcon('confetti')}</div>
-                        <h3 style="color: #059669; margin-bottom: 1rem;">Parabéns! Sua reserva de emergência está completa!</h3>
-                        <p style="color: #047857; margin-bottom: 0.5rem;">Você já tem ${formatCurrency(currentAmount)} guardado.</p>
-                        <p style="color: #047857;">Isso cobre ${months} meses de gastos essenciais de ${formatCurrency(monthlyExpenses)}/mês.</p>
+                    <div style="text-align: center; padding: 2.5rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 16px; border: 2px solid #86efac;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">
+                            <i class="ph ph-check-circle" style="color: #059669;"></i>
+                        </div>
+                        <h3 style="color: #059669; margin-bottom: 1.5rem; font-size: 1.8rem;">Parabéns! Sua reserva está completa! 🎉</h3>
+                        <p style="color: #047857; margin-bottom: 0.75rem; font-size: 1.1rem; line-height: 1.6;">
+                            Você já tem <strong>${formatCurrency(currentAmount)}</strong> guardado.
+                        </p>
+                        <p style="color: #047857; font-size: 1.05rem; line-height: 1.6;">
+                            Isso cobre <strong>${months} meses</strong> de gastos essenciais de <strong>${formatCurrency(monthlyExpenses)}/mês</strong>.
+                        </p>
+                        ${surplus > 0 ? `
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.7); border-radius: 12px; display: inline-block;">
+                                <p style="color: #059669; font-weight: 600; margin: 0; font-size: 0.95rem;">
+                                    💰 Você tem ${formatCurrency(surplus)} a mais que o necessário!
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div style="background: #eff6ff; padding: 1.5rem; border-radius: 12px; border: 2px solid #bfdbfe; margin-top: 1.5rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="ph ph-lightbulb" style="font-size: 1.5rem; color: #1e40af; flex-shrink: 0;"></i>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.6rem; font-size: 1rem;">Próximos Passos:</div>
+                                <div style="color: #1e40af; font-size: 0.9rem; line-height: 1.8;">
+                                    ✅ Mantenha sua reserva em investimentos de alta liquidez (poupança, CDB, Tesouro Selic)<br>
+                                    ✅ Não use esse dinheiro para gastos não emergenciais<br>
+                                    ✅ Agora você pode focar em investimentos de longo prazo com maior retorno<br>
+                                    ${surplus > 0 ? `✅ Considere usar o excedente (${formatCurrency(surplus)}) para investir em outras metas` : ''}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
             } else {
-                const rate = monthlyRate / 100;
+                //Calcula quanto tempo até completar a reserva (SEM rendimento, cálculo simples)
                 let monthsToComplete = 0;
-                let accumulated = currentAmount;
-                const maxMonths = 600;
-
-                //Calcula quanto tempo até completar a reserva
-                while (accumulated < targetAmount && monthsToComplete < maxMonths) {
-                    accumulated = accumulated * (1 + rate) + monthlySavings;
-                    monthsToComplete++;
+                if (monthlySavings > 0) {
+                    monthsToComplete = Math.ceil(stillNeeded / monthlySavings);
                 }
 
-                if (monthsToComplete >= maxMonths || monthlySavings <= 0) {
+                if (monthlySavings <= 0) {
                     resultsHTML = `
-                        <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; color: #dc2626;">
-                            ${monthlySavings <= 0 
-                                ? 'Você precisa informar um valor de aporte mensal para construir sua reserva.'
-                                : 'Com os valores atuais, levaria muito tempo. Tente aumentar o valor mensal guardado.'}
+                        <div class="error-message" style="text-align: center; padding: 1.5rem; background: #fef2f2; border-radius: 12px; border: 2px solid #fca5a5;">
+                            <i class="ph ph-warning-circle" style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"></i>
+                            <p style="color: #dc2626; font-weight: 600; margin: 0;">
+                                Você precisa informar um valor de aporte mensal para construir sua reserva.
+                            </p>
                         </div>
                     `;
                 } else {
                     const years = Math.floor(monthsToComplete / 12);
                     const remainingMonths = monthsToComplete % 12;
-                    const totalSaved = monthlySavings * monthsToComplete;
-                    const totalInterest = targetAmount - currentAmount - totalSaved;
+                    const progressPercentage = ((currentAmount / targetAmount) * 100).toFixed(1);
 
                     let recommendationColor = '#059669';
-                    let recommendationText = 'Excelente!';
-                    let recommendationIcon = renderIcon('check-circle');
+                    let recommendationText = 'Excelente escolha!';
+                    let recommendationIcon = '✅';
                     
                     if (months < 3) {
                         recommendationColor = '#dc2626';
                         recommendationText = 'Atenção: 3 meses é o mínimo recomendado';
-                        recommendationIcon = renderIcon('warning-circle');
+                        recommendationIcon = '⚠️';
                     } else if (months < 6) {
                         recommendationColor = '#f59e0b';
                         recommendationText = 'Bom, mas 6 meses seria ideal';
-                        recommendationIcon = renderIcon('lightning');
+                        recommendationIcon = '⚡';
                     }
 
                     resultsHTML = `
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <h4 style="color: #1e40af;">Valor Necessário</h4>
-                                <div class="stat-value">${formatCurrency(targetAmount)}</div>
-                                <small style="color: #64748b;">${months} meses × ${formatCurrency(monthlyExpenses)}</small>
+                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 2rem; border-radius: 16px; border: 2px solid #93c5fd; margin-bottom: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.95rem; color: #1e40af; font-weight: 600; margin-bottom: 1rem;">
+                                    <i class="ph ph-shield-check" style="font-size: 1.3rem;"></i> META DE RESERVA DE EMERGÊNCIA
+                                </div>
+                                <div style="font-size: 3rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem;">
+                                    ${formatCurrency(targetAmount)}
+                                </div>
+                                <div style="font-size: 1rem; color: #3b82f6; font-weight: 500;">
+                                    ${months} meses × ${formatCurrency(monthlyExpenses)} = sua segurança financeira
+                                </div>
                             </div>
-                            <div class="stat-card">
-                                <h4 style="color: #dc2626;">Ainda Falta</h4>
-                                <div class="stat-value">${formatCurrency(stillNeeded)}</div>
-                                <small style="color: #64748b;">${((stillNeeded/targetAmount)*100).toFixed(1)}% do total</small>
+                        </div>
+
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="color: #64748b; font-size: 0.9rem; font-weight: 600;">Progresso Atual</span>
+                                <span style="color: #1e3a8a; font-size: 1.1rem; font-weight: 700;">${progressPercentage}%</span>
                             </div>
-                            <div class="stat-card">
-                                <h4 style="color: #059669;">Tempo Estimado</h4>
-                                <div class="stat-value">
+                            <div style="width: 100%; height: 24px; background: #e2e8f0; border-radius: 12px; overflow: hidden; position: relative;">
+                                <div style="height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); width: ${progressPercentage}%; border-radius: 12px; transition: width 0.5s ease;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                <span style="color: #3b82f6; font-size: 0.85rem; font-weight: 600;">${formatCurrency(currentAmount)}</span>
+                                <span style="color: #64748b; font-size: 0.85rem; font-weight: 600;">Faltam ${formatCurrency(stillNeeded)}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                                <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                    <i class="ph ph-calendar"></i> TEMPO ESTIMADO
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">
                                     ${years > 0 ? years + ' ano' + (years > 1 ? 's' : '') : ''}
                                     ${years > 0 && remainingMonths > 0 ? ' e ' : ''}
                                     ${remainingMonths > 0 ? remainingMonths + ' mês' + (remainingMonths > 1 ? 'es' : '') : ''}
                                 </div>
                             </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                                <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                    <i class="ph ph-piggy-bank"></i> APORTE MENSAL
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">${formatCurrency(monthlySavings)}</div>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                                <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                    <i class="ph ph-trending-down"></i> AINDA FALTA
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">${formatCurrency(stillNeeded)}</div>
+                            </div>
                         </div>
                         
-                        <div style="margin-top: 1.5rem; padding: 1.5rem; background: ${recommendationColor}15; border-left: 4px solid ${recommendationColor}; border-radius: 8px;">
-                            <p style="margin: 0; color: ${recommendationColor}; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 1.25rem;">${recommendationIcon}</span>
-                                ${recommendationText}
-                            </p>
+                        <div style="background: ${recommendationColor === '#059669' ? '#ecfdf5' : recommendationColor === '#f59e0b' ? '#fff7ed' : '#fef2f2'}; padding: 1.25rem; border-radius: 12px; border: 2px solid ${recommendationColor === '#059669' ? '#86efac' : recommendationColor === '#f59e0b' ? '#fed7aa' : '#fca5a5'}; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 1.5rem;">${recommendationIcon}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: ${recommendationColor}; font-size: 0.95rem;">${recommendationText}</div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div style="margin-top: 1.5rem; padding: 1.5rem; background: #f1f5f9; border-radius: 12px;">
-                            <h4 style="color: #1e293b; margin-bottom: 1rem;">Detalhes do Plano</h4>
-                            <p style="margin: 0.5rem 0; color: #1e293b;"><strong>Você já tem guardado:</strong> ${formatCurrency(currentAmount)}</p>
-                            <p style="margin: 0.5rem 0; color: #1e293b;"><strong>Vai guardar mensalmente:</strong> ${formatCurrency(monthlySavings)}</p>
-                            <p style="margin: 0.5rem 0; color: #1e293b;"><strong>Total de aportes:</strong> ${formatCurrency(totalSaved)}</p>
-                            <p style="margin: 0.5rem 0; color: #1e293b;"><strong>Rendimento esperado:</strong> ${formatCurrency(Math.max(0, totalInterest))}</p>
-                            <p style="margin: 0.5rem 0; color: #1e293b;"><strong>Total final:</strong> ${formatCurrency(targetAmount)}</p>
-                        </div>
-
-                        <div style="margin-top: 1.5rem; padding: 1.25rem; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 12px;">
-                            <h4 style="color: #1e40af; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                                Dicas para sua Reserva de Emergência
-                            </h4>
-                            <ul style="margin: 0; padding-left: 1.5rem; color: #1e40af; font-size: 0.9rem; line-height: 1.8;">
-                                <li>Mantenha em investimentos de <strong>liquidez diária</strong> (Tesouro Selic, CDB, Fundos DI)</li>
-                                <li>Nunca use para investimentos de risco ou gastos não emergenciais</li>
-                                <li>Considere aumentar para 12 meses se for autônomo ou tem renda variável</li>
-                                <li>Reavalie o valor sempre que seus gastos mensais mudarem</li>
-                            </ul>
+                        <div style="background: #eff6ff; padding: 1.25rem; border-radius: 12px; border: 2px solid #bfdbfe;">
+                            <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                <i class="ph ph-info" style="font-size: 1.5rem; color: #1e40af; flex-shrink: 0;"></i>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.4rem; font-size: 0.95rem;">Resumo do Planejamento</div>
+                                    <div style="color: #1e40af; font-size: 0.85rem; line-height: 1.6;">
+                                        • Você economizará ${formatCurrency(monthlySavings)} por mês durante ${monthsToComplete} meses<br>
+                                        • Sua reserva cobrirá ${months} meses de gastos essenciais<br>
+                                        • Mantenha em investimento de liquidez imediata (poupança, CDB ou Tesouro Selic)
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
@@ -12845,6 +13457,10 @@
                 targetSection.classList.remove('hidden');
             }
             
+            //🔒 PRIVACIDADE: Adiciona classe no body para controlar visibilidade do botão
+            document.body.className = document.body.className.replace(/section-\w+/g, '');
+            document.body.classList.add(`section-${sectionName}`);
+            
             //Atualiza o título do header
             const titles = {
                 overview: 'Dashboard', //✅ REVERTIDO
@@ -13545,7 +14161,9 @@
         //Toggle perfil (abre modal)
         function toggleProfile() {
             loadUserProfile();
-            document.getElementById('profileModal').classList.add('show');
+            const profileModal = document.getElementById('profileModal');
+            profileModal.classList.add('show');
+            profileModal.classList.add('active'); // Adiciona classe para controle CSS
             
             //Ocultar AppBar no mobile quando perfil abrir
             const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
@@ -13611,12 +14229,39 @@
             
             const user = JSON.parse(localStorage.getItem('user')) || {};
             
+            const name = document.getElementById('profileNameInput').value.trim();
+            const occupation = document.getElementById('profileOccupation').value.trim();
+            
+            //✅ VALIDAÇÃO DE NOME INDEVIDO NO PERFIL
+            if (!name) {
+                showNotification('Por favor, informe seu nome', 'error');
+                return;
+            }
+            
+            const nameValidation = validateName(name);
+            if (!nameValidation.valid) {
+                showNotification(nameValidation.message, 'error');
+                return;
+            }
+            
+            if (!occupation) {
+                showNotification('Por favor, informe sua ocupação', 'error');
+                return;
+            }
+            
+            //✅ VALIDAÇÃO DE OCUPAÇÃO INDEVIDA NO PERFIL
+            const occupationValidation = validateOccupation(occupation);
+            if (!occupationValidation.valid) {
+                showNotification(occupationValidation.message, 'error');
+                return;
+            }
+            
             //✅ CORREÇÃO: Capitaliza nome e ocupação antes de enviar
             const updatedData = {
                 id: user.id,
-                nome: capitalizeWords(document.getElementById('profileNameInput').value.trim()),
+                nome: capitalizeWords(name),
                 email: user.email.toLowerCase(), //Garante que email seja minúsculo
-                ocupacao: capitalizeWords(document.getElementById('profileOccupation').value.trim()),
+                ocupacao: capitalizeWords(occupation),
                 rendaMensal: user.rendaMensal,
                 diaRecebimento: user.diaRecebimento
             };
@@ -16746,6 +17391,11 @@
             if (metaThemeColor) {
                 metaThemeColor.content = '#000000';
             }
+            
+            //Garante que o indicador de senha esteja escondido no modo login
+            if (typeof checkPasswordStrength === 'function') {
+                checkPasswordStrength();
+            }
         }
 
         //Initialize application when DOM is ready
@@ -16774,3 +17424,251 @@
         if (window.location.hash === '' || window.location.hash === '#landing') {
             history.replaceState({ page: 'landing' }, '', '#landing');
         }
+
+// ============================================================================
+// FUNÇÕES DE RECUPERAÇÃO DE SENHA
+// ============================================================================
+
+// Variável global para armazenar o email em recuperação
+let recoveryEmail = '';
+let securityQuestions = [];
+
+// Função para mostrar a tela de recuperação de senha
+function showForgotPasswordScreen() {
+    const authScreen = document.getElementById('authScreen');
+    const securityScreen = document.getElementById('securityQuestionsScreen');
+    
+    if (authScreen && securityScreen) {
+        authScreen.style.display = 'none';
+        securityScreen.style.display = 'flex';
+        
+        // Reset para step 1
+        document.getElementById('securityQuestionsStep1').style.display = 'block';
+        document.getElementById('securityQuestionsStep2').style.display = 'none';
+        document.getElementById('securityQuestionsStep3').style.display = 'none';
+        
+        // Limpar campos
+        document.getElementById('recoveryEmail').value = '';
+        clearSecurityErrors();
+    }
+}
+
+// Função para voltar ao login
+function backToLogin() {
+    const authScreen = document.getElementById('authScreen');
+    const securityScreen = document.getElementById('securityQuestionsScreen');
+    
+    if (authScreen && securityScreen) {
+        securityScreen.style.display = 'none';
+        authScreen.style.display = 'flex';
+        
+        // Limpar dados
+        recoveryEmail = '';
+        securityQuestions = [];
+        clearSecurityErrors();
+    }
+}
+
+// Função para voltar ao step de email
+function goBackToEmailStep() {
+    document.getElementById('securityQuestionsStep1').style.display = 'block';
+    document.getElementById('securityQuestionsStep2').style.display = 'none';
+    document.getElementById('securityQuestionsStep3').style.display = 'none';
+    clearSecurityErrors();
+}
+
+// Limpar mensagens de erro
+function clearSecurityErrors() {
+    const errors = ['securityQuestionsError1', 'securityQuestionsError2', 'securityQuestionsError3'];
+    errors.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+}
+
+// STEP 1: Submit do email para recuperação
+async function handleRecoveryEmailSubmit(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('recoveryEmail').value.trim();
+    const errorDiv = document.getElementById('securityQuestionsError1');
+    
+    if (!email) {
+        errorDiv.innerHTML = '<div class="error-message">Por favor, informe seu email</div>';
+        return;
+    }
+    
+    try {
+        // Buscar perguntas de segurança do usuário
+        const response = await fetch(`${API_URL}/api/auth/get-security-questions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Email não encontrado');
+        }
+        
+        const data = await response.json();
+        
+        // Verificar se tem perguntas
+        if (!data.questions || data.questions.length === 0) {
+            errorDiv.innerHTML = '<div class="error-message">Este usuário não possui perguntas de segurança cadastradas.</div>';
+            return;
+        }
+        
+        // Armazenar dados para próxima etapa
+        recoveryEmail = email;
+        securityQuestions = data.questions;
+        
+        // Preencher as perguntas no step 2
+        document.getElementById('securityQuestion1').textContent = '1. ' + securityQuestions[0];
+        if (securityQuestions.length > 1) {
+            document.getElementById('securityQuestion2').textContent = '2. ' + securityQuestions[1];
+        }
+        if (securityQuestions.length > 2) {
+            document.getElementById('securityQuestion3').textContent = '3. ' + securityQuestions[2];
+        }
+        
+        // Ir para step 2
+        document.getElementById('securityQuestionsStep1').style.display = 'none';
+        document.getElementById('securityQuestionsStep2').style.display = 'block';
+        clearSecurityErrors();
+        
+    } catch (error) {
+        console.error('Erro ao buscar perguntas:', error);
+        errorDiv.innerHTML = '<div class="error-message">' + error.message + '</div>';
+    }
+}
+
+// STEP 2: Submit das respostas de segurança
+async function handleSecurityAnswersSubmit(event) {
+    event.preventDefault();
+    
+    const answer1 = document.getElementById('securityAnswer1').value.trim();
+    const answer2 = document.getElementById('securityAnswer2').value.trim();
+    const answer3 = document.getElementById('securityAnswer3').value.trim();
+    const errorDiv = document.getElementById('securityQuestionsError2');
+    
+    // Coletar apenas as respostas necessárias baseado no número de perguntas
+    const answers = [];
+    if (answer1) answers.push(answer1);
+    if (answer2) answers.push(answer2);
+    if (answer3) answers.push(answer3);
+    
+    if (answers.length === 0) {
+        errorDiv.innerHTML = '<div class="error-message">Por favor, responda todas as perguntas</div>';
+        return;
+    }
+    
+    try {
+        // Validar respostas com o backend
+        const response = await fetch(`${API_URL}/api/auth/verify-security-answers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: recoveryEmail,
+                answers: answers
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok || !data.verified) {
+            throw new Error(data.message || 'Respostas incorretas');
+        }
+        
+        // Respostas corretas! Ir para step 3
+        document.getElementById('securityQuestionsStep2').style.display = 'none';
+        document.getElementById('securityQuestionsStep3').style.display = 'block';
+        clearSecurityErrors();
+        
+        // Limpar campos de resposta
+        document.getElementById('securityAnswer1').value = '';
+        document.getElementById('securityAnswer2').value = '';
+        document.getElementById('securityAnswer3').value = '';
+        
+    } catch (error) {
+        console.error('Erro ao validar respostas:', error);
+        errorDiv.innerHTML = '<div class="error-message">' + error.message + '</div>';
+    }
+}
+
+// STEP 3: Submit da nova senha
+async function handleNewPasswordSubmit(event) {
+    event.preventDefault();
+    
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmNewPassword').value;
+    const errorDiv = document.getElementById('securityQuestionsError3');
+    
+    if (!newPassword || !confirmPassword) {
+        errorDiv.innerHTML = '<div class="error-message">Por favor, preencha todos os campos</div>';
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        errorDiv.innerHTML = '<div class="error-message">A senha deve ter no mínimo 6 caracteres</div>';
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        errorDiv.innerHTML = '<div class="error-message">As senhas não coincidem</div>';
+        return;
+    }
+    
+    try {
+        // Atualizar senha no backend
+        const response = await fetch(`${API_URL}/api/auth/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: recoveryEmail,
+                newPassword: newPassword
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Erro ao redefinir senha');
+        }
+        
+        // Sucesso! Mostrar mensagem e voltar ao login
+        alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
+        
+        // Limpar campos
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmNewPassword').value = '';
+        
+        // Voltar ao login
+        backToLogin();
+        
+    } catch (error) {
+        console.error('Erro ao redefinir senha:', error);
+        errorDiv.innerHTML = '<div class="error-message">Erro ao redefinir senha. Tente novamente.</div>';
+    }
+}
+
+// Função auxiliar para toggle de visibilidade da senha (recuperação)
+function toggleNewPassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.type = field.type === 'password' ? 'text' : 'password';
+    }
+}
+
+// Função para atualizar força da senha (se necessário)
+function updatePasswordStrength() {
+    const password = document.getElementById('newPassword').value;
+    // Implementar lógica de força da senha se necessário
+    console.log('Verificando força da senha:', password.length);
+}

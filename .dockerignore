@@ -1,0 +1,17 @@
+# Git
+.git/
+.gitignore
+
+# IDEs
+.vscode/
+
+# Documentação
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scripts
+*.bat
+*.sh
