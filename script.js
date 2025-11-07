@@ -3245,6 +3245,11 @@
                 //Mostra mensagem de sucesso
                 showSuccessMessage('Perfil configurado com sucesso!');
 
+                //✅ NOVO: Após fechar onboarding, aguarda 5 segundos e verifica popup de novidades
+                setTimeout(() => {
+                    checkAndShowWhatsNew();
+                }, 5000);
+
                 //Reseta para próxima vez
                 currentOnboardingStep = 1;
                 onboardingData = {};
@@ -17793,25 +17798,25 @@ const WHATS_NEW_CONTENT = {
 };
 
 function checkAndShowWhatsNew() {
-    //Aguarda 3 segundos após onboarding completo
-    setTimeout(() => {
-        if (!currentUser || !currentUser.id) {
-            console.log('❌ Usuário não autenticado, popup de novidades não será exibido');
-            return;
-        }
+    //REGRA: Só executa se o onboarding JÁ foi completado
+    //Para novos usuários, essa função será chamada APÓS o onboarding fechar
+    
+    if (!currentUser || !currentUser.id) {
+        console.log('❌ Usuário não autenticado, popup de novidades não será exibido');
+        return;
+    }
 
-        const lastVersionViewed = currentUser.ultimaVersaoVisualizada || '';
-        
-        console.log('🎉 Verificando popup de novidades:', {
-            currentVersion: CURRENT_VERSION,
-            lastVersionViewed: lastVersionViewed,
-            shouldShow: lastVersionViewed !== CURRENT_VERSION
-        });
+    const lastVersionViewed = currentUser.ultimaVersaoVisualizada || '';
+    
+    console.log('🎉 Verificando popup de novidades:', {
+        currentVersion: CURRENT_VERSION,
+        lastVersionViewed: lastVersionViewed,
+        shouldShow: lastVersionViewed !== CURRENT_VERSION
+    });
 
-        if (lastVersionViewed !== CURRENT_VERSION) {
-            showWhatsNewModal();
-        }
-    }, 3000);
+    if (lastVersionViewed !== CURRENT_VERSION) {
+        showWhatsNewModal();
+    }
 }
 
 function showWhatsNewModal() {
@@ -17836,7 +17841,7 @@ function showWhatsNewModal() {
     featuresList.innerHTML = WHATS_NEW_CONTENT.features.map(feat => `<li>${feat}</li>`).join('');
 
     //Esconde bottom nav no mobile
-    const bottomNav = document.querySelector('.bottom-nav');
+    const bottomNav = document.querySelector('.mobile-bottom-nav');
     if (bottomNav) {
         bottomNav.style.display = 'none';
     }
@@ -17852,7 +17857,7 @@ async function closeWhatsNewModal() {
     if (!modal) return;
     
     //Mostra bottom nav novamente
-    const bottomNav = document.querySelector('.bottom-nav');
+    const bottomNav = document.querySelector('.mobile-bottom-nav');
     if (bottomNav) {
         bottomNav.style.display = 'flex';
     }
@@ -17892,9 +17897,11 @@ async function closeWhatsNewModal() {
 document.addEventListener('DOMContentLoaded', () => {
     //Aguarda autenticação e carregamento de dados
     setTimeout(() => {
-        if (currentUser && currentUser.id) {
+        if (currentUser && currentUser.id && currentUser.onboardingCompleted) {
+            //✅ Para usuários que JÁ completaram onboarding, mostra popup após 3 segundos
             checkAndShowWhatsNew();
         }
-    }, 1000);
+        //✅ Para novos usuários, o popup será mostrado APÓS o onboarding fechar (5 segundos depois)
+    }, 3000);
 });
 

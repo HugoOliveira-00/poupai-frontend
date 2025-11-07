@@ -21505,6 +21505,7 @@ body:has(.welcome-screen[style*='display: block']) {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
+    z-index: 10000 !important; /* Acima do onboarding (z-index padrão de modals é ~1000) */
 }
 
 /* Header fixo e minimalista */
@@ -21655,8 +21656,8 @@ body:has(.welcome-screen[style*='display: block']) {
     }
     
     /* Esconde bottom nav quando popup está aberto */
-    #whatsNewModal.modal[style*="display: flex"] ~ .bottom-nav,
-    #whatsNewModal.modal[style*="display: flex"] ~ * .bottom-nav {
+    .modal#whatsNewModal[style*="display: flex"] ~ .mobile-bottom-nav,
+    body:has(.modal#whatsNewModal[style*="display: flex"]) .mobile-bottom-nav {
         display: none !important;
     }
 }
