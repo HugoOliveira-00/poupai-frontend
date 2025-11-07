@@ -17765,3 +17765,124 @@ function updatePasswordStrength() {
     // Implementar lógica de força da senha se necessário
     console.log('Verificando força da senha:', password.length);
 }
+
+//========================================
+// 🎉 POPUP DE NOVIDADES
+//========================================
+
+const CURRENT_VERSION = '1.5';
+const RELEASE_DATE = '07/11/2024';
+
+const WHATS_NEW_CONTENT = {
+    fixes: [
+        'Gráfico de fluxo financeiro agora mostra apenas dias com transações reais',
+        'Tooltip explicativo adicionado ao gráfico principal',
+        'Gráfico de pizza (distribuição) não corta mais quando está em 100%'
+    ],
+    improvements: [
+        'Modal de adicionar despesa otimizado para mobile (header inline, grid 1x3)',
+        'Botão "Ano Inteiro" removido do filtro em dispositivos móveis',
+        'Loading spinner adicionado ao gráfico de evolução de preços',
+        'Legenda do gráfico de pizza movida para baixo (melhor visualização)'
+    ],
+    features: [
+        'Onboarding agora sincroniza entre diferentes navegadores via backend',
+        'Sistema de perguntas de segurança para recuperação de senha',
+        'Validação de nome e ocupação no cadastro e perfil'
+    ]
+};
+
+function checkAndShowWhatsNew() {
+    //Aguarda 3 segundos após onboarding completo
+    setTimeout(() => {
+        if (!currentUser || !currentUser.id) {
+            console.log('❌ Usuário não autenticado, popup de novidades não será exibido');
+            return;
+        }
+
+        const lastVersionViewed = currentUser.ultimaVersaoVisualizada || '';
+        
+        console.log('🎉 Verificando popup de novidades:', {
+            currentVersion: CURRENT_VERSION,
+            lastVersionViewed: lastVersionViewed,
+            shouldShow: lastVersionViewed !== CURRENT_VERSION
+        });
+
+        if (lastVersionViewed !== CURRENT_VERSION) {
+            showWhatsNewModal();
+        }
+    }, 3000);
+}
+
+function showWhatsNewModal() {
+    const modal = document.getElementById('whatsNewModal');
+    if (!modal) {
+        console.error('❌ Modal de novidades não encontrado');
+        return;
+    }
+
+    //Preenche conteúdo
+    document.getElementById('whatsNewVersion').textContent = CURRENT_VERSION;
+    document.getElementById('whatsNewDate').textContent = `Atualizado em ${RELEASE_DATE}`;
+
+    //Preenche listas
+    const fixesList = document.getElementById('whatsNewFixes');
+    fixesList.innerHTML = WHATS_NEW_CONTENT.fixes.map(fix => `<li>${fix}</li>`).join('');
+
+    const improvementsList = document.getElementById('whatsNewImprovements');
+    improvementsList.innerHTML = WHATS_NEW_CONTENT.improvements.map(imp => `<li>${imp}</li>`).join('');
+
+    const featuresList = document.getElementById('whatsNewFeatures');
+    featuresList.innerHTML = WHATS_NEW_CONTENT.features.map(feat => `<li>${feat}</li>`).join('');
+
+    //Mostra modal
+    modal.style.display = 'flex';
+
+    console.log('✅ Popup de novidades exibido');
+}
+
+async function closeWhatsNewModal() {
+    const modal = document.getElementById('whatsNewModal');
+    if (!modal) return;
+
+    try {
+        //Marca versão como visualizada no backend
+        const response = await fetch(`${API_BASE_URL}/api/auth/mark-version-viewed`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                version: CURRENT_VERSION
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Versão marcada como visualizada no backend:', data);
+            
+            //Atualiza localStorage
+            if (currentUser) {
+                currentUser.ultimaVersaoVisualizada = CURRENT_VERSION;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+        } else {
+            console.error('❌ Erro ao marcar versão como visualizada');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao comunicar com backend:', error);
+    }
+
+    //Fecha modal
+    modal.style.display = 'none';
+}
+
+//Verifica ao carregar dados
+document.addEventListener('DOMContentLoaded', () => {
+    //Aguarda autenticação e carregamento de dados
+    setTimeout(() => {
+        if (currentUser && currentUser.id) {
+            checkAndShowWhatsNew();
+        }
+    }, 1000);
+});
+

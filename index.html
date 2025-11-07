@@ -2062,6 +2062,54 @@
     </div>
    </div>
   </div>
+  
+  <!-- 🎉 Popup de Novidades -->
+  <div class="modal" id="whatsNewModal" style="display: none;">
+   <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden;">
+    <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 2rem; text-align: center; color: white;">
+     <i class="ph ph-sparkle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+     <h2 style="margin: 0 0 0.5rem 0; font-size: 1.75rem;">Novidades da versão <span id="whatsNewVersion"></span></h2>
+     <p style="margin: 0; opacity: 0.9;" id="whatsNewDate"></p>
+    </div>
+    
+    <div style="padding: 2rem;">
+     <!-- Correções -->
+     <div style="margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+       <i class="ph ph-check-circle" style="font-size: 1.5rem; color: #10b981;"></i>
+       <h3 style="margin: 0; font-size: 1.1rem; color: #111827;">Correções</h3>
+      </div>
+      <ul id="whatsNewFixes" style="margin: 0; padding-left: 1.5rem; color: #6b7280; line-height: 1.8;">
+      </ul>
+     </div>
+     
+     <!-- Melhorias -->
+     <div style="margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+       <i class="ph ph-lightning" style="font-size: 1.5rem; color: #f59e0b;"></i>
+       <h3 style="margin: 0; font-size: 1.1rem; color: #111827;">Melhorias</h3>
+      </div>
+      <ul id="whatsNewImprovements" style="margin: 0; padding-left: 1.5rem; color: #6b7280; line-height: 1.8;">
+      </ul>
+     </div>
+     
+     <!-- Novas Funcionalidades -->
+     <div style="margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+       <i class="ph ph-star" style="font-size: 1.5rem; color: #3b82f6;"></i>
+       <h3 style="margin: 0; font-size: 1.1rem; color: #111827;">Novas Funcionalidades</h3>
+      </div>
+      <ul id="whatsNewFeatures" style="margin: 0; padding-left: 1.5rem; color: #6b7280; line-height: 1.8;">
+      </ul>
+     </div>
+     
+     <button onclick="closeWhatsNewModal()" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+      <i class="ph ph-check"></i> Entendi
+     </button>
+    </div>
+   </div>
+  </div>
+  
   <!-- Modal: Add/Edit Transaction -->
   <div class="modal" id="transactionModal">
    <div class="modal-content modal-transaction">
