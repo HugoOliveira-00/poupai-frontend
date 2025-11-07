@@ -2155,6 +2155,13 @@
                     //Atribui o novo usuário
                     currentUser = userData;
                     
+                    //✅ Sincroniza flag de onboarding do backend
+                    if (userData.onboardingCompleted) {
+                        localStorage.setItem('onboardingCompleted', 'true');
+                    } else {
+                        localStorage.removeItem('onboardingCompleted');
+                    }
+                    
                     //✅ ISSUE #15: Log seguro - dados sensíveis mascarados
                     secureLog('info', '✅ Novo usuário carregado', currentUser);
                     
@@ -3140,7 +3147,18 @@
                     }
                 }
                 
-                //Marca onboarding como completo e remove flag de novo usuário
+                //Marca onboarding como completo no BACKEND
+                try {
+                    await fetch(`${API_BASE_URL}/api/auth/complete-onboarding`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUser.id })
+                    });
+                } catch (err) {
+                    console.error('Erro ao marcar onboarding no backend:', err);
+                }
+                
+                //Marca onboarding como completo localmente e remove flag de novo usuário
                 localStorage.setItem('onboardingCompleted', 'true');
                 localStorage.removeItem('isNewUser');
 
