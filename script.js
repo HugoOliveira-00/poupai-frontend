@@ -5281,66 +5281,68 @@
             const incomeData = [];
             const expenseData = [];
             
-            //Agrupa por SEMANAS dentro do mês (mais visual que 30 barrinhas)
-            const weeksInMonth = [];
-            let weekStart = new Date(monthStart);
+            //✅ NOVA LÓGICA: Mostra apenas DIAS com transações (não mais semanas)
+            const daysWithTransactions = new Set();
             
-            while (weekStart <= monthEnd) {
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekStart.getDate() + 6); //7 dias na semana
-                weekEnd.setHours(23, 59, 59, 999);
-                
-                //Não ultrapassar o último dia do mês
-                const effectiveEnd = weekEnd > monthEnd ? new Date(monthEnd) : new Date(weekEnd);
-                effectiveEnd.setHours(23, 59, 59, 999);
-                
-                weeksInMonth.push({
-                    start: new Date(weekStart),
-                    end: effectiveEnd
-                });
-                
-                weekStart.setDate(weekStart.getDate() + 7);
-            }
-            
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Total de semanas no mês:', weeksInMonth.length);
-            
-            //Calcula dados para cada semana
-            weeksInMonth.forEach((week, index) => {
-                const startDay = week.start.getDate();
-                const endDay = week.end.getDate();
-                
-                //Label bonito: "1-7", "8-14", etc
-                const weekLabel = startDay === endDay ? `Dia ${startDay}` : `${startDay}-${endDay}`;
-                labels.push(weekLabel);
-                
-                console.log(`\n📅 Semana ${index + 1} (${weekLabel}):`, 
-                    week.start.toLocaleDateString(), 'até', week.end.toLocaleDateString());
-                
-                //Filtra receitas da semana
-                const weekIncomeTransactions = validTransactions.filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    const isInWeek = t.tipo === 'receita' && tDate >= week.start && tDate <= week.end;
-                    if (isInWeek) {
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]  💰 Receita:', t.descricao, 'R$', t.valor, 'em', tDate.toLocaleDateString());
-                    }
-                    return isInWeek;
-                });
-                const weekIncome = weekIncomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
-                
-                //Filtra despesas da semana
-                const weekExpenseTransactions = validTransactions.filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    const isInWeek = t.tipo === 'despesa' && tDate >= week.start && tDate <= week.end;
-                    if (isInWeek) {
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]  💸 Despesa:', t.descricao, 'R$', t.valor, 'em', tDate.toLocaleDateString());
-                    }
-                    return isInWeek;
-                });
-                const weekExpense = weekExpenseTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
-                
-                incomeData.push(weekIncome);
-                expenseData.push(weekExpense);
+            //Coleta todos os dias que têm transações
+            validTransactions.forEach(t => {
+                const tDate = parseLocalDate(t.data);
+                if (tDate >= monthStart && tDate <= monthEnd) {
+                    const dayOfMonth = tDate.getDate();
+                    daysWithTransactions.add(dayOfMonth);
+                }
             });
+            
+            //Ordena os dias
+            const sortedDays = Array.from(daysWithTransactions).sort((a, b) => a - b);
+            
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Dias com transações:', sortedDays);
+            
+            //Se não houver transações, mostra mensagem
+            if (sortedDays.length === 0) {
+                labels.push('Sem dados');
+                incomeData.push(0);
+                expenseData.push(0);
+            } else {
+                //Para cada dia com transação, calcula receitas e despesas
+                sortedDays.forEach(day => {
+                    const dayDate = new Date(currentYear, currentMonth, day);
+                    dayDate.setHours(0, 0, 0, 0);
+                    const dayEnd = new Date(dayDate);
+                    dayEnd.setHours(23, 59, 59, 999);
+                    
+                    //Label: "Dia X" ou "Dia X (Data)"
+                    const dayLabel = `Dia ${day}`;
+                    labels.push(dayLabel);
+                    
+                    console.log(`\n📅 ${dayLabel}:`, dayDate.toLocaleDateString());
+                    
+                    //Filtra receitas do dia
+                    const dayIncomeTransactions = validTransactions.filter(t => {
+                        const tDate = parseLocalDate(t.data);
+                        const isInDay = t.tipo === 'receita' && tDate >= dayDate && tDate <= dayEnd;
+                        if (isInDay) {
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]  💰 Receita:', t.descricao, 'R$', t.valor);
+                        }
+                        return isInDay;
+                    });
+                    const dayIncome = dayIncomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
+                    
+                    //Filtra despesas do dia
+                    const dayExpenseTransactions = validTransactions.filter(t => {
+                        const tDate = parseLocalDate(t.data);
+                        const isInDay = t.tipo === 'despesa' && tDate >= dayDate && tDate <= dayEnd;
+                        if (isInDay) {
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]  💸 Despesa:', t.descricao, 'R$', t.valor);
+                        }
+                        return isInDay;
+                    });
+                    const dayExpense = dayExpenseTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
+                    
+                    incomeData.push(dayIncome);
+                    expenseData.push(dayExpense);
+                });
+            }
             
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]\n📈 Dados finais do gráfico:');
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]Labels:', labels);
@@ -5377,6 +5379,32 @@
                         legend: { 
                             display: true,
                             labels: { color: '#6b7280' }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                title: (context) => {
+                                    const dayLabel = context[0].label;
+                                    //Extrai o número do dia do label "Dia X"
+                                    const dayNum = parseInt(dayLabel.replace('Dia ', ''));
+                                    const dayDate = new Date(currentYear, currentMonth, dayNum);
+                                    return `${dayLabel} - ${dayDate.toLocaleDateString('pt-BR')}`;
+                                },
+                                label: (context) => {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y || 0;
+                                    return `${label}: R$ ${value.toFixed(2)}`;
+                                },
+                                footer: (context) => {
+                                    return 'Mostrando apenas dias com transações';
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -8359,6 +8387,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            bottom: 20,
+                            left: 10,
+                            right: 10
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'right',
@@ -8392,7 +8428,8 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    cutout: '60%'
                 }
             });
         }
@@ -17058,6 +17095,23 @@
             try {
                 console.log(`🔄 Atualizando gráfico para ${asset}...`);
                 
+                //Mostra loading
+                const canvas = document.getElementById('mainMarketChart');
+                if (canvas) {
+                    const container = canvas.parentElement;
+                    let loadingDiv = container.querySelector('.chart-loading');
+                    if (!loadingDiv) {
+                        loadingDiv = document.createElement('div');
+                        loadingDiv.className = 'chart-loading';
+                        loadingDiv.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10;';
+                        loadingDiv.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div><p style="margin-top: 10px; color: #6b7280;">Carregando dados...</p>';
+                        container.style.position = 'relative';
+                        container.appendChild(loadingDiv);
+                    }
+                    loadingDiv.style.display = 'block';
+                    canvas.style.opacity = '0.3';
+                }
+                
                 let labels = [];
                 let data = [];
                 let chartLabel = '';
@@ -17244,11 +17298,32 @@
                 if (footerInfo) {
                     footerInfo.textContent = footerText;
                 }
+                
+                //Esconde loading
+                if (canvas) {
+                    const container = canvas.parentElement;
+                    const loadingDiv = container.querySelector('.chart-loading');
+                    if (loadingDiv) {
+                        loadingDiv.style.display = 'none';
+                    }
+                    canvas.style.opacity = '1';
+                }
 
                 console.log(`✅ Gráfico de ${asset} atualizado`);
 
             } catch (error) {
                 console.error('[ERROR]Erro ao atualizar gráfico:', error);
+                
+                //Esconde loading em caso de erro
+                const canvas = document.getElementById('mainMarketChart');
+                if (canvas) {
+                    const container = canvas.parentElement;
+                    const loadingDiv = container.querySelector('.chart-loading');
+                    if (loadingDiv) {
+                        loadingDiv.style.display = 'none';
+                    }
+                    canvas.style.opacity = '1';
+                }
             }
         }
 

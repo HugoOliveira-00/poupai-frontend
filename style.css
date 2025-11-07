@@ -17514,9 +17514,7 @@ body.modal-open {
     }
     
     /* Ocultar botão "Ano Inteiro" no mobile */
-    .filter-btn-minimal[data-period="year"],
-    button[data-period="year"],
-    button:has-text("Ano Inteiro") {
+    .filter-btn-minimal[data-period="1year"] {
         display: none !important;
     }
     
