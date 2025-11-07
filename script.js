@@ -17835,6 +17835,12 @@ function showWhatsNewModal() {
     const featuresList = document.getElementById('whatsNewFeatures');
     featuresList.innerHTML = WHATS_NEW_CONTENT.features.map(feat => `<li>${feat}</li>`).join('');
 
+    //Esconde bottom nav no mobile
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = 'none';
+    }
+
     //Mostra modal
     modal.style.display = 'flex';
 
@@ -17844,6 +17850,12 @@ function showWhatsNewModal() {
 async function closeWhatsNewModal() {
     const modal = document.getElementById('whatsNewModal');
     if (!modal) return;
+    
+    //Mostra bottom nav novamente
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = 'flex';
+    }
 
     try {
         //Marca versão como visualizada no backend

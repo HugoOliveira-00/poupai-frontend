@@ -21498,7 +21498,7 @@ body:has(.welcome-screen[style*='display: block']) {
    ======================================== */
 
 .whats-new-modal {
-    max-width: 700px !important;
+    max-width: 900px !important;
     width: 90%;
     padding: 0 !important;
     overflow: hidden !important;
@@ -21652,6 +21652,12 @@ body:has(.welcome-screen[style*='display: block']) {
     .whats-new-btn {
         padding: 0.875rem;
         font-size: 0.95rem;
+    }
+    
+    /* Esconde bottom nav quando popup está aberto */
+    #whatsNewModal.modal[style*="display: flex"] ~ .bottom-nav,
+    #whatsNewModal.modal[style*="display: flex"] ~ * .bottom-nav {
+        display: none !important;
     }
 }
 
