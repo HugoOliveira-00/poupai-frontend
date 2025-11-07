@@ -8389,15 +8389,15 @@
                     maintainAspectRatio: false,
                     layout: {
                         padding: {
-                            top: 20,
-                            bottom: 20,
+                            top: 10,
+                            bottom: 10,
                             left: 10,
                             right: 10
                         }
                     },
                     plugins: {
                         legend: {
-                            position: 'right',
+                            position: 'bottom',
                             labels: {
                                 padding: 15,
                                 font: { size: 13, weight: '600' },
