@@ -7944,13 +7944,13 @@
             //Receitas
             document.getElementById('summaryIncome').textContent = formatCurrency(currentStats.receitas);
             const numReceitas = transactions.filter(t => t.tipo === 'receita').length;
-            document.getElementById('summaryIncomeTrend').textContent = `${numReceitas} transação${numReceitas !== 1 ? 'ões' : ''}`;
+            document.getElementById('summaryIncomeTrend').textContent = `${numReceitas} transaçã${numReceitas !== 1 ? 'ões' : 'o'}`;
             document.getElementById('summaryIncomeTrend').style.color = '#64748b';
             
             //Despesas
             document.getElementById('summaryExpenses').textContent = formatCurrency(currentStats.despesas);
             const numDespesas = transactions.filter(t => t.tipo === 'despesa').length;
-            document.getElementById('summaryExpensesTrend').textContent = `${numDespesas} transação${numDespesas !== 1 ? 'ões' : ''}`;
+            document.getElementById('summaryExpensesTrend').textContent = `${numDespesas} transaçã${numDespesas !== 1 ? 'ões' : 'o'}`;
             document.getElementById('summaryExpensesTrend').style.color = '#64748b';
             
             //Meta de Gastos - usando meta do usuário ou padrão de R$ 5.000
@@ -8449,12 +8449,24 @@
             const days = currentReportPeriod === '7days' ? 7 : currentReportPeriod === '30days' ? 30 : 30;
             const avgPerDay = (transactionFrequency / days).toFixed(1);
             
+            //✅ Mensagem mais clara baseada na frequência
+            let frequencyDescription;
+            if (transactionFrequency === 0) {
+                frequencyDescription = `Nenhuma transação registrada no período de ${days} dias.`;
+            } else if (transactionFrequency === 1) {
+                frequencyDescription = `Você registrou 1 transação no período de ${days} dias.`;
+            } else if (avgPerDay < 0.5) {
+                frequencyDescription = `Você registrou ${transactionFrequency} transações no período de ${days} dias. Poucas transações registradas.`;
+            } else {
+                frequencyDescription = `Você registrou ${transactionFrequency} transações no período, uma média de ${avgPerDay} por dia.`;
+            }
+            
             patterns.push({
                 type: 'success',
                 icon: 'ph ph-chart-line-up',
                 title: 'Frequência de Transações',
-                description: `Você registrou ${transactionFrequency} transações no período, uma média de ${avgPerDay} por dia.`,
-                value: `${transactionFrequency} transações`
+                description: frequencyDescription,
+                value: `${transactionFrequency} transaçã${transactionFrequency !== 1 ? 'ões' : 'o'}`
             });
             
             //Padrão 2: Horário de maior gasto
@@ -16369,7 +16381,7 @@
             
             //Lista de seletores de elementos que contêm valores monetários
             const valueSelectors = [
-                //Stat cards principais
+                //Stat cards principais (Dashboard)
                 '#totalBalance',
                 '#totalIncome',
                 '#totalExpenses',
@@ -16383,13 +16395,18 @@
                 '#nextMonthForecast',
                 '#biggestExpenseValue',
                 
-                //Transações
+                //Transações (Todas as abas)
                 '.transaction-mini-value',
                 '.transaction-value',
                 '.stat-value',
                 
-                //Relatórios
+                //Relatórios (Aba Relatórios)
                 '.expense-type-value',
+                '#summaryBalance',
+                '#summaryIncome',
+                '#summaryExpenses',
+                '.summary-value',
+                '.pattern-value',
                 
                 //Modal de resumo mensal
                 '#reviewIncome',
@@ -16397,9 +16414,22 @@
                 '#reviewSavings',
                 '#reviewBalance',
                 
-                //Metas
+                //Metas (Aba Metas)
                 '.goal-current',
-                '.goal-target'
+                '.goal-target',
+                '.goal-value',
+                
+                //Gráficos (valores nos tooltips são dinâmicos, mas labels sim)
+                '.chart-value',
+                
+                //Mercado (Aba Mercado)
+                '.stock-price',
+                '.stock-change',
+                '.currency-value',
+                '.crypto-value',
+                
+                //Perfil
+                '.profile-stat-value'
             ];
             
             if (isActive) {
