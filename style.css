@@ -16996,7 +16996,9 @@ body.modal-open {
 
 .chart-canvas-wrapper {
     position: relative;
-    height: 320px;
+    height: 360px;
+    padding: 20px 10px;
+    overflow: visible;
 }
 
 .chart-canvas-wrapper canvas {
@@ -17533,7 +17535,14 @@ body.modal-open {
     }
     
     .chart-canvas-wrapper {
-        height: 250px !important;
+        height: 300px !important;
+        padding: 25px 10px !important;
+        overflow: visible !important;
+    }
+    
+    /* Específico para gráfico de pizza */
+    #categoryPieChart {
+        max-height: 280px !important;
     }
     
     /* Advanced Analysis Section */
