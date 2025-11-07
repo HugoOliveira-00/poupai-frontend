@@ -47,58 +47,6 @@
             -webkit-text-size-adjust: 100%;
         }
         
-        /* ✅ FORÇA LAYOUT DESKTOP EM NOTEBOOKS - Anula TODOS os estilos mobile */
-        body.device-desktop {
-            /* Garante viewport grande */
-            min-width: 100vw !important;
-        }
-        
-        /* IMPORTANTE: Desativa TODOS os media queries mobile em desktops */
-        @media (max-width: 1023px) {
-            body.device-desktop,
-            body.device-desktop * {
-                /* Anula estilos mobile */
-                max-width: none !important;
-            }
-            
-            /* Força container desktop */
-            body.device-desktop .dashboard-container {
-                max-width: 1200px !important;
-                width: 90% !important;
-                margin: 0 auto !important;
-                padding: 2rem !important;
-            }
-            
-            body.device-desktop .modal-content {
-                max-width: 600px !important;
-                width: 90% !important;
-                margin: 5% auto !important;
-            }
-            
-            /* Força grid desktop */
-            body.device-desktop .stats-grid,
-            body.device-desktop .category-grid {
-                display: grid !important;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
-                gap: 1.5rem !important;
-            }
-        }
-        
-        /* ✅ DETECTA MOBILE DE FORMA ROBUSTA - funciona em QUALQUER orientação */
-        /* Usa altura da tela em vez de largura para não quebrar em landscape */
-        @media screen and (max-height: 1024px) and (max-width: 1024px), 
-               screen and (max-device-width: 768px),
-               screen and (hover: none) and (pointer: coarse) {
-            :root {
-                --is-mobile: 1;
-            }
-            
-            /* MAS ignora se for desktop detectado via JavaScript */
-            body.device-desktop {
-                --is-mobile: 0;
-            }
-        }
-        
         /* Força layout mobile em qualquer orientação de celular */
         @media screen and (max-device-width: 768px) {
             html, body {
@@ -483,7 +431,7 @@
         }
 
         /* Responsividade Mobile - Category Tracker */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .category-tracker-item {
                 margin-bottom: 1rem;
                 padding: 0.875rem;
@@ -1358,7 +1306,7 @@
         }
         
         /* Responsivo */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .loading-spinner {
                 width: 100px;
                 height: 100px;
@@ -1906,7 +1854,7 @@
             display: none !important;
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .about-back-btn, .auth-back-btn {
                 top: 1rem;
                 left: 1rem;
@@ -2705,7 +2653,7 @@
         }
 
         /* Responsividade Mobile - Security Questions */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             #securityQuestionsScreen {
                 position: fixed !important;
                 top: 0 !important;
@@ -2763,7 +2711,7 @@
         /* ============================================== */
 
         /* Responsividade Mobile - Auth Screen */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .auth-screen {
                 padding: 0;
                 overflow-y: auto;
@@ -3709,7 +3657,7 @@
         }
 
         /* Mobile (768px ou menos) - Muda para vers�o simplificada */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .welcome-screen {
                 /* Ajuste óptico mobile - centralização visual perfeita */
                 transform: translateY(var(--optical-shift)) !important;
@@ -4200,7 +4148,7 @@
         }
 
         /* Responsividade para section header com a��es */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .section-header-with-actions {
                 flex-direction: column;
                 align-items: stretch;
@@ -4559,7 +4507,7 @@
         }
 
         /* Responsividade mobile */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .btn-refresh {
                 padding: 0.4rem 0.5rem;
                 font-size: 1rem;
@@ -4598,7 +4546,7 @@
             gap: 0.75rem;
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .btn-refresh-large {
                 padding: 0.625rem 1.25rem;
                 font-size: 0.9rem;
@@ -5211,7 +5159,7 @@
             }
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .mini-cards-grid {
                 grid-template-columns: 1fr;
             }
@@ -6056,7 +6004,7 @@
         }
 
         /* Responsive Simulators */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .simulators-grid {
                 grid-template-columns: 1fr;
             }
@@ -7099,7 +7047,7 @@
             transform: translateY(-2px);
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .transaction-details-modal {
                 max-width: 95%;
             }
@@ -7129,7 +7077,7 @@
             }
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .calendar-day {
                 min-height: 85px;
                 padding: 0.5rem;
@@ -7959,7 +7907,7 @@
 }
 
 /* Mobile: Adiciona margem lateral para não ficar colado */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .modal-transaction {
         max-width: calc(100% - 2rem);
         margin: 0 1rem;
@@ -8570,7 +8518,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .minimal-form-container {
         width: 95%;
         max-height: 95vh;
@@ -8986,7 +8934,7 @@
             }
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             /* === GARANTIR LAYOUT FLEXBOX CORRETO === */
             .landing-page {
                 position: fixed !important;
@@ -10643,7 +10591,7 @@
         }
 
         /* Mobile Responsive */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .subscriptions-summary {
                 grid-template-columns: 1fr;
                 gap: 1rem;
@@ -11390,7 +11338,7 @@
         }
 
         /* Mobile Responsive - Profile */
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .info-widgets {
                 grid-template-columns: 1fr;
             }
@@ -12458,7 +12406,7 @@
             color: #14532d;
         }
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             .market-grid {
                 grid-template-columns: 1fr;
             }
@@ -12489,7 +12437,7 @@
            OTIMIZA��ES MOBILE COMPLETAS
            ======================================== */
 
-        @media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+        @media (max-width: 768px) {
             /* Tamanhos de fonte globais */
             html {
                 font-size: 14px;
@@ -13487,7 +13435,7 @@
 }
 
 /* Responsividade */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .simulator-view-content {
         padding: 1rem;
     }
@@ -13909,7 +13857,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .result-grid {
         grid-template-columns: 1fr;
     }
@@ -14304,7 +14252,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .inflation-comparison-box {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -14336,7 +14284,7 @@
    MELHORIAS DE RESPONSIVIDADE MOBILE - MODAIS
    ============================================ */
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .modal-content {
         padding: 1.5rem;
         width: 95%;
@@ -14443,7 +14391,7 @@ body.modal-open {
 }
 
 /* Mobile Responsive - Profile Minimalista */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .profile-modal-content {
         width: 100%;
         max-width: 100%;
@@ -15539,7 +15487,7 @@ body.modal-open {
 }
 
 /* Responsivo */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .installment-modal-minimal {
         max-width: 95%;
     }
@@ -15899,7 +15847,7 @@ body.modal-open {
 }
 
 /* Responsividade */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .transaction-detail-modal-new {
         max-width: 95%;
     }
@@ -16181,7 +16129,7 @@ body.modal-open {
 }
 
 /* Responsivo para modais de detalhes */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .reminder-card {
         flex-direction: column;
         gap: 0.75rem;
@@ -16225,7 +16173,7 @@ body.modal-open {
 }
 
 /* Ajustes responsivos */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .form-steps {
         padding: 1rem 0.5rem;
     }
@@ -16470,7 +16418,7 @@ body.modal-open {
     }
 }
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .expense-type-report {
         padding: 1.5rem;
         margin: 1.5rem 0;
@@ -16601,7 +16549,7 @@ body.modal-open {
     border-color: #2563eb;
 }
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .expense-type-filters {
         gap: 0.5rem;
         padding: 0 0 1rem 0;
@@ -18803,7 +18751,7 @@ body.modal-open {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .review-cards-row {
         grid-template-columns: 1fr;
     }
@@ -19091,7 +19039,7 @@ body.modal-open {
     }
 }
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .level-1-cards {
         grid-template-columns: 1fr;
         gap: 0.875rem;
@@ -19427,7 +19375,7 @@ body.modal-open {
 }
 
 /* Responsive para cards compactos */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .news-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -19984,7 +19932,7 @@ body.modal-open {
 }
 
 /* Responsividade */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .featured-grid,
     .essentials-grid {
         grid-template-columns: 1fr;
@@ -20447,7 +20395,7 @@ body.modal-open {
 
 
 /* FIX: Garantir que o menu mobile fique ACIMA do blur */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .app-sidebar {
         z-index: 10001 !important;
         position: fixed !important;
@@ -20470,7 +20418,7 @@ body.modal-open {
 
 
 /* SOLU��O CORRETA: Blur no conte�do, n�o no overlay */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Overlay simples SEM blur */
     .mobile-menu-overlay {
         background: rgba(0, 0, 0, 0.6) !important;
@@ -20503,7 +20451,7 @@ body.modal-open {
 
 
 /* SOLU��O DEFINITIVA: Overlay simples sem blur */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Overlay escuro SIMPLES - sem blur */
     .mobile-menu-overlay {
         position: fixed !important;
@@ -20547,7 +20495,7 @@ body.modal-open {
    MENU LATERAL MOBILE - REFATORADO DO ZERO
    ======================================== */
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* 1. RESET COMPLETO do sidebar */
     .app-sidebar {
         position: fixed !important;
@@ -20624,7 +20572,7 @@ body.modal-open {
 
 
 /* Desabilitar ::before pattern no mobile */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .app-sidebar::before {
         display: none !important;
         content: none !important;
@@ -20655,7 +20603,7 @@ body.onboarding-active .mobile-bottom-nav {
     display: none !important;
 }
 
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* 1. OCULTAR menu lateral no mobile */
     .app-sidebar {
         display: none !important;
@@ -20753,7 +20701,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    AJUSTES MOBILE RESPONSIVOS
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Ajustar botão de privacidade para mobile */
     .privacy-toggle-btn {
         padding: 0.5rem 0.75rem !important;
@@ -20849,7 +20797,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* Corre��o: Ocultar R$ no mobile */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .input-icon {
         display: none !important;
     }
@@ -20862,7 +20810,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    CORRE��ES MOBILE - RELAT�RIOS
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* T�tulo e subt�tulo de Relat�rios */
     .section-header h2 {
         font-size: 1.5rem;
@@ -20942,7 +20890,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* Padding adicional para section-header no mobile */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .section-header {
         padding: 0 1rem;
         margin-bottom: 1.5rem;
@@ -20961,7 +20909,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* App-body padding responsivo */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .app-body {
         padding: 1.25rem;
         padding-bottom: 85px !important;
@@ -20977,7 +20925,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    CARDS DO GRID - RESPONSIVIDADE MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Grid de resumo em coluna �nica */
     .report-summary-grid {
         grid-template-columns: 1fr !important;
@@ -21011,7 +20959,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    PERFIL MODAL - ALTURA REDUZIDA NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     #profileModal .modal-content {
         max-height: 80vh !important;
         height: auto !important;
@@ -21078,7 +21026,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    GR�FICO FLUXO FINANCEIRO - ALTURA MAIOR NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .chart-container {
         margin-bottom: 2rem;
     }
@@ -21101,7 +21049,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    OCULTAR APPBAR QUANDO MODAL EST� ABERTO
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Ocultar AppBar quando qualquer modal estiver aberto */
     .modal.show ~ .mobile-bottom-nav,
     body:has(.modal.show) .mobile-bottom-nav {
@@ -21112,7 +21060,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    SE��O AJUDA - RESPONSIVIDADE MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Cards de contato r�pido */
     .help-quick-contact {
         display: grid;
@@ -21208,7 +21156,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* Corre��o adicional - aumentar ainda mais o gr�fico */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .chart-container > div {
         height: 500px !important;
         min-height: 500px !important;
@@ -21220,7 +21168,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* Bot�o Ajuda como bot�o normal de navega��o */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     .mobile-bottom-nav .nav-item[data-section='help'] {
         flex: 1;
         display: flex;
@@ -21265,7 +21213,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    CORRIGIR SCROLL DO GR�FICO FLUXO FINANCEIRO
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Remover scroll interno do gr�fico */
     .chart-container {
         overflow-x: visible !important;
@@ -21296,7 +21244,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    CORRIGIR SCROLL DOS CARDS E FAQ NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Remover qualquer scroll interno dos cards */
     .help-contact-card,
     .faq-item,
@@ -21322,7 +21270,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    OCULTAR FAQ NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Ocultar completamente a se��o de FAQ no mobile */
     .faq-list,
     #sectionHelp .chart-container {
@@ -21334,7 +21282,7 @@ body.onboarding-active .mobile-bottom-nav {
 /* ============================================
    SIMPLIFICAR TRANSA��ES NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Ocultar �cone da transa��o */
     .transfer-logo {
         display: none !important;
@@ -21407,7 +21355,7 @@ body:has(.welcome-screen[style*='display: block']) {
 /* ============================================
    FOR�AR COR AZUL NA BARRA DE NAVEGA��O DO CHROME ANDROID
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Background padrão branco para o body */
     body {
         background: #FFFFFF !important;
@@ -21441,71 +21389,13 @@ body:has(.welcome-screen[style*='display: block']) {
         position: relative;
         z-index: 2;
     }
-    
-    /* ✅ FORÇA LAYOUT DESKTOP NA LANDING PAGE EM NOTEBOOKS */
-    body.device-desktop .landing-container {
-        max-width: 500px !important;
-        padding: 3rem !important;
-    }
-    
-    body.device-desktop .landing-content {
-        text-align: center;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    
-    /* Força mostrar versão DESKTOP dos títulos */
-    body.device-desktop .landing-title-desktop {
-        display: block !important;
-        font-size: 3.5rem !important;
-    }
-    
-    body.device-desktop .landing-title-mobile {
-        display: none !important;
-    }
-    
-    body.device-desktop .landing-subtitle-desktop {
-        display: block !important;
-        font-size: 1.25rem !important;
-    }
-    
-    body.device-desktop .landing-subtitle-mobile {
-        display: none !important;
-    }
-    
-    /* Força mostrar logo no header */
-    body.device-desktop .landing-logo {
-        display: flex !important;
-    }
-    
-    body.device-desktop .landing-header {
-        padding: 1.5rem 3rem !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-    }
-    
-    /* Botões com tamanho desktop */
-    body.device-desktop .btn-cta-primary,
-    body.device-desktop .btn-cta-secondary {
-        padding: 1rem 2.5rem !important;
-        font-size: 1.125rem !important;
-        max-width: 280px !important;
-    }
-    
-    /* Landing main centralizado */
-    body.device-desktop .landing-main {
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
 }
 
 
 /* ============================================
    REMOVER GRANULADO (NOISE) NO MOBILE PARA UNIFORMIZAR COR
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Remove o efeito de noise/granulado no mobile */
     .noise-overlay {
         display: none !important;
@@ -21527,7 +21417,7 @@ body:has(.welcome-screen[style*='display: block']) {
 /* ============================================
    ✅ PREVENIR ZOOM AUTOMÁTICO EM INPUTS NO MOBILE
    ============================================ */
-@media (max-width: 768px), screen and (max-height: 1024px) and (orientation: landscape) {
+@media (max-width: 768px) {
     /* Força font-size mínimo de 16px em todos os inputs para prevenir zoom no iOS/Android */
     input[type="text"],
     input[type="email"],
