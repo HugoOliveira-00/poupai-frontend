@@ -47,6 +47,28 @@
             -webkit-text-size-adjust: 100%;
         }
         
+        /* ✅ FORÇA LAYOUT DESKTOP EM NOTEBOOKS - Anula estilos mobile */
+        body.device-desktop {
+            /* Força largura mínima para layout desktop */
+            min-width: 1024px !important;
+        }
+        
+        /* Anula TODOS os estilos mobile se for desktop detectado */
+        @media (max-width: 1023px) {
+            body.device-desktop * {
+                /* Força reset de estilos mobile */
+                max-width: none !important;
+                width: auto !important;
+            }
+            
+            body.device-desktop .container,
+            body.device-desktop .dashboard-container,
+            body.device-desktop .modal-content {
+                max-width: 1200px !important;
+                margin: 0 auto !important;
+            }
+        }
+        
         /* ✅ DETECTA MOBILE DE FORMA ROBUSTA - funciona em QUALQUER orientação */
         /* Usa altura da tela em vez de largura para não quebrar em landscape */
         @media screen and (max-height: 1024px) and (max-width: 1024px), 
@@ -54,6 +76,11 @@
                screen and (hover: none) and (pointer: coarse) {
             :root {
                 --is-mobile: 1;
+            }
+            
+            /* MAS ignora se for desktop detectado via JavaScript */
+            body.device-desktop {
+                --is-mobile: 0;
             }
         }
         

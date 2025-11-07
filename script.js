@@ -1,5 +1,71 @@
 
         //========================================
+        //🖥️ DETECÇÃO DE DISPOSITIVO - Identifica se é mobile REAL ou notebook
+        //========================================
+        
+        function detectDeviceType() {
+            const ua = navigator.userAgent.toLowerCase();
+            const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+            const isTabletUA = /ipad|android(?!.*mobile)|tablet/i.test(ua);
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            
+            // Notebook/Desktop: Largura >= 1024px OU sem touch OU user agent de desktop
+            const isDesktop = screenWidth >= 1024 || (!isMobileUA && !hasTouch);
+            
+            // Mobile: User agent mobile E tela pequena E tem touch
+            const isMobile = isMobileUA && screenWidth < 768 && hasTouch;
+            
+            // Tablet: Entre 768 e 1024px OU user agent tablet
+            const isTablet = isTabletUA || (screenWidth >= 768 && screenWidth < 1024 && hasTouch);
+            
+            return {
+                isMobile: isMobile,
+                isTablet: isTablet,
+                isDesktop: isDesktop || (!isMobile && !isTablet),
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+                hasTouch: hasTouch,
+                userAgent: ua
+            };
+        }
+        
+        // Aplica classe no body baseado no tipo de dispositivo
+        function applyDeviceClass() {
+            const device = detectDeviceType();
+            document.body.classList.remove('device-mobile', 'device-tablet', 'device-desktop');
+            
+            if (device.isMobile) {
+                document.body.classList.add('device-mobile');
+                console.log('📱 Dispositivo detectado: MOBILE');
+            } else if (device.isTablet) {
+                document.body.classList.add('device-tablet');
+                console.log('📱 Dispositivo detectado: TABLET');
+            } else {
+                document.body.classList.add('device-desktop');
+                console.log('💻 Dispositivo detectado: DESKTOP/NOTEBOOK');
+            }
+            
+            console.log('Device Info:', device);
+        }
+        
+        // Aplica detecção ao carregar e ao redimensionar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyDeviceClass);
+        } else {
+            applyDeviceClass();
+        }
+        
+        // Reaplica se mudar orientação (só em mobile real)
+        window.addEventListener('orientationchange', () => {
+            const device = detectDeviceType();
+            if (device.isMobile || device.isTablet) {
+                setTimeout(applyDeviceClass, 100);
+            }
+        });
+
+        //========================================
         //✅ ISSUE #15: SEGURANÇA - ANONIMIZAÇÃO DE LOGS
         //========================================
         
