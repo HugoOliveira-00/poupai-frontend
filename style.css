@@ -47,25 +47,40 @@
             -webkit-text-size-adjust: 100%;
         }
         
-        /* ✅ FORÇA LAYOUT DESKTOP EM NOTEBOOKS - Anula estilos mobile */
+        /* ✅ FORÇA LAYOUT DESKTOP EM NOTEBOOKS - Anula TODOS os estilos mobile */
         body.device-desktop {
-            /* Força largura mínima para layout desktop */
-            min-width: 1024px !important;
+            /* Garante viewport grande */
+            min-width: 100vw !important;
         }
         
-        /* Anula TODOS os estilos mobile se for desktop detectado */
+        /* IMPORTANTE: Desativa TODOS os media queries mobile em desktops */
         @media (max-width: 1023px) {
+            body.device-desktop,
             body.device-desktop * {
-                /* Força reset de estilos mobile */
+                /* Anula estilos mobile */
                 max-width: none !important;
-                width: auto !important;
             }
             
-            body.device-desktop .container,
-            body.device-desktop .dashboard-container,
-            body.device-desktop .modal-content {
+            /* Força container desktop */
+            body.device-desktop .dashboard-container {
                 max-width: 1200px !important;
+                width: 90% !important;
                 margin: 0 auto !important;
+                padding: 2rem !important;
+            }
+            
+            body.device-desktop .modal-content {
+                max-width: 600px !important;
+                width: 90% !important;
+                margin: 5% auto !important;
+            }
+            
+            /* Força grid desktop */
+            body.device-desktop .stats-grid,
+            body.device-desktop .category-grid {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+                gap: 1.5rem !important;
             }
         }
         

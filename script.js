@@ -4,30 +4,50 @@
         //========================================
         
         function detectDeviceType() {
-            const ua = navigator.userAgent.toLowerCase();
-            const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
-            const isTabletUA = /ipad|android(?!.*mobile)|tablet/i.test(ua);
-            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            // A forma mais confiável: tamanho da JANELA (não da tela)
+            const viewportWidth = window.innerWidth;
             const screenWidth = window.screen.width;
             const screenHeight = window.screen.height;
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const ua = navigator.userAgent.toLowerCase();
             
-            // Notebook/Desktop: Largura >= 1024px OU sem touch OU user agent de desktop
-            const isDesktop = screenWidth >= 1024 || (!isMobileUA && !hasTouch);
+            // REGRA PRINCIPAL: Se a viewport tem >= 1024px, É DESKTOP/NOTEBOOK
+            // Não importa se tem touch ou não
+            if (viewportWidth >= 1024) {
+                return {
+                    isMobile: false,
+                    isTablet: false,
+                    isDesktop: true,
+                    viewportWidth: viewportWidth,
+                    screenWidth: screenWidth,
+                    reason: 'Viewport >= 1024px (Desktop/Notebook)'
+                };
+            }
             
-            // Mobile: User agent mobile E tela pequena E tem touch
-            const isMobile = isMobileUA && screenWidth < 768 && hasTouch;
+            // Se viewport < 1024px, precisa verificar melhor
+            const isMobileUA = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua);
+            const isTabletUA = /ipad|tablet/i.test(ua);
             
-            // Tablet: Entre 768 e 1024px OU user agent tablet
-            const isTablet = isTabletUA || (screenWidth >= 768 && screenWidth < 1024 && hasTouch);
+            // Tablets geralmente têm 768-1023px
+            if (viewportWidth >= 768 && (isTabletUA || hasTouch)) {
+                return {
+                    isMobile: false,
+                    isTablet: true,
+                    isDesktop: false,
+                    viewportWidth: viewportWidth,
+                    screenWidth: screenWidth,
+                    reason: 'Tablet (768-1023px + touch ou iPad UA)'
+                };
+            }
             
+            // Mobile: viewport < 768px
             return {
-                isMobile: isMobile,
-                isTablet: isTablet,
-                isDesktop: isDesktop || (!isMobile && !isTablet),
+                isMobile: true,
+                isTablet: false,
+                isDesktop: false,
+                viewportWidth: viewportWidth,
                 screenWidth: screenWidth,
-                screenHeight: screenHeight,
-                hasTouch: hasTouch,
-                userAgent: ua
+                reason: 'Mobile (viewport < 768px)'
             };
         }
         
@@ -38,31 +58,37 @@
             
             if (device.isMobile) {
                 document.body.classList.add('device-mobile');
-                console.log('📱 Dispositivo detectado: MOBILE');
+                console.log('📱 DISPOSITIVO: MOBILE');
             } else if (device.isTablet) {
                 document.body.classList.add('device-tablet');
-                console.log('📱 Dispositivo detectado: TABLET');
+                console.log('📱 DISPOSITIVO: TABLET');
             } else {
                 document.body.classList.add('device-desktop');
-                console.log('💻 Dispositivo detectado: DESKTOP/NOTEBOOK');
+                console.log('💻 DISPOSITIVO: DESKTOP/NOTEBOOK');
             }
             
-            console.log('Device Info:', device);
+            console.log('Detecção:', device);
+            console.log('Viewport Width:', device.viewportWidth + 'px');
+            console.log('Razão:', device.reason);
         }
         
-        // Aplica detecção ao carregar e ao redimensionar
+        // Aplica detecção ao carregar
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', applyDeviceClass);
         } else {
             applyDeviceClass();
         }
         
-        // Reaplica se mudar orientação (só em mobile real)
+        // CRÍTICO: Reaplica ao redimensionar (notebooks podem mudar tamanho da janela)
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(applyDeviceClass, 100);
+        });
+        
+        // Reaplica se mudar orientação
         window.addEventListener('orientationchange', () => {
-            const device = detectDeviceType();
-            if (device.isMobile || device.isTablet) {
-                setTimeout(applyDeviceClass, 100);
-            }
+            setTimeout(applyDeviceClass, 200);
         });
 
         //========================================
