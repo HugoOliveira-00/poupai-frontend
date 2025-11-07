@@ -9394,30 +9394,80 @@
             .modal-content {
                 width: 95%;
                 max-width: 95%;
-                margin: 1rem;
-                padding: 1.25rem;
-                max-height: 90vh;
+                margin: 0.5rem;
+                padding: 1rem;
+                max-height: 85vh;
                 overflow-y: auto;
             }
 
             .transaction-modal-header {
-                flex-direction: column;
+                flex-direction: row;
+                align-items: center;
                 gap: 0.75rem;
                 padding-bottom: 1rem;
             }
 
             .modal-header-icon {
-                width: 42px;
-                height: 42px;
-                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+                font-size: 1.4rem;
+                flex-shrink: 0;
+            }
+            
+            .transaction-modal-header > div:nth-child(2) {
+                text-align: left;
             }
 
             .transaction-modal-header h3 {
-                font-size: 1.25rem;
+                font-size: 1.15rem;
             }
 
             .modal-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            /* Grid 1x3 para tipos de despesa no mobile */
+            .expense-type-filters {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                padding: 0 0.5rem 1rem 0.5rem;
+            }
+            
+            .type-filter-btn {
+                padding: 0.65rem 0.5rem;
+                font-size: 0.75rem;
+                flex-direction: column;
+                gap: 0.25rem;
+                text-align: center;
+            }
+            
+            .type-filter-btn i {
+                font-size: 1.1rem;
+            }
+            
+            .type-filter-btn span {
+                line-height: 1.2;
+            }
+            
+            /* Reduzir espaçamento dos campos no modal mobile */
+            #transactionModal .form-group,
+            #editTransactionModal .form-group {
+                margin-bottom: 0.75rem;
+            }
+            
+            #transactionModal .form-group label,
+            #editTransactionModal .form-group label {
+                margin-bottom: 0.4rem;
                 font-size: 0.85rem;
+            }
+            
+            #transactionModal input,
+            #transactionModal select,
+            #editTransactionModal input,
+            #editTransactionModal select {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.9rem;
             }
 
             .btn-submit-transaction {
