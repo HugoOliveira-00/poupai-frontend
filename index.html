@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
+  <!-- Build: 2025-11-08-v2 - Force cache refresh -->
+  
   <!-- PWA Configuration -->
   <!-- ✅ Navigation bar preta (compatível com todos os navegadores) -->
   <meta name="theme-color" content="#000000">
@@ -525,6 +527,7 @@
       </h1>
      </div>
      <nav class="navigation">
+      <!-- Menu de navegação principal - v2.0 -->
       <a class="active" href="#" onclick="showSection(event, 'overview')">
        <i class="ph ph-house"></i>
        <span>
@@ -537,6 +540,14 @@
        <span>
         Transações
        </span>
+      </a>
+      <a href="#" onclick="showSection(event, 'todos')">
+       <i class="ph ph-note-pencil">
+       </i>
+       <span>
+        A Registrar
+       </span>
+       <span class="nav-badge" id="todoBadgeDesktop" style="display: none;">0</span>
       </a>
       <a href="#" onclick="showSection(event, 'calendar')">
        <i class="ph ph-calendar">
@@ -927,12 +938,17 @@
       <!-- Supports income tracking and three expense types: single, fixed, and installment payments -->
       <section class="hidden" id="sectionTransactions">
        <div class="section-header">
-        <h2>
-         <i class="ph ph-swap"></i> Todas as Transações
-        </h2>
-        <p>
-         Gerencie e acompanhe todas suas receitas e despesas
-        </p>
+        <div class="section-title-group">
+         <h2>
+          <i class="ph ph-swap"></i> Todas as Transações
+         </h2>
+         <p>
+          Gerencie e acompanhe todas suas receitas e despesas
+         </p>
+        </div>
+        <button class="btn-pull-todo" onclick="openPullTodoModal()">
+         <i class="ph ph-list-checks"></i> Puxar Rascunho
+        </button>
        </div>
        
        <!-- Transaction type filters: all, income, single, fixed, installment expenses -->
@@ -989,6 +1005,10 @@
        </div>
        
        <div class="button-group">
+        <button class="btn-pull-todo" onclick="registerExpensesListAsTransactions()">
+         <i class="ph ph-check-circle"></i>
+         Registrar Lista Completa
+        </button>
         <button class="btn-add-income" onclick="openAddTransactionModal('income')">
          <div class="btn-icon-wrapper">
           <i class="ph ph-arrow-circle-up"></i>
@@ -1025,6 +1045,52 @@
         </div>
        </div>
       </section>
+      
+      <!-- ===================================
+           SECTION: A REGISTRAR (LISTA DE DESPESAS)
+           =================================== -->
+      <section class="hidden" id="sectionTodos">
+       <div class="section-header">
+        <div class="section-title-group">
+         <h2>
+          <i class="ph ph-list-checks"></i> Lista de Despesas
+         </h2>
+         <p>
+          Anote rapidamente as despesas para registrar depois
+         </p>
+        </div>
+        <div class="section-header-actions">
+         <button class="btn-primary" onclick="openExpensesListModal()">
+          <i class="ph ph-plus"></i> Adicionar
+         </button>
+         <button class="btn-secondary" onclick="clearExpensesList()">
+          <i class="ph ph-trash"></i> Apagar Lista
+         </button>
+        </div>
+       </div>
+       
+       <!-- Lista -->
+       <div class="expenses-list-container" id="todosListContainer">
+        <div class="empty-todos">
+         <i class="ph ph-list-checks"></i>
+         <h3>Lista vazia</h3>
+         <p>Adicione despesas para anotar rapidamente</p>
+        </div>
+       </div>
+       
+       <!-- Rodapé com totais -->
+       <div class="expenses-list-footer">
+        <div class="footer-stat">
+         <span class="footer-label">Total de Itens:</span>
+         <span class="footer-value" id="expensesListCount">0</span>
+        </div>
+        <div class="footer-stat highlight">
+         <span class="footer-label">Total Geral:</span>
+         <span class="footer-value" id="expensesListTotal">R$ 0,00</span>
+        </div>
+       </div>
+      </section>
+      
       <!-- SECTION: Financial Calendar -->
       <!-- Interactive calendar view showing daily transactions, holidays and monthly financial flow -->
       <!-- Includes color-coded legend for income, expenses (single/fixed/installment) and Brazilian holidays -->
@@ -2118,6 +2184,80 @@
    </div>
   </div>
   
+  <!-- ============================================ -->
+  <!-- MODAL: ADICIONAR À LISTA DE DESPESAS -->
+  <!-- ============================================ -->
+  <div class="modal" id="todoModal" style="display: none;">
+   <div class="modal-content modal-todo">
+    <div class="modal-header">
+     <div class="modal-header-icon">
+      <i class="ph ph-list-checks"></i>
+     </div>
+     <div>
+      <h3 id="todoModalTitle">Adicionar à Lista</h3>
+      <p>Preencha os dados da despesa</p>
+     </div>
+     <button onclick="closeExpensesListModal()" class="btn-close-modal">
+      <i class="ph ph-x"></i>
+     </button>
+    </div>
+    
+    <form id="todoForm" onsubmit="submitExpensesListForm(event)">
+     <div class="form-group">
+      <label>Nome da Despesa *</label>
+      <input type="text" id="todoTitle" required placeholder="Ex: Pagar pizzaria" maxlength="100">
+     </div>
+     
+     <div class="form-row">
+      <div class="form-group">
+       <label>Tipo *</label>
+       <select id="todoType" required>
+        <option value="Despesa Única">Despesa Única</option>
+        <option value="Despesa Fixa">Despesa Fixa</option>
+        <option value="Despesa Parcelada">Despesa Parcelada</option>
+       </select>
+      </div>
+      
+      <div class="form-group">
+       <label>Data *</label>
+       <input type="date" id="todoDate" required>
+      </div>
+     </div>
+     
+     <div class="form-row">
+      <div class="form-group">
+       <label>Categoria *</label>
+       <select id="todoCategory" required>
+        <option value="">Selecione...</option>
+        <option value="Alimentação">🍔 Alimentação</option>
+        <option value="Transporte">🚗 Transporte</option>
+        <option value="Moradia">🏠 Moradia</option>
+        <option value="Saúde">💊 Saúde</option>
+        <option value="Educação">📚 Educação</option>
+        <option value="Lazer">🎮 Lazer</option>
+        <option value="Compras">🛍️ Compras</option>
+        <option value="Outros">📦 Outros</option>
+       </select>
+      </div>
+      
+      <div class="form-group">
+       <label>Valor *</label>
+       <input type="number" id="todoAmount" required placeholder="0.00" step="0.01" min="0">
+      </div>
+     </div>
+     
+     <div class="modal-footer">
+      <button type="button" onclick="closeExpensesListModal()" class="btn-secondary">
+       <i class="ph ph-x"></i> Cancelar
+      </button>
+      <button type="submit" class="btn-primary">
+       <i class="ph ph-plus"></i> Adicionar
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  
   <!-- Modal: Add/Edit Transaction -->
   <div class="modal" id="transactionModal">
    <div class="modal-content modal-transaction">
@@ -2816,9 +2956,9 @@
             <div class="form-group-minimal">
               <label><i class="ph ph-lock-key"></i> Nova Senha</label>
               <div class="password-input-wrapper">
-                <input type="password" id="newPasswordProfile" autocomplete="new-password" required placeholder="••••••••" minlength="6" oninput="checkPasswordStrength()">
-                <button type="button" class="toggle-password" onclick="toggleProfilePassword('newPassword', 'eyeNewPassword')" aria-label="Mostrar senha">
-                  <svg id="eyeNewPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <input type="password" id="profileNewPassword" autocomplete="new-password" required placeholder="••••••••" minlength="6" oninput="checkPasswordStrength()">
+                <button type="button" class="toggle-password" onclick="toggleProfilePassword('profileNewPassword', 'eyeProfileNewPassword')" aria-label="Mostrar senha">
+                  <svg id="eyeProfileNewPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
@@ -3812,6 +3952,12 @@
       <span>Transações</span>
     </button>
     
+    <button class="nav-item" data-section="todos" onclick="showSectionMobile(event, 'todos')">
+      <i class="ph ph-note-pencil"></i>
+      <span>A Registrar</span>
+      <span class="nav-badge" id="todoBadge" style="display: none;">0</span>
+    </button>
+    
     <button class="nav-item" data-section="reports" onclick="showSectionMobile(event, 'reports')">
       <i class="ph ph-chart-bar"></i>
       <span>Relatórios</span>
@@ -3881,7 +4027,7 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108"></script>
+  <script src="script.js?v=20251108002001"></script>
   
   <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>
