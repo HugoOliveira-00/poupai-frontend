@@ -21687,6 +21687,25 @@ body:has(.welcome-screen[style*='display: block']) {
     animation: badgePulse 2s infinite;
 }
 
+/* Badge no sidebar desktop */
+.navigation a .nav-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+}
+
+/* Badge no mobile */
+.mobile-bottom-nav .nav-item {
+    position: relative;
+}
+
+.mobile-bottom-nav .nav-badge {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+}
+
 @keyframes badgePulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
