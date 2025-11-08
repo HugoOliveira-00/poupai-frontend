@@ -9,10 +9,10 @@
   <!-- PWA Configuration -->
   <link rel="manifest" href="/manifest.json">
   
-  <!-- Theme colors for PWA - PRETO para navigation bar Android -->
-  <meta name="theme-color" content="#000000">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <!-- Theme colors for PWA -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e40af" media="(prefers-color-scheme: dark)">
   
   <!-- Mobile app settings -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -20,7 +20,7 @@
   
   <!-- iOS settings -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="poupAí">
   
   <!-- Fullscreen settings -->
@@ -94,39 +94,34 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108024" rel="stylesheet">
+  <link href="style.css?v=20251108021" rel="stylesheet">
 </head>
 <body>
-  <!-- Theme Color Dynamic Update - FORÇAR PRETO -->
+  <!-- Theme Color Dynamic Update -->
   <script>
     (function() {
       function updateThemeColor() {
-        // NÃO remove! Apenas garante que existe e está preto
-        let meta = document.querySelector('meta[name="theme-color"]:not([media])');
+        let meta = document.querySelector('meta[name="theme-color"]');
         if (!meta) {
           meta = document.createElement('meta');
           meta.name = 'theme-color';
           document.head.appendChild(meta);
         }
         
-        // Força preto
+        // Sempre preto em todas as telas
         meta.content = '#000000';
-        
-        console.log('Theme color: #000000');
       }
       
       updateThemeColor();
       setTimeout(updateThemeColor, 100);
-      setTimeout(updateThemeColor, 500);
-      setTimeout(updateThemeColor, 1000);
       
       if ('MutationObserver' in window) {
         const observer = new MutationObserver(updateThemeColor);
-        observer.observe(document.head, { 
+        observer.observe(document.body, { 
           childList: true, 
           subtree: true, 
           attributes: true, 
-          attributeFilter: ['content'] 
+          attributeFilter: ['class', 'style'] 
         });
       }
       
@@ -4041,29 +4036,23 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108023"></script>
-  
-  <!-- ✅ GARANTIR cor PRETA na navigation bar Android (última linha de defesa) -->
+    <script src="script.js?v=20251108018">  <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>
+    // Remove qualquer meta theme-color existente e recria com preto
     document.addEventListener('DOMContentLoaded', function() {
-      // NÃO remove! Apenas atualiza
-      let meta = document.querySelector('meta[name="theme-color"]:not([media])');
-      if (!meta) {
-        meta = document.createElement('meta');
-        meta.name = 'theme-color';
-        document.head.appendChild(meta);
-      }
+      const existingMeta = document.querySelectorAll('meta[name="theme-color"]');
+      existingMeta.forEach(meta => meta.remove());
       
-      // Força PRETO
+      const meta = document.createElement('meta');
+      meta.name = 'theme-color';
       meta.content = '#000000';
-      console.log('Navigation bar Android: PRETO #000000');
+      document.head.appendChild(meta);
       
-      // Monitora e mantém PRETO sempre (SEM remover)
+      // Monitora mudanças e força preto sempre
       setInterval(function() {
-        const currentMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+        const currentMeta = document.querySelector('meta[name="theme-color"]');
         if (currentMeta && currentMeta.content !== '#000000') {
           currentMeta.content = '#000000';
-          console.log('Navigation bar corrigida para PRETO');
         }
       }, 100);
     });
