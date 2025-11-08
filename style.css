@@ -21927,7 +21927,7 @@ body:has(.welcome-screen[style*='display: block']) {
    =================================== */
 
 .modal-todo {
-    max-width: 500px; /* Reduzido para melhor experiência mobile */
+    max-width: 900px; /* Dobro do tamanho original para web */
 }
 
 @media (max-width: 768px) {
@@ -21936,45 +21936,31 @@ body:has(.welcome-screen[style*='display: block']) {
     }
 }
 
-.modal-todo .modal-header {
+/* Header simplificado - apenas título, subtítulo e botão fechar */
+.modal-header-simple {
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     border-bottom: 2px solid #93c5fd;
     padding: 1.5rem;
     border-radius: 16px 16px 0 0;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
 }
 
-.modal-todo .modal-header-icon {
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-    flex-shrink: 0;
-}
-
-.modal-todo .modal-header h3 {
+.modal-header-simple h3 {
     color: #1e40af;
     font-size: 1.375rem;
     margin: 0;
     font-weight: 700;
 }
 
-.modal-todo .modal-subtitle {
+.modal-header-simple .modal-subtitle {
     color: #3b82f6;
     font-size: 0.875rem;
     margin: 0.25rem 0 0;
 }
 
-.modal-todo .close-modal {
-    margin-left: auto;
+.modal-header-simple .close-modal {
     width: 36px;
     height: 36px;
     border-radius: 8px;
@@ -21989,7 +21975,7 @@ body:has(.welcome-screen[style*='display: block']) {
     transition: all 0.2s ease;
 }
 
-.modal-todo .close-modal:hover {
+.modal-header-simple .close-modal:hover {
     background: rgba(59, 130, 246, 0.2);
     transform: rotate(90deg);
 }
@@ -22030,6 +22016,19 @@ body:has(.welcome-screen[style*='display: block']) {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     outline: none;
+}
+
+/* Layout 2 colunas para data e categoria */
+.form-row-2cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-row-2cols {
+        grid-template-columns: 1fr;
+    }
 }
 
 .modal-todo .input-with-icon {

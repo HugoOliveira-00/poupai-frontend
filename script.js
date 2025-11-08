@@ -18366,9 +18366,9 @@ async function registerAllExpenses() {
             saveExpensesList(); // Backup
             renderExpensesList();
             
-            // Atualiza transações
+            // Atualiza transações e dashboard
             await loadTransactions();
-            updateBalance();
+            updateDashboardStats();
             
             showPopup('success', 'Sucesso!', 
                 `${result.totalRegistrado} despesa(s) registrada(s) e lista limpa`);
