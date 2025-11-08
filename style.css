@@ -3940,6 +3940,31 @@
             border-radius: 0 4px 4px 0;
         }
 
+        /* Botão Sair no menu lateral - Efeito de brilho */
+        .navigation a.sidebar-logout {
+            margin-top: auto;
+            color: rgba(255, 255, 255, 0.85);
+            transition: all 0.3s ease;
+        }
+
+        .navigation a.sidebar-logout:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateX(3px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
+                        0 0 40px rgba(255, 255, 255, 0.15);
+            filter: brightness(1.2);
+        }
+
+        .navigation a.sidebar-logout i {
+            filter: drop-shadow(0 0 0 transparent);
+            transition: filter 0.3s ease;
+        }
+
+        .navigation a.sidebar-logout:hover i {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        }
+
         .sidebar-footer {
             padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -20868,24 +20893,15 @@ body.onboarding-active .mobile-bottom-nav {
         white-space: nowrap;
     }
     
-    /* 4. Item ativo - Efeito de brilho suave */
+    /* 4. Item ativo - Mantém cor padrão */
     .nav-item.active {
+        color: #3b82f6;
         position: relative;
-        animation: navGlow 0.3s ease;
-    }
-    
-    .nav-item.active::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-        border-radius: 12px;
-        pointer-events: none;
     }
     
     .nav-item.active i {
         transform: scale(1.1);
-        filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+        color: #3b82f6;
     }
     
     .nav-item.active::before {
@@ -20896,15 +20912,8 @@ body.onboarding-active .mobile-bottom-nav {
         transform: translateX(-50%);
         width: 40px;
         height: 3px;
-        background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        background: #3b82f6;
         border-radius: 0 0 3px 3px;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-    }
-    
-    @keyframes navGlow {
-        0% { filter: brightness(1); }
-        50% { filter: brightness(1.2); }
-        100% { filter: brightness(1); }
     }
     
     /* 5. Hover states */
@@ -21410,12 +21419,12 @@ body.onboarding-active .mobile-bottom-nav {
     }
     
     .mobile-bottom-nav .nav-item[data-section='help'].active {
-        animation: navGlow 0.3s ease;
+        color: #3b82f6;
     }
     
     .mobile-bottom-nav .nav-item[data-section='help'].active i {
         transform: scale(1.1);
-        filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+        color: #3b82f6;
     }
     
     .mobile-bottom-nav .nav-item[data-section='help'].active::before {
@@ -21426,9 +21435,8 @@ body.onboarding-active .mobile-bottom-nav {
         transform: translateX(-50%);
         width: 40px;
         height: 3px;
-        background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        background: #3b82f6;
         border-radius: 0 0 3px 3px;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
     }
 }
 
@@ -21888,11 +21896,18 @@ body:has(.welcome-screen[style*='display: block']) {
     font-weight: 700;
 }
 
+/* Efeito de brilho APENAS para o botão central quando ativo */
 .mobile-bottom-nav .nav-item-center.active {
-    animation: navGlow 0.3s ease;
+    animation: navGlowCenter 0.3s ease;
     filter: brightness(1.1);
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5), 
                 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+@keyframes navGlowCenter {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.2); }
+    100% { filter: brightness(1.1); }
 }
 
 @keyframes badgePulse {
