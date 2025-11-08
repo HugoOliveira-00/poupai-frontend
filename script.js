@@ -17935,3 +17935,428 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
 });
 
+//========================================
+// SISTEMA DE TO-DO FINANCEIRO
+//========================================
+
+let financialTodos = [];
+
+//Estrutura de um To-Do:
+// {
+//   id: timestamp,
+//   title: "Pagar pizzaria",
+//   amount: 45.00,
+//   date: "2024-11-08",
+//   category: "Alimentação",
+//   type: "expense" | "income",
+//   note: "Pizza da sexta",
+//   status: "pending" | "completed",
+//   createdAt: ISO timestamp
+// }
+
+//Inicializa sistema de To-Dos
+function initFinancialTodos() {
+    const saved = localStorage.getItem('financialTodos');
+    if (saved) {
+        financialTodos = JSON.parse(saved);
+    }
+    updateTodoBadge();
+}
+
+//Salva no localStorage
+function saveFinancialTodos() {
+    localStorage.setItem('financialTodos', JSON.stringify(financialTodos));
+    updateTodoBadge();
+}
+
+//Adiciona novo To-Do
+function addFinancialTodo(data) {
+    const todo = {
+        id: Date.now(),
+        title: data.title,
+        amount: parseFloat(data.amount),
+        date: data.date,
+        category: data.category,
+        type: data.type, // 'expense' ou 'income'
+        note: data.note || '',
+        status: 'pending',
+        createdAt: new Date().toISOString()
+    };
+    
+    financialTodos.unshift(todo);
+    saveFinancialTodos();
+    renderTodosList();
+    showToast('generalNotification', 'success', 'Sucesso', 'Rascunho salvo com sucesso!');
+}
+
+//Edita To-Do existente
+function editFinancialTodo(id, data) {
+    const todo = financialTodos.find(t => t.id === id);
+    if (todo) {
+        todo.title = data.title;
+        todo.amount = parseFloat(data.amount);
+        todo.date = data.date;
+        todo.category = data.category;
+        todo.type = data.type;
+        todo.note = data.note || '';
+        
+        saveFinancialTodos();
+        renderTodosList();
+        showToast('generalNotification', 'success', 'Sucesso', 'Rascunho atualizado!');
+    }
+}
+
+//Remove To-Do
+function deleteFinancialTodo(id) {
+    if (confirm('Deseja realmente excluir este rascunho?')) {
+        financialTodos = financialTodos.filter(t => t.id !== id);
+        saveFinancialTodos();
+        renderTodosList();
+        showToast('generalNotification', 'success', 'Sucesso', 'Rascunho removido!');
+    }
+}
+
+//Marca To-Do como completo (usado ao registrar como transação)
+function completeTodo(id) {
+    const todo = financialTodos.find(t => t.id === id);
+    if (todo) {
+        todo.status = 'completed';
+        saveFinancialTodos();
+        renderTodosList();
+    }
+}
+
+//Pega todos os To-Dos pendentes
+function getPendingTodos() {
+    return financialTodos.filter(t => t.status === 'pending');
+}
+
+//Atualiza badge contador no menu
+function updateTodoBadge() {
+    const pendingCount = getPendingTodos().length;
+    const badgeMobile = document.getElementById('todoBadge');
+    const badgeDesktop = document.getElementById('todoBadgeDesktop');
+    
+    [badgeMobile, badgeDesktop].forEach(badge => {
+        if (badge) {
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount > 99 ? '99+' : pendingCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    });
+    
+    //Atualiza stats na página
+    updateTodosStats();
+}
+
+//Atualiza estatísticas na página To-Dos
+function updateTodosStats() {
+    const pending = getPendingTodos();
+    const expenses = pending.filter(t => t.type === 'expense');
+    const incomes = pending.filter(t => t.type === 'income');
+    
+    const expensesTotal = expenses.reduce((sum, t) => sum + t.amount, 0);
+    const incomesTotal = incomes.reduce((sum, t) => sum + t.amount, 0);
+    
+    const elExpenses = document.getElementById('todosExpensesTotal');
+    const elIncomes = document.getElementById('todosIncomesTotal');
+    const elCount = document.getElementById('todosTotalCount');
+    
+    if (elExpenses) elExpenses.textContent = `R$ ${expensesTotal.toFixed(2)}`;
+    if (elIncomes) elIncomes.textContent = `R$ ${incomesTotal.toFixed(2)}`;
+    if (elCount) elCount.textContent = pending.length;
+}
+
+//Abre modal de adicionar To-Do
+function openTodoModal(editId = null) {
+    const modal = document.getElementById('todoModal');
+    const title = document.getElementById('todoModalTitle');
+    const form = document.getElementById('todoForm');
+    
+    if (editId) {
+        const todo = financialTodos.find(t => t.id === editId);
+        if (todo) {
+            title.textContent = 'Editar Rascunho';
+            document.getElementById('todoTitle').value = todo.title;
+            document.getElementById('todoAmount').value = todo.amount;
+            document.getElementById('todoDate').value = todo.date;
+            document.getElementById('todoCategory').value = todo.category;
+            document.getElementById('todoType').value = todo.type;
+            document.getElementById('todoNote').value = todo.note;
+            form.dataset.editId = editId;
+        }
+    } else {
+        title.textContent = 'Novo Rascunho';
+        form.reset();
+        document.getElementById('todoDate').value = new Date().toISOString().split('T')[0];
+        delete form.dataset.editId;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+//Fecha modal de To-Do
+function closeTodoModal() {
+    const modal = document.getElementById('todoModal');
+    modal.style.display = 'none';
+}
+
+//Submete formulário de To-Do
+function submitTodoForm(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const data = {
+        title: document.getElementById('todoTitle').value,
+        amount: document.getElementById('todoAmount').value,
+        date: document.getElementById('todoDate').value,
+        category: document.getElementById('todoCategory').value,
+        type: document.getElementById('todoType').value,
+        note: document.getElementById('todoNote').value
+    };
+    
+    if (form.dataset.editId) {
+        editFinancialTodo(parseInt(form.dataset.editId), data);
+    } else {
+        addFinancialTodo(data);
+    }
+    
+    closeTodoModal();
+}
+
+//Renderiza lista de To-Dos
+function renderTodosList() {
+    const container = document.getElementById('todosListContainer');
+    if (!container) return;
+    
+    const pending = getPendingTodos();
+    
+    if (pending.length === 0) {
+        container.innerHTML = `
+            <div class="empty-todos">
+                <i class="ph ph-note-pencil"></i>
+                <h3>Nenhum rascunho pendente</h3>
+                <p>Crie rascunhos de despesas ou receitas para registrar depois</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const html = pending.map(todo => {
+        const isExpense = todo.type === 'expense';
+        const icon = isExpense ? 'ph-arrow-down' : 'ph-arrow-up';
+        const colorClass = isExpense ? 'expense' : 'income';
+        
+        return `
+            <div class="todo-card ${colorClass}">
+                <div class="todo-card-header">
+                    <div class="todo-icon">
+                        <i class="ph ${icon}"></i>
+                    </div>
+                    <div class="todo-info">
+                        <h4>${todo.title}</h4>
+                        <span class="todo-category">${todo.category}</span>
+                    </div>
+                    <div class="todo-amount ${colorClass}">
+                        ${isExpense ? '-' : '+'} R$ ${todo.amount.toFixed(2)}
+                    </div>
+                </div>
+                <div class="todo-card-body">
+                    <div class="todo-meta">
+                        <span><i class="ph ph-calendar"></i> ${formatDate(todo.date)}</span>
+                        ${todo.note ? `<span><i class="ph ph-note"></i> ${todo.note}</span>` : ''}
+                    </div>
+                </div>
+                <div class="todo-card-actions">
+                    <button onclick="registerTodoAsTransaction(${todo.id})" class="btn-register">
+                        <i class="ph ph-check-circle"></i> Registrar
+                    </button>
+                    <button onclick="openTodoModal(${todo.id})" class="btn-edit">
+                        <i class="ph ph-pencil-simple"></i>
+                    </button>
+                    <button onclick="deleteFinancialTodo(${todo.id})" class="btn-delete">
+                        <i class="ph ph-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = html;
+}
+
+//Registra um To-Do como transação
+function registerTodoAsTransaction(todoId) {
+    const todo = financialTodos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    //Cria a transação
+    const transaction = {
+        id: Date.now(),
+        description: todo.title,
+        amount: todo.type === 'expense' ? -Math.abs(todo.amount) : Math.abs(todo.amount),
+        date: todo.date,
+        category: todo.category,
+        note: todo.note,
+        type: todo.type
+    };
+    
+    //Adiciona às transações
+    transactions.unshift(transaction);
+    saveTransactions();
+    
+    //Marca o To-Do como completo
+    completeTodo(todoId);
+    
+    //Atualiza displays
+    updateBalance();
+    loadTransactions();
+    renderTodosList();
+    
+    showToast('generalNotification', 'success', 'Sucesso', 'Transação registrada com sucesso!');
+}
+
+//Registra TODOS os To-Dos pendentes
+function registerAllTodos() {
+    const pending = getPendingTodos();
+    
+    if (pending.length === 0) {
+        showToast('generalNotification', 'info', 'Aviso', 'Não há rascunhos pendentes');
+        return;
+    }
+    
+    if (!confirm(`Deseja registrar ${pending.length} rascunho(s) como transações?`)) {
+        return;
+    }
+    
+    pending.forEach(todo => {
+        const transaction = {
+            id: Date.now() + Math.random(), //Garante IDs únicos
+            description: todo.title,
+            amount: todo.type === 'expense' ? -Math.abs(todo.amount) : Math.abs(todo.amount),
+            date: todo.date,
+            category: todo.category,
+            note: todo.note,
+            type: todo.type
+        };
+        
+        transactions.unshift(transaction);
+        completeTodo(todo.id);
+    });
+    
+    saveTransactions();
+    updateBalance();
+    loadTransactions();
+    renderTodosList();
+    
+    showToast('generalNotification', 'success', 'Sucesso', `${pending.length} transações registradas!`);
+}
+
+//Abre modal para selecionar rascunho na aba de transações
+function openPullTodoModal() {
+    const pending = getPendingTodos();
+    
+    if (pending.length === 0) {
+        showToast('generalNotification', 'info', 'Aviso', 'Não há rascunhos disponíveis');
+        return;
+    }
+    
+    const modal = document.getElementById('pullTodoModal');
+    const list = document.getElementById('pullTodoList');
+    
+    const html = pending.map(todo => {
+        const isExpense = todo.type === 'expense';
+        const icon = isExpense ? 'ph-arrow-down' : 'ph-arrow-up';
+        const colorClass = isExpense ? 'expense' : 'income';
+        
+        return `
+            <div class="pull-todo-item" onclick="selectTodoForTransaction(${todo.id})">
+                <div class="pull-todo-icon ${colorClass}">
+                    <i class="ph ${icon}"></i>
+                </div>
+                <div class="pull-todo-info">
+                    <h4>${todo.title}</h4>
+                    <span>${todo.category} • ${formatDate(todo.date)}</span>
+                </div>
+                <div class="pull-todo-amount ${colorClass}">
+                    ${isExpense ? '-' : '+'} R$ ${todo.amount.toFixed(2)}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    list.innerHTML = html;
+    modal.style.display = 'flex';
+}
+
+//Fecha modal de puxar rascunho
+function closePullTodoModal() {
+    const modal = document.getElementById('pullTodoModal');
+    modal.style.display = 'none';
+}
+
+//Seleciona rascunho e preenche modal de transação
+function selectTodoForTransaction(todoId) {
+    const todo = financialTodos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    closePullTodoModal();
+    
+    //Abre modal de transação em modo de adição
+    openTransactionModal();
+    
+    //Aguarda o modal abrir e então preenche os campos
+    setTimeout(() => {
+        document.getElementById('description').value = todo.title;
+        document.getElementById('amount').value = Math.abs(todo.amount);
+        document.getElementById('transactionDate').value = todo.date;
+        document.getElementById('category').value = todo.category;
+        document.getElementById('transactionNote').value = todo.note;
+        
+        //Marca qual To-Do está sendo usado (para completar após salvar)
+        const form = document.getElementById('transactionForm');
+        form.dataset.fromTodoId = todoId;
+        
+        //Define o tipo (expense/income)
+        const typeRadios = document.getElementsByName('transactionType');
+        typeRadios.forEach(radio => {
+            radio.checked = radio.value === todo.type;
+        });
+    }, 100);
+}
+
+//Hook no salvamento de transação para marcar To-Do como completo
+//Modificar a função saveTransaction existente
+const originalSaveTransaction = window.saveTransaction;
+window.saveTransaction = function(event) {
+    const form = event.target;
+    const todoId = form.dataset.fromTodoId;
+    
+    //Chama a função original
+    if (originalSaveTransaction) {
+        originalSaveTransaction(event);
+    }
+    
+    //Se veio de um To-Do, marca como completo
+    if (todoId) {
+        completeTodo(parseInt(todoId));
+        delete form.dataset.fromTodoId;
+        renderTodosList();
+    }
+};
+
+//Formata data para exibição
+function formatDate(dateString) {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+//Inicializa ao carregar
+document.addEventListener('DOMContentLoaded', () => {
+    initFinancialTodos();
+});
+
+
