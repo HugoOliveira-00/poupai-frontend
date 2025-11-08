@@ -16,6 +16,43 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
         }
+        
+        /* ✅ FORÇAR navigation bar/status bar PRETA no Android */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS */
+            html {
+                background: #000000;
+            }
+        }
+        
+        @supports not (-webkit-touch-callout: none) {
+            /* Android - força background preto para navigation bar */
+            html {
+                background: #000000;
+            }
+            
+            body::before {
+                content: '';
+                position: fixed;
+                top: -100vh;
+                left: 0;
+                right: 0;
+                height: 100vh;
+                background: #000000;
+                z-index: -1;
+            }
+            
+            body::after {
+                content: '';
+                position: fixed;
+                bottom: -100vh;
+                left: 0;
+                right: 0;
+                height: 100vh;
+                background: #000000;
+                z-index: -1;
+            }
+        }
 
         /* Reduz tamanho de placeholders/hints para melhor legibilidade */
         input::placeholder,
@@ -8932,7 +8969,8 @@
         .filter-actions {
             display: flex;
             gap: 0.75rem;
-            align-items: center;
+            align-items: center; /* Alinhamento vertical dos botões */
+            justify-content: flex-start;
         }
 
         .btn-filter,
