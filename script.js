@@ -18050,9 +18050,30 @@ function updateExpensesListTotal() {
     const total = expensesList.reduce((sum, item) => sum + item.amount, 0);
     const totalEl = document.getElementById('expensesListTotal');
     const countEl = document.getElementById('expensesListCount');
+    const latestEl = document.getElementById('expensesListLatest');
     
-    if (totalEl) totalEl.textContent = `R$ ${total.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
     if (countEl) countEl.textContent = expensesList.length;
+    
+    if (latestEl) {
+        if (expensesList.length > 0) {
+            // Encontra a data mais recente
+            const latestDate = expensesList.reduce((latest, item) => {
+                return new Date(item.date) > new Date(latest) ? item.date : latest;
+            }, expensesList[0].date);
+            
+            // Formata a data
+            const dateObj = new Date(latestDate + 'T00:00:00');
+            const formatted = dateObj.toLocaleDateString('pt-BR', { 
+                day: '2-digit', 
+                month: 'short' 
+            });
+            
+            latestEl.textContent = formatted;
+        } else {
+            latestEl.textContent = '-';
+        }
+    }
 }
 
 //Abre modal de adicionar/editar
