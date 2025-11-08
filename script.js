@@ -17919,51 +17919,133 @@ let expensesList = [];
 //   amount: 45.00
 // }
 
-//Inicializa lista
-function initExpensesList() {
-    const saved = localStorage.getItem('expensesList');
-    if (saved) {
-        expensesList = JSON.parse(saved);
+//Inicializa lista - Carrega da API
+async function initExpensesList() {
+    const currentUser = getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+        console.warn('Usuário não logado - lista de contas não carregada');
+        expensesList = [];
+        updateExpensesListBadge();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}`);
+        if (response.ok) {
+            const data = await response.json();
+            // Mapeia do formato backend para frontend
+            expensesList = data.map(item => ({
+                id: item.id,
+                name: item.nome,
+                type: item.tipo,
+                date: item.data,
+                category: item.categoria,
+                amount: item.valor
+            }));
+        } else {
+            console.error('Erro ao carregar lista:', response.status);
+            expensesList = [];
+        }
+    } catch (error) {
+        console.error('Erro ao conectar com API:', error);
+        // Fallback para localStorage se API falhar
+        const saved = localStorage.getItem('expensesList');
+        if (saved) {
+            expensesList = JSON.parse(saved);
+        } else {
+            expensesList = [];
+        }
     }
     updateExpensesListBadge();
 }
 
-//Salva no localStorage
+//Salva no localStorage (backup)
 function saveExpensesList() {
     localStorage.setItem('expensesList', JSON.stringify(expensesList));
     updateExpensesListBadge();
 }
 
-//Adiciona nova despesa na lista
-function addToExpensesList(data) {
-    const item = {
-        id: Date.now(),
-        name: data.name,
-        type: data.type,
-        date: data.date,
-        category: data.category,
-        amount: parseFloat(data.amount)
-    };
-    
-    expensesList.push(item);
-    saveExpensesList();
-    renderExpensesList();
-    showToast('generalNotification', 'success', 'Adicionado!', 'Item adicionado à lista');
+//Adiciona nova despesa na lista - Salva na API
+async function addToExpensesList(data) {
+    const currentUser = getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+        showPopup('error', 'Erro', 'Você precisa estar logado');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/lista-contas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuarioId: currentUser.id,
+                nome: data.name,
+                tipo: data.type,
+                data: data.date,
+                categoria: data.category,
+                valor: parseFloat(data.amount)
+            })
+        });
+
+        if (response.ok) {
+            const item = await response.json();
+            // Adiciona ao array local
+            expensesList.push({
+                id: item.id,
+                name: item.nome,
+                type: item.tipo,
+                date: item.data,
+                category: item.categoria,
+                amount: item.valor
+            });
+            
+            saveExpensesList(); // Backup
+            renderExpensesList();
+            showPopup('success', 'Adicionado!', 'Item adicionado à lista');
+        } else {
+            showPopup('error', 'Erro', 'Não foi possível adicionar o item');
+        }
+    } catch (error) {
+        console.error('Erro ao adicionar:', error);
+        showPopup('error', 'Erro', 'Falha na conexão com o servidor');
+    }
 }
 
-//Edita item da lista
-function editExpensesListItem(id, data) {
-    const item = expensesList.find(e => e.id === id);
-    if (item) {
-        item.name = data.name;
-        item.type = data.type;
-        item.date = data.date;
-        item.category = data.category;
-        item.amount = parseFloat(data.amount);
-        
-        saveExpensesList();
-        renderExpensesList();
-        showToast('generalNotification', 'success', 'Atualizado!', 'Item atualizado');
+//Edita item da lista - Atualiza na API
+async function editExpensesListItem(id, data) {
+    try {
+        const response = await fetch(`${API_URL}/lista-contas/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nome: data.name,
+                tipo: data.type,
+                data: data.date,
+                categoria: data.category,
+                valor: parseFloat(data.amount)
+            })
+        });
+
+        if (response.ok) {
+            // Atualiza no array local
+            const item = expensesList.find(e => e.id === id);
+            if (item) {
+                item.name = data.name;
+                item.type = data.type;
+                item.date = data.date;
+                item.category = data.category;
+                item.amount = parseFloat(data.amount);
+            }
+            
+            saveExpensesList(); // Backup
+            renderExpensesList();
+            showPopup('success', 'Atualizado!', 'Item atualizado');
+        } else {
+            showPopup('error', 'Erro', 'Não foi possível atualizar o item');
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar:', error);
+        showPopup('error', 'Erro', 'Falha na conexão com o servidor');
     }
 }
 
@@ -17987,10 +18069,28 @@ function deleteExpensesListItem(id) {
 }
 
 function confirmDeleteExpenseItem(id) {
-    expensesList = expensesList.filter(e => e.id !== id);
-    saveExpensesList();
-    renderExpensesList();
-    showPopup('success', 'Removido!', 'Item removido da lista');
+    deleteExpenseItem(id);
+}
+
+async function deleteExpenseItem(id) {
+    try {
+        const response = await fetch(`${API_URL}/lista-contas/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok || response.status === 204) {
+            // Remove do array local
+            expensesList = expensesList.filter(e => e.id !== id);
+            saveExpensesList(); // Backup
+            renderExpensesList();
+            showPopup('success', 'Removido!', 'Item removido da lista');
+        } else {
+            showPopup('error', 'Erro', 'Não foi possível remover o item');
+        }
+    } catch (error) {
+        console.error('Erro ao deletar:', error);
+        showPopup('error', 'Erro', 'Falha na conexão com o servidor');
+    }
 }
 
 //Limpa lista completa
@@ -18015,10 +18115,33 @@ function clearExpensesList() {
 }
 
 function confirmClearExpensesList() {
-    expensesList = [];
-    saveExpensesList();
-    renderExpensesList();
-    showPopup('success', 'Limpo!', 'Lista apagada completamente');
+    clearAllExpenses();
+}
+
+async function clearAllExpenses() {
+    const currentUser = getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+        showPopup('error', 'Erro', 'Você precisa estar logado');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}/limpar`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            expensesList = [];
+            saveExpensesList(); // Backup
+            renderExpensesList();
+            showPopup('success', 'Limpo!', 'Lista apagada completamente');
+        } else {
+            showPopup('error', 'Erro', 'Não foi possível limpar a lista');
+        }
+    } catch (error) {
+        console.error('Erro ao limpar:', error);
+        showPopup('error', 'Erro', 'Falha na conexão com o servidor');
+    }
 }
 
 //Atualiza badge contador
@@ -18202,32 +18325,47 @@ function registerExpensesListAsTransactions() {
 }
 
 function confirmRegisterExpensesList() {
-    expensesList.forEach(item => {
-        const transaction = {
-            id: Date.now() + Math.random(),
-            description: item.name,
-            amount: -Math.abs(item.amount), //Sempre negativo (despesa)
-            date: item.date,
-            category: item.category,
-            type: item.type.toLowerCase().includes('fixa') ? 'fixa' : item.type.toLowerCase().includes('parcelada') ? 'parcelada' : 'unica',
-            note: `Registrado da lista rápida`
-        };
-        
-        transactions.unshift(transaction);
-    });
-    
-    saveTransactions();
-    
-    //Limpa a lista
-    expensesList = [];
-    saveExpensesList();
-    renderExpensesList();
-    
-    //Atualiza transações
-    updateBalance();
-    loadTransactions();
-    
-    showPopup('success', 'Sucesso!', 'Despesas registradas e lista limpa');
+    registerAllExpenses();
+}
+
+async function registerAllExpenses() {
+    const currentUser = getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+        showPopup('error', 'Erro', 'Você precisa estar logado');
+        return;
+    }
+
+    if (expensesList.length === 0) {
+        showPopup('info', 'Aviso', 'A lista está vazia');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}/registrar`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            
+            // Limpa a lista local
+            expensesList = [];
+            saveExpensesList(); // Backup
+            renderExpensesList();
+            
+            // Atualiza transações
+            await loadTransactions();
+            updateBalance();
+            
+            showPopup('success', 'Sucesso!', 
+                `${result.totalRegistrado} despesa(s) registrada(s) e lista limpa`);
+        } else {
+            showPopup('error', 'Erro', 'Não foi possível registrar as despesas');
+        }
+    } catch (error) {
+        console.error('Erro ao registrar:', error);
+        showPopup('error', 'Erro', 'Falha na conexão com o servidor');
+    }
 }
 
 //Formata data
