@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108006" rel="stylesheet">
+  <link href="style.css?v=20251108007" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -976,6 +976,10 @@
           <i class="ph ph-credit-card"></i>
           <span>Parceladas</span>
          </button>
+         <button class="type-filter-btn btn-clear-filters" onclick="clearFilters()" title="Limpar filtros">
+          <i class="ph ph-x"></i>
+          <span>Limpar</span>
+         </button>
         </div>
        </div>
        
@@ -996,7 +1000,7 @@
           <i class="ph ph-info"></i> Ex: 01/01/2025 até 31/01/2025
          </small>
         </div>
-        <div class="filter-actions">
+        <div class="filter-actions hide-on-mobile">
          <button class="btn-filter" onclick="filterTransactions()">
           <i class="ph ph-funnel"></i>
           Filtrar
@@ -3964,20 +3968,9 @@
        MOBILE BOTTOM NAVIGATION (AppBar)
        =================================== -->
   <nav class="mobile-bottom-nav hidden">
-    <button class="nav-item active" data-section="overview" onclick="showSectionMobile(event, 'overview')">
-      <i class="ph ph-house"></i>
-      <span>Início</span>
-    </button>
-    
     <button class="nav-item" data-section="transactions" onclick="showSectionMobile(event, 'transactions')">
       <i class="ph ph-arrows-left-right"></i>
       <span>Transações</span>
-    </button>
-    
-    <button class="nav-item" data-section="todos" onclick="showSectionMobile(event, 'todos')">
-      <i class="ph ph-note-pencil"></i>
-      <span>A Registrar</span>
-      <span class="nav-badge" id="todoBadge" style="display: none;">0</span>
     </button>
     
     <button class="nav-item" data-section="reports" onclick="showSectionMobile(event, 'reports')">
@@ -3985,9 +3978,15 @@
       <span>Relatórios</span>
     </button>
     
-    <button class="nav-item" data-section="market" onclick="showSectionMobile(event, 'market')">
-      <i class="ph ph-trend-up"></i>
-      <span>Mercado</span>
+    <button class="nav-item nav-item-center active" data-section="overview" onclick="showSectionMobile(event, 'overview')">
+      <i class="ph ph-house"></i>
+      <span>Início</span>
+    </button>
+    
+    <button class="nav-item" data-section="todos" onclick="showSectionMobile(event, 'todos')">
+      <i class="ph ph-note-pencil"></i>
+      <span>A Registrar</span>
+      <span class="nav-badge" id="todoBadge" style="display: none;">0</span>
     </button>
     
     <button class="nav-item" data-section="help" onclick="showSectionMobile(event, 'help')">

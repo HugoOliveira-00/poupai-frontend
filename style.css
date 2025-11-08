@@ -16666,22 +16666,39 @@ body.modal-open {
     .expense-type-filters {
         gap: 0.375rem;
         padding: 0;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
     }
     
     .type-filter-btn {
-        padding: 0.625rem;
+        padding: 0.75rem 0.5rem;
         font-size: 0.8125rem;
         min-width: auto;
         border-radius: 10px;
-        flex: 0 0 auto;
+        flex-direction: column;
+        gap: 0.25rem;
     }
     
     .type-filter-btn i {
-        font-size: 1.125rem;
+        font-size: 1.25rem;
     }
     
     .type-filter-btn span {
         display: none; /* Esconde texto no mobile, só ícone */
+    }
+    
+    /* Botão de limpar filtros no grid */
+    .btn-clear-filters {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #dc2626;
+    }
+    
+    .btn-clear-filters:hover,
+    .btn-clear-filters.active {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-color: #dc2626;
+        color: white;
     }
     
     /* Esconde filtro de período no mobile */
@@ -21833,6 +21850,29 @@ body:has(.welcome-screen[style*='display: block']) {
     position: absolute;
     top: 4px;
     right: 8px;
+}
+
+/* Botão central destacado */
+.mobile-bottom-nav .nav-item-center {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 16px;
+    margin: 0 0.25rem;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.mobile-bottom-nav .nav-item-center i {
+    font-size: 1.75rem;
+}
+
+.mobile-bottom-nav .nav-item-center span {
+    font-weight: 700;
+}
+
+.mobile-bottom-nav .nav-item-center.active {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 @keyframes badgePulse {
