@@ -16316,7 +16316,6 @@
 
         function closeToast(toastId) {
             closePopup();
-            }
         }
 
         //========================================
