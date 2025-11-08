@@ -14465,7 +14465,7 @@
             event.preventDefault();
             
             const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
+            const newPassword = document.getElementById('profileNewPassword').value;
             const confirmPassword = document.getElementById('confirmPasswordProfile').value;
 
             //Validações
@@ -14706,7 +14706,7 @@
 
         //Monitora força da senha
         document.addEventListener('DOMContentLoaded', () => {
-            const newPasswordInput = document.getElementById('newPassword');
+            const newPasswordInput = document.getElementById('profileNewPassword');
             if (newPasswordInput) {
                 newPasswordInput.addEventListener('input', (e) => {
                     const password = e.target.value;
