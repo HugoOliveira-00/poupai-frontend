@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108005" rel="stylesheet">
+  <link href="style.css?v=20251108006" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -949,27 +949,34 @@
        </div>
        
        <!-- Transaction type filters: all, income, single, fixed, installment expenses -->
-       <div class="expense-type-filters">
-        <button class="type-filter-btn active" data-filter="all" onclick="filterByExpenseType('all')">
-         <i class="ph ph-swap"></i>
-         <span>Todas</span>
-        </button>
-        <button class="type-filter-btn" data-filter="receita" onclick="filterByExpenseType('receita')">
-         <i class="ph ph-arrow-circle-up"></i>
-         <span>Receitas</span>
-        </button>
-        <button class="type-filter-btn" data-filter="unica" onclick="filterByExpenseType('unica')">
-         <i class="ph ph-wallet"></i>
-         <span>Únicas</span>
-        </button>
-        <button class="type-filter-btn" data-filter="fixa" onclick="filterByExpenseType('fixa')">
-         <i class="ph ph-repeat"></i>
-         <span>Fixas</span>
-        </button>
-        <button class="type-filter-btn" data-filter="parcelada" onclick="filterByExpenseType('parcelada')">
-         <i class="ph ph-credit-card"></i>
-         <span>Parceladas</span>
-        </button>
+       <!-- Filtros de Tipo com Label Mobile -->
+       <div class="filter-type-section">
+        <div class="filter-label-mobile">
+         <i class="ph ph-funnel-simple"></i>
+         <span>Filtros</span>
+        </div>
+        <div class="expense-type-filters">
+         <button class="type-filter-btn active" data-filter="all" onclick="filterByExpenseType('all')">
+          <i class="ph ph-swap"></i>
+          <span>Todas</span>
+         </button>
+         <button class="type-filter-btn" data-filter="receita" onclick="filterByExpenseType('receita')">
+          <i class="ph ph-arrow-circle-up"></i>
+          <span>Receitas</span>
+         </button>
+         <button class="type-filter-btn" data-filter="unica" onclick="filterByExpenseType('unica')">
+          <i class="ph ph-wallet"></i>
+          <span>Únicas</span>
+         </button>
+         <button class="type-filter-btn" data-filter="fixa" onclick="filterByExpenseType('fixa')">
+          <i class="ph ph-repeat"></i>
+          <span>Fixas</span>
+         </button>
+         <button class="type-filter-btn" data-filter="parcelada" onclick="filterByExpenseType('parcelada')">
+          <i class="ph ph-credit-card"></i>
+          <span>Parceladas</span>
+         </button>
+        </div>
        </div>
        
        <div class="filter-row">

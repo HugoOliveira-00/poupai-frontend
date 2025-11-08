@@ -16566,12 +16566,21 @@ body.modal-open {
 /* FILTROS POR TIPO DE DESPESA                 */
 /* ============================================ */
 
+/* Label de Filtros (Mobile) */
+.filter-label-mobile {
+    display: none;
+}
+
+.filter-type-section {
+    margin-bottom: 1rem;
+}
+
 .expense-type-filters {
     display: flex;
     gap: 0.75rem;
-    padding: 0 0 1.5rem 0;
+    padding: 0;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Alinhado � esquerda */
+    justify-content: flex-start; /* Alinhado à esquerda */
 }
 
 .type-filter-btn {
@@ -16629,19 +16638,46 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-    .expense-type-filters {
+    /* Mostra label de filtros no mobile */
+    .filter-label-mobile {
+        display: flex;
+        align-items: center;
         gap: 0.5rem;
-        padding: 0 0 1rem 0;
+        margin-bottom: 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .filter-label-mobile i {
+        font-size: 1rem;
+        color: #3b82f6;
+    }
+    
+    .filter-type-section {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+    
+    .expense-type-filters {
+        gap: 0.375rem;
+        padding: 0;
     }
     
     .type-filter-btn {
-        padding: 0.5rem 0.75rem;
+        padding: 0.625rem;
         font-size: 0.8125rem;
         min-width: auto;
+        border-radius: 10px;
+        flex: 0 0 auto;
     }
     
     .type-filter-btn i {
-        font-size: 1rem;
+        font-size: 1.125rem;
     }
     
     .type-filter-btn span {
