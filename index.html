@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108015" rel="stylesheet">
+  <link href="style.css?v=20251108016" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -2204,13 +2204,10 @@
   <!-- ============================================ -->
   <div class="modal" id="todoModal" style="display: none;">
    <div class="modal-content modal-todo">
-    <div class="modal-header modal-header-simple">
-     <div>
-      <h3 id="todoModalTitle">Adicionar à Lista</h3>
-      <p class="modal-subtitle">Despesas únicas para registrar depois</p>
-     </div>
-     <button class="close-modal" onclick="closeExpensesListModal()">×</button>
-    </div>
+    <button class="close-modal" onclick="closeExpensesListModal()">×</button>
+    
+    <h3 class="modal-title-simple">Adicionar à Lista</h3>
+    <p class="modal-subtitle-simple">Despesas únicas para registrar depois</p>
     
     <form id="todoForm" onsubmit="submitExpensesListForm(event)">
      <div class="form-group">
@@ -4039,7 +4036,7 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108015"></script>
+  <script src="script.js?v=20251108016"></script>
   
   <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>

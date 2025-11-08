@@ -21928,56 +21928,54 @@ body:has(.welcome-screen[style*='display: block']) {
 
 .modal-todo {
     max-width: 900px; /* Dobro do tamanho original para web */
+    padding: 2rem;
 }
 
 @media (max-width: 768px) {
     .modal-todo {
         max-width: 95%;
+        padding: 1.5rem;
     }
 }
 
-/* Header simplificado - apenas título, subtítulo e botão fechar */
-.modal-header-simple {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border-bottom: 2px solid #93c5fd;
-    padding: 1.5rem;
-    border-radius: 16px 16px 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.modal-header-simple h3 {
-    color: #1e40af;
-    font-size: 1.375rem;
-    margin: 0;
-    font-weight: 700;
-}
-
-.modal-header-simple .modal-subtitle {
-    color: #3b82f6;
-    font-size: 0.875rem;
-    margin: 0.25rem 0 0;
-}
-
-.modal-header-simple .close-modal {
+/* Botão de fechar padrão (canto superior direito) */
+.modal-todo .close-modal {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
     width: 36px;
     height: 36px;
-    border-radius: 8px;
-    background: rgba(59, 130, 246, 0.1);
+    border-radius: 50%;
+    background: #f1f5f9;
     border: none;
-    color: #2563eb;
+    color: #64748b;
     font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    z-index: 10;
 }
 
-.modal-header-simple .close-modal:hover {
-    background: rgba(59, 130, 246, 0.2);
+.modal-todo .close-modal:hover {
+    background: #e2e8f0;
+    color: #1e293b;
     transform: rotate(90deg);
+}
+
+/* Título e subtítulo simples (sem header azul) */
+.modal-title-simple {
+    color: #1e293b;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.modal-subtitle-simple {
+    color: #64748b;
+    font-size: 0.9375rem;
+    margin: 0 0 2rem 0;
 }
 
 .modal-todo .form-group label {
@@ -22080,6 +22078,12 @@ body:has(.welcome-screen[style*='display: block']) {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.modal-todo .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .modal-todo .btn-secondary {

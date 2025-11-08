@@ -18005,6 +18005,9 @@ async function addToExpensesList(data) {
             saveExpensesList(); // Backup
             renderExpensesList();
             
+            // Atualiza badge da aba
+            updateExpensesListBadge();
+            
             showPopup('success', 'Adicionado!', 'Item adicionado à lista');
         } else {
             showPopup('error', 'Erro', 'Não foi possível adicionar o item');
@@ -18246,6 +18249,14 @@ function closeExpensesListModal() {
 function submitExpensesListForm(event) {
     event.preventDefault();
     
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    
+    // Proteção contra duplo clique
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Processando...';
+    
     const form = event.target;
     const data = {
         name: document.getElementById('todoTitle').value,
@@ -18256,9 +18267,15 @@ function submitExpensesListForm(event) {
     };
     
     if (form.dataset.editId) {
-        editExpensesListItem(parseInt(form.dataset.editId), data);
+        editExpensesListItem(parseInt(form.dataset.editId), data).finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
     } else {
-        addToExpensesList(data);
+        addToExpensesList(data).finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
     }
     
     closeExpensesListModal();
@@ -18338,7 +18355,23 @@ function registerExpensesListAsTransactions() {
 }
 
 function confirmRegisterExpensesList() {
-    registerAllExpenses();
+    // Busca o botão que chamou a função
+    const btn = document.querySelector('.btn-pull-todo');
+    if (!btn) {
+        registerAllExpenses();
+        return;
+    }
+    
+    // Proteção contra duplo clique
+    if (btn.disabled) return;
+    btn.disabled = true;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Registrando...';
+    
+    registerAllExpenses().finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+    });
 }
 
 async function registerAllExpenses() {
@@ -18366,9 +18399,15 @@ async function registerAllExpenses() {
             saveExpensesList(); // Backup
             renderExpensesList();
             
+            // Atualiza badge da aba
+            updateExpensesListBadge();
+            
             // Atualiza transações e dashboard
             await loadTransactions();
             updateDashboardStats();
+            
+            // Atualiza gráficos
+            if (typeof renderChart === 'function') renderChart();
             
             showPopup('success', 'Sucesso!', 
                 `${result.totalRegistrado} despesa(s) registrada(s) e lista limpa`);
