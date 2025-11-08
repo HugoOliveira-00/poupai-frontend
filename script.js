@@ -18099,37 +18099,45 @@ function renderExpensesList() {
     if (expensesList.length === 0) {
         container.innerHTML = `
             <div class="empty-todos">
-                <i class="ph ph-list-checks"></i>
-                <h3>Lista vazia</h3>
-                <p>Adicione despesas para anotar rapidamente</p>
+                <i class="ph ph-clipboard-text"></i>
+                <h3>Nenhuma conta anotada</h3>
+                <p>Clique em "Adicionar" para começar a anotar suas contas do dia</p>
             </div>
         `;
         return;
     }
     
-    const html = expensesList.map(item => `
-        <div class="expense-list-item">
-            <div class="expense-item-header">
+    const html = expensesList.map(item => {
+        // Ícone baseado no tipo
+        const typeIcon = item.type.toLowerCase().includes('fixa') ? 'ph-repeat' : 
+                        item.type.toLowerCase().includes('parcelada') ? 'ph-credit-card' : 
+                        'ph-receipt';
+        
+        return `
+            <div class="expense-list-item">
                 <div class="expense-item-info">
                     <h4>${item.name}</h4>
                     <div class="expense-item-meta">
-                        <span class="expense-type-badge">${item.type}</span>
-                        <span><i class="ph ph-calendar"></i> ${formatDate(item.date)}</span>
+                        <span class="expense-type-badge">
+                            <i class="ph ${typeIcon}"></i>
+                            ${item.type}
+                        </span>
+                        <span><i class="ph ph-calendar-blank"></i> ${formatDate(item.date)}</span>
                         <span><i class="ph ph-tag"></i> ${item.category}</span>
                     </div>
                 </div>
-                <div class="expense-item-amount">R$ ${item.amount.toFixed(2)}</div>
+                <div class="expense-item-amount">R$ ${item.amount.toFixed(2).replace('.', ',')}</div>
+                <div class="expense-item-actions">
+                    <button onclick="openExpensesListModal(${item.id})" class="btn-edit-small" title="Editar">
+                        <i class="ph ph-pencil-simple"></i>
+                    </button>
+                    <button onclick="deleteExpensesListItem(${item.id})" class="btn-delete-small" title="Remover">
+                        <i class="ph ph-trash"></i>
+                    </button>
+                </div>
             </div>
-            <div class="expense-item-actions">
-                <button onclick="openExpensesListModal(${item.id})" class="btn-edit-small">
-                    <i class="ph ph-pencil-simple"></i>
-                </button>
-                <button onclick="deleteExpensesListItem(${item.id})" class="btn-delete-small">
-                    <i class="ph ph-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
     
     container.innerHTML = html;
     updateExpensesListTotal();
