@@ -21927,7 +21927,7 @@ body:has(.welcome-screen[style*='display: block']) {
    =================================== */
 
 .modal-todo {
-    max-width: 800px;
+    max-width: 500px; /* Reduzido para melhor experiência mobile */
 }
 
 @media (max-width: 768px) {
@@ -22179,12 +22179,12 @@ body:has(.welcome-screen[style*='display: block']) {
 .expense-list-item {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1rem; /* Reduzido de 1.5rem */
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem; /* Reduzido de 1.5rem */
     transition: all 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -22199,12 +22199,12 @@ body:has(.welcome-screen[style*='display: block']) {
 .expense-item-info {
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
+    gap: 0.4rem; /* Reduzido de 0.625rem */
     min-width: 0; /* Permite truncate */
 }
 
 .expense-item-info h4 {
-    font-size: 0.9375rem;
+    font-size: 0.875rem; /* Reduzido de 0.9375rem */
     font-weight: 600;
     color: #0f172a;
     margin: 0;

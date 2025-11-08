@@ -18205,6 +18205,10 @@ function openExpensesListModal(editId = null) {
     const modal = document.getElementById('todoModal');
     const title = document.getElementById('todoModalTitle');
     const form = document.getElementById('todoForm');
+    const bottomNav = document.querySelector('.bottom-nav');
+    
+    // Esconde bottom nav ao abrir modal
+    if (bottomNav) bottomNav.style.display = 'none';
     
     if (editId) {
         const item = expensesList.find(e => e.id === editId);
@@ -18230,7 +18234,12 @@ function openExpensesListModal(editId = null) {
 //Fecha modal
 function closeExpensesListModal() {
     const modal = document.getElementById('todoModal');
+    const bottomNav = document.querySelector('.bottom-nav');
+    
     modal.style.display = 'none';
+    
+    // Mostra bottom nav novamente ao fechar modal
+    if (bottomNav) bottomNav.style.display = 'flex';
 }
 
 //Submete formulário

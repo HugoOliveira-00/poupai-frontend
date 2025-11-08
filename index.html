@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108013" rel="stylesheet">
+  <link href="style.css?v=20251108014" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -2210,7 +2210,7 @@
      </div>
      <div>
       <h3 id="todoModalTitle">Adicionar à Lista</h3>
-      <p class="modal-subtitle">Anote rapidamente para registrar depois</p>
+      <p class="modal-subtitle">Despesas únicas para registrar depois</p>
      </div>
      <button class="close-modal" onclick="closeExpensesListModal()">×</button>
     </div>
@@ -2237,17 +2237,8 @@
      </div>
      
      <div class="form-row">
-      <div class="form-group">
-       <label>
-        <i class="ph ph-note"></i>
-        Tipo
-       </label>
-       <select id="todoType" required>
-        <option value="Despesa Única">Despesa Única</option>
-        <option value="Despesa Fixa">Despesa Fixa</option>
-        <option value="Despesa Parcelada">Despesa Parcelada</option>
-       </select>
-      </div>
+      <!-- Tipo fixo como "Única" - removido do formulário -->
+      <input type="hidden" id="todoType" value="Despesa Única">
       
       <div class="form-group">
        <label>
@@ -4051,7 +4042,7 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108013"></script>
+  <script src="script.js?v=20251108014"></script>
   
   <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>
