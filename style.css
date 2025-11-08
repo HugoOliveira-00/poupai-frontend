@@ -1902,6 +1902,11 @@
                 max-width: 700px; /* Tamanho intermediário para tablet */
             }
             
+            /* Mostrar hint em tablet */
+            .filter-section .form-hint {
+                display: block !important;
+            }
+            
             /* Centraliza conteúdo verticalmente em tablet landscape */
             body {
                 display: flex;
@@ -8899,7 +8904,7 @@
             display: flex;
             gap: 1.5rem;
             margin-bottom: 2rem;
-            align-items: flex-end;
+            align-items: flex-start; /* Alinha pelo topo para que os botões fiquem na altura dos inputs */
             flex-wrap: wrap;
             background: white;
             padding: 1.5rem;
@@ -8928,6 +8933,11 @@
         .filter-row label i {
             font-size: 1.1rem;
             color: #3b82f6;
+        }
+        
+        /* Esconder hint em desktop/notebook */
+        .filter-section .form-hint {
+            display: none !important;
         }
 
         .date-inputs {
@@ -8969,8 +8979,9 @@
         .filter-actions {
             display: flex;
             gap: 0.75rem;
-            align-items: center; /* Alinhamento vertical dos botões */
+            align-items: flex-start; /* Alinha pelo topo */
             justify-content: flex-start;
+            margin-top: 28px; /* Altura do label (0.9rem font + 0.75rem margin-bottom + ajuste) */
         }
 
         .btn-filter,
@@ -9443,6 +9454,11 @@
 
             .filter-actions {
                 width: 100%;
+            }
+            
+            /* Mostrar hint apenas em mobile/tablet */
+            .filter-section .form-hint {
+                display: block !important;
             }
 
             .btn-filter,
