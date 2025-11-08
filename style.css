@@ -10466,7 +10466,7 @@
             /* Conteúdo centralizado verticalmente */
             .dashboard-main {
                 padding-top: 3rem;
-                padding-bottom: 3rem;
+                padding-bottom: 5rem; /* Mesmo espaço do landing-footer (4rem + margem) */
                 max-width: 95%;
                 margin: 0 auto;
             }
@@ -10486,13 +10486,22 @@
             }
             
             /* Bottom nav invisível em tablet landscape */
-            .bottom-nav {
+            .bottom-nav,
+            .mobile-bottom-nav {
                 display: none !important;
             }
             
-            /* Main content sem margem do bottom nav */
+            /* Main content com padding suficiente para não cortar */
             .main-content {
-                padding-bottom: 1rem;
+                padding-bottom: 5rem; /* Mesmo espaço do landing-footer */
+                margin-bottom: 0;
+            }
+            
+            /* Sections do dashboard com padding extra */
+            .dashboard-section,
+            .transactions-section,
+            .news-section {
+                padding-bottom: 3rem;
             }
             
             /* Modais centralizados */
