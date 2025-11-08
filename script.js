@@ -18183,5 +18183,21 @@ function formatDate(dateString) {
 //Inicializa ao carregar
 document.addEventListener('DOMContentLoaded', () => {
     initExpensesList();
+    
+    //🔍 DEBUG: Verifica se sectionTodos existe no DOM
+    console.log('🔍 === VERIFICAÇÃO DO ELEMENTO sectionTodos ===');
+    const sectionTodos = document.getElementById('sectionTodos');
+    console.log('🔍 Elemento encontrado:', sectionTodos);
+    if (sectionTodos) {
+        console.log('✅ sectionTodos EXISTE no DOM');
+        console.log('📊 Classes atuais:', sectionTodos.className);
+        console.log('📊 Display computado:', window.getComputedStyle(sectionTodos).display);
+        console.log('📊 Visibility:', window.getComputedStyle(sectionTodos).visibility);
+        console.log('📊 Opacity:', window.getComputedStyle(sectionTodos).opacity);
+    } else {
+        console.error('❌ sectionTodos NÃO EXISTE no DOM!');
+    }
+    console.log('🔍 Total de sections no DOM:', document.querySelectorAll('[id^="section"]').length);
+    console.log('🔍 === FIM DA VERIFICAÇÃO ===');
 });
 
