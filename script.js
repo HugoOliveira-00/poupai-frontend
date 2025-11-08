@@ -17921,8 +17921,8 @@ let expensesList = [];
 
 //Inicializa lista - Carrega da API
 async function initExpensesList() {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.id) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
         console.warn('Usuário não logado - lista de contas não carregada');
         expensesList = [];
         updateExpensesListBadge();
@@ -17930,7 +17930,7 @@ async function initExpensesList() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}`);
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${user.id}`);
         if (response.ok) {
             const data = await response.json();
             // Mapeia do formato backend para frontend
@@ -17967,8 +17967,8 @@ function saveExpensesList() {
 
 //Adiciona nova despesa na lista - Salva na API
 async function addToExpensesList(data) {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.id) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
         showPopup('error', 'Erro', 'Você precisa estar logado');
         return;
     }
@@ -17981,7 +17981,7 @@ async function addToExpensesList(data) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                usuarioId: currentUser.id,
+                usuarioId: user.id,
                 nome: data.name,
                 tipo: data.type,
                 data: data.date,
@@ -18127,14 +18127,14 @@ function confirmClearExpensesList() {
 }
 
 async function clearAllExpenses() {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.id) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
         showPopup('error', 'Erro', 'Você precisa estar logado');
         return;
     }
 
     try {
-        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}/limpar`, {
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${user.id}/limpar`, {
             method: 'DELETE'
         });
 
@@ -18337,8 +18337,8 @@ function confirmRegisterExpensesList() {
 }
 
 async function registerAllExpenses() {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.id) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
         showPopup('error', 'Erro', 'Você precisa estar logado');
         return;
     }
@@ -18349,7 +18349,7 @@ async function registerAllExpenses() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/lista-contas/usuario/${currentUser.id}/registrar`, {
+        const response = await fetch(`${API_URL}/lista-contas/usuario/${user.id}/registrar`, {
             method: 'POST'
         });
 
