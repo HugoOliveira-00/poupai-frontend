@@ -4172,6 +4172,26 @@
             flex-direction: column;
             gap: 0.5rem;
         }
+        
+        /* Espaçamento extra quando tem alerta informativo */
+        .section-header:has(.section-info-alert) {
+            margin-bottom: 3rem;
+        }
+        
+        .section-info-alert {
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .section-header h2 {
             font-size: 2rem;

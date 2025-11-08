@@ -8419,29 +8419,31 @@
         function renderPatternsAnalysis(currentStats, currentTransactions, previousStats) {
             const patterns = [];
             
-            //Padrão 1: Frequência de transações
+            //Padrão 1: Atividade Financeira (simplificado)
             const transactionFrequency = currentTransactions.length;
             const days = currentReportPeriod === '7days' ? 7 : currentReportPeriod === '30days' ? 30 : 30;
             const avgPerDay = (transactionFrequency / days).toFixed(1);
             
-            //✅ Mensagem mais clara baseada na frequência
+            //✅ Mensagem simples e clara
             let frequencyDescription;
             if (transactionFrequency === 0) {
-                frequencyDescription = `Nenhuma transação registrada no período de ${days} dias.`;
+                frequencyDescription = `Nenhum registro financeiro nos últimos ${days} dias.`;
             } else if (transactionFrequency === 1) {
-                frequencyDescription = `Você registrou 1 transação no período de ${days} dias.`;
-            } else if (avgPerDay < 0.5) {
-                frequencyDescription = `Você registrou ${transactionFrequency} transações no período de ${days} dias. Poucas transações registradas.`;
+                frequencyDescription = `Você tem 1 registro financeiro.`;
+            } else if (transactionFrequency <= 5) {
+                frequencyDescription = `Você tem ${transactionFrequency} registros financeiros. Que tal adicionar mais para ter uma visão completa?`;
+            } else if (transactionFrequency <= 10) {
+                frequencyDescription = `Você tem ${transactionFrequency} registros financeiros. Bom acompanhamento!`;
             } else {
-                frequencyDescription = `Você registrou ${transactionFrequency} transações no período, uma média de ${avgPerDay} por dia.`;
+                frequencyDescription = `Você tem ${transactionFrequency} registros financeiros. Excelente controle!`;
             }
             
             patterns.push({
                 type: 'success',
                 icon: 'ph ph-chart-line-up',
-                title: 'Frequência de Transações',
+                title: 'Atividade Financeira',
                 description: frequencyDescription,
-                value: `${transactionFrequency} transaçã${transactionFrequency !== 1 ? 'ões' : 'o'}`
+                value: `${transactionFrequency} registro${transactionFrequency !== 1 ? 's' : ''}`
             });
             
             //Padrão 2: Horário de maior gasto
