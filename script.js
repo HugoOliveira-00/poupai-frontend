@@ -1592,7 +1592,13 @@
             event.preventDefault();
             
             document.querySelectorAll('[id^="section"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`section${section.charAt(0).toUpperCase() + section.slice(1)}`).classList.remove('hidden');
+            
+            const targetSection = document.getElementById(`section${section.charAt(0).toUpperCase() + section.slice(1)}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            } else {
+                console.error(`Section not found: section${section.charAt(0).toUpperCase() + section.slice(1)}`);
+            }
             
             document.querySelectorAll('.navigation a').forEach(a => a.classList.remove('active'));
             event.target.closest('a').classList.add('active');
