@@ -8090,47 +8090,6 @@
             }
         }
 
-        function renderEvolutionChart() {
-            //Total de Gastos
-            const gastosChange = previousStats.despesas > 0 
-                ? ((currentStats.despesas - previousStats.despesas) / previousStats.despesas) * 100 
-                : 0;
-            
-            document.getElementById('insightTotalGastos').textContent = formatCurrency(currentStats.despesas);
-            document.getElementById('insightGastosChange').innerHTML = `
-                <i class="ph ${gastosChange >= 0 ? 'ph-arrow-up' : 'ph-arrow-down'}"></i>
-                ${gastosChange >= 0 ? '+' : ''}${gastosChange.toFixed(1)}% vs período anterior
-            `;
-            document.getElementById('insightGastosChange').style.color = gastosChange >= 0 ? '#dc2626' : '#059669';
-            
-            //Total de Receitas
-            const receitasChange = previousStats.receitas > 0 
-                ? ((currentStats.receitas - previousStats.receitas) / previousStats.receitas) * 100 
-                : 0;
-            
-            document.getElementById('insightTotalReceitas').textContent = formatCurrency(currentStats.receitas);
-            document.getElementById('insightReceitasChange').innerHTML = `
-                <i class="ph ${receitasChange >= 0 ? 'ph-arrow-up' : 'ph-arrow-down'}"></i>
-                ${receitasChange >= 0 ? '+' : ''}${receitasChange.toFixed(1)}% vs período anterior
-            `;
-            document.getElementById('insightReceitasChange').style.color = receitasChange >= 0 ? '#059669' : '#dc2626';
-            
-            //Saldo do Período
-            document.getElementById('insightSaldo').textContent = formatCurrency(currentStats.saldo);
-            document.getElementById('insightSaldoStatus').textContent = 
-                currentStats.saldo > 0 ? 'Saldo positivo 🎉' : currentStats.saldo < 0 ? 'Saldo negativo ⚠️' : 'Equilíbrio financeiro';
-            document.getElementById('insightSaldoStatus').style.color = 
-                currentStats.saldo > 0 ? '#059669' : currentStats.saldo < 0 ? '#dc2626' : '#6b7280';
-            
-            //Média Diária e Projeção
-            const days = currentReportPeriod === '7days' ? 7 : currentReportPeriod === '30days' ? 30 : 30;
-            const mediaDiaria = currentStats.despesas / days;
-            const projecaoMensal = mediaDiaria * 30;
-            
-            document.getElementById('insightMediaDiaria').textContent = formatCurrency(mediaDiaria);
-            document.getElementById('insightProjecao').textContent = `Projeção: ${formatCurrency(projecaoMensal)}/mês`;
-        }
-
         function renderComparison(currentStats, previousStats) {
             const items = [
                 {
