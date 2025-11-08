@@ -3200,13 +3200,13 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 100000 !important; /* Sempre acima do bottom-nav (9999) e sidebar (99999) */
             /* Desktop: SEM ajuste - centralização natural do flexbox */
         }
         
         /* Modal de logout deve aparecer ACIMA do modal de perfil */
         #logoutModal {
-            z-index: 10001 !important;
+            z-index: 100001 !important;
         }
 
         .modal.show {
@@ -22038,6 +22038,8 @@ body:has(.welcome-screen[style*='display: block']) {
 .modal-todo {
     max-width: 900px; /* Dobro do tamanho original para web */
     padding: 2rem;
+    position: relative;
+    z-index: 100000 !important; /* Sempre acima do bottom-nav (9999) */
 }
 
 @media (max-width: 768px) {
