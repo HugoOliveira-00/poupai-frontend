@@ -1607,6 +1607,7 @@
             const titles = {
                 overview: 'Dashboard', //✅ REVERTIDO: Voltou para Dashboard no header
                 transactions: 'Transações',
+                todos: 'A Registrar',
                 calendar: 'Calendário',
                 goals: 'Metas',
                 simulators: 'Simuladores',
@@ -1621,6 +1622,7 @@
             }
             
             if (section === 'reports') renderReports();
+            if (section === 'todos') renderTodosList();
             if (section === 'calendar') {
                 //Reseta para o mês atual ao abrir o calendário
                 currentCalendarDate = new Date();
@@ -13537,6 +13539,7 @@
             const titles = {
                 overview: 'Dashboard', //✅ REVERTIDO
                 transactions: 'Transações',
+                todos: 'A Registrar',
                 reports: 'Relatórios',
                 market: 'Mercado',
                 calendar: 'Calendário',
@@ -13553,6 +13556,11 @@
             //Renderiza reports se necessário
             if (sectionName === 'reports' && typeof renderReports === 'function') {
                 renderReports();
+            }
+            
+            //Renderiza todos se necessário
+            if (sectionName === 'todos' && typeof renderTodosList === 'function') {
+                renderTodosList();
             }
             
             //Renderiza calendário se necessário
