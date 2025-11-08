@@ -9,10 +9,10 @@
   <!-- PWA Configuration -->
   <link rel="manifest" href="/manifest.json">
   
-  <!-- Theme colors for PWA -->
-  <meta name="theme-color" content="#3b82f6">
-  <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1e40af" media="(prefers-color-scheme: dark)">
+  <!-- Theme colors for PWA - PRETO para navigation bar Android -->
+  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   
   <!-- Mobile app settings -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -20,7 +20,7 @@
   
   <!-- iOS settings -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="poupAí">
   
   <!-- Fullscreen settings -->
@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108021" rel="stylesheet">
+  <link href="style.css?v=20251108022" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -4036,7 +4036,9 @@
   </div>
   
   <!-- Main Dashboard Script -->
-    <script src="script.js?v=20251108018">  <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
+  <script src="script.js?v=20251108022"></script>
+  
+  <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>
     // Remove qualquer meta theme-color existente e recria com preto
     document.addEventListener('DOMContentLoaded', function() {
