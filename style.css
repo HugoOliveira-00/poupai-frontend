@@ -1864,6 +1864,43 @@
             .modal-todo {
                 max-width: 700px; /* Tamanho intermediário para tablet */
             }
+            
+            /* Centraliza conteúdo verticalmente em tablet landscape */
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .app-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+            
+            /* Ajusta sidebar para não ficar muito no topo */
+            .sidebar {
+                margin-top: 2rem;
+            }
+            
+            /* Main content mais centralizado */
+            .main-content {
+                padding-top: 2rem;
+                display: flex;
+                align-items: center;
+                min-height: calc(100vh - 4rem);
+            }
+            
+            /* Dashboard sections com melhor espaçamento */
+            .section {
+                margin-bottom: 2rem;
+            }
+            
+            /* Modal mais centralizado verticalmente */
+            .modal {
+                align-items: center;
+                padding: 3rem 1rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -10421,6 +10458,47 @@
 
             .modal-content {
                 max-height: 85vh;
+            }
+        }
+        
+        /* Landscape tablet (uso deitado) */
+        @media (min-width: 769px) and (max-width: 1280px) and (orientation: landscape) {
+            /* Conteúdo centralizado verticalmente */
+            .dashboard-main {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+                max-width: 95%;
+                margin: 0 auto;
+            }
+            
+            /* Cards com altura reduzida */
+            .stats-grid {
+                gap: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1.25rem;
+            }
+            
+            /* Gráficos mais compactos */
+            .chart-container {
+                max-height: 350px;
+            }
+            
+            /* Bottom nav invisível em tablet landscape */
+            .bottom-nav {
+                display: none !important;
+            }
+            
+            /* Main content sem margem do bottom nav */
+            .main-content {
+                padding-bottom: 1rem;
+            }
+            
+            /* Modais centralizados */
+            .modal-content {
+                margin-top: auto;
+                margin-bottom: auto;
             }
         }
 
