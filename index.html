@@ -7,27 +7,27 @@
   <!-- Build: 2025-11-08-v2 - Force cache refresh -->
   
   <!-- PWA Configuration -->
-  <!-- ✅ Navigation bar preta (compatível com todos os navegadores) -->
-  <meta name="theme-color" content="#000000">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Theme colors for PWA -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e40af" media="(prefers-color-scheme: dark)">
+  
+  <!-- Mobile app settings -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="PoupAí">
+  <meta name="application-name" content="poupAí">
+  
+  <!-- iOS settings -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="PoupAí">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="poupAí">
+  
+  <!-- Fullscreen settings -->
+  <meta name="fullscreen" content="yes">
+  <meta name="browsermode" content="application">
   
   <title>PoupAí - Finanças Pessoais</title>
-  
-  <!-- ✅ CSS CRÍTICO: Forçar navigation bar preta -->
-  <style>
-    :root {
-      color-scheme: dark !important;
-    }
-    html, body {
-      background-color: #000000 !important;
-    }
-  </style>
   
   <!-- External Resources -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108016" rel="stylesheet">
+  <link href="style.css?v=20251108017" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -2206,7 +2206,7 @@
    <div class="modal-content modal-todo">
     <button class="close-modal" onclick="closeExpensesListModal()">×</button>
     
-    <h3 class="modal-title-simple">Adicionar à Lista</h3>
+    <h3 class="modal-title-simple" id="todoModalTitle">Adicionar à Lista</h3>
     <p class="modal-subtitle-simple">Despesas únicas para registrar depois</p>
     
     <form id="todoForm" onsubmit="submitExpensesListForm(event)">
@@ -4036,7 +4036,7 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108016"></script>
+  <script src="script.js?v=20251108017"></script>
   
   <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>

@@ -1827,6 +1827,7 @@
             justify-content: flex-start;
             align-items: center;
             padding: 2rem 3rem;
+            padding-bottom: 3rem; /* Espaço extra para tablet */
             margin-top: 1rem;
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
@@ -1852,6 +1853,17 @@
         .auth-screen:not(.hidden) ~ .landing-page .landing-footer,
         body:has(.auth-screen:not([style*="display: none"])) .landing-footer {
             display: none !important;
+        }
+
+        /* Tablet específico (1024px - 1280px) */
+        @media (min-width: 769px) and (max-width: 1280px) {
+            .landing-footer {
+                padding-bottom: 4rem; /* Mais espaço para tablets maiores */
+            }
+            
+            .modal-todo {
+                max-width: 700px; /* Tamanho intermediário para tablet */
+            }
         }
 
         @media (max-width: 768px) {
