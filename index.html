@@ -94,24 +94,25 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108023" rel="stylesheet">
+  <link href="style.css?v=20251108024" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update - FORÇAR PRETO -->
   <script>
     (function() {
       function updateThemeColor() {
-        // Remove TODOS os meta theme-color
-        const allMetas = document.querySelectorAll('meta[name="theme-color"]');
-        allMetas.forEach(m => m.remove());
+        // NÃO remove! Apenas garante que existe e está preto
+        let meta = document.querySelector('meta[name="theme-color"]:not([media])');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'theme-color';
+          document.head.appendChild(meta);
+        }
         
-        // Cria NOVO com preto
-        const meta = document.createElement('meta');
-        meta.name = 'theme-color';
+        // Força preto
         meta.content = '#000000';
-        document.head.appendChild(meta);
         
-        console.log('Theme color forçado: #000000');
+        console.log('Theme color: #000000');
       }
       
       updateThemeColor();
@@ -121,11 +122,11 @@
       
       if ('MutationObserver' in window) {
         const observer = new MutationObserver(updateThemeColor);
-        observer.observe(document.body, { 
+        observer.observe(document.head, { 
           childList: true, 
           subtree: true, 
           attributes: true, 
-          attributeFilter: ['class', 'style'] 
+          attributeFilter: ['content'] 
         });
       }
       
@@ -4045,30 +4046,23 @@
   <!-- ✅ GARANTIR cor PRETA na navigation bar Android (última linha de defesa) -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Remove TODOS os meta theme-color
-      const existingMeta = document.querySelectorAll('meta[name="theme-color"]');
-      existingMeta.forEach(meta => meta.remove());
+      // NÃO remove! Apenas atualiza
+      let meta = document.querySelector('meta[name="theme-color"]:not([media])');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+      }
       
-      // Cria NOVO meta PRETO
-      const meta = document.createElement('meta');
-      meta.name = 'theme-color';
+      // Força PRETO
       meta.content = '#000000';
-      document.head.appendChild(meta);
+      console.log('Navigation bar Android: PRETO #000000');
       
-      console.log('Navigation bar Android: PRETO forçado!');
-      
-      // Monitora e mantém PRETO sempre
+      // Monitora e mantém PRETO sempre (SEM remover)
       setInterval(function() {
-        const currentMeta = document.querySelector('meta[name="theme-color"]');
-        if (!currentMeta || currentMeta.content !== '#000000') {
-          const allMetas = document.querySelectorAll('meta[name="theme-color"]');
-          allMetas.forEach(m => m.remove());
-          
-          const newMeta = document.createElement('meta');
-          newMeta.name = 'theme-color';
-          newMeta.content = '#000000';
-          document.head.appendChild(newMeta);
-          
+        const currentMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+        if (currentMeta && currentMeta.content !== '#000000') {
+          currentMeta.content = '#000000';
           console.log('Navigation bar corrigida para PRETO');
         }
       }, 100);
