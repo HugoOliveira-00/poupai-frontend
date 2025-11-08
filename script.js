@@ -17973,6 +17973,9 @@ async function addToExpensesList(data) {
         return;
     }
 
+    // Mostra loading
+    const loadingToast = showLoadingToast('Adicionando item...');
+
     try {
         const response = await fetch(`${API_URL}/lista-contas`, {
             method: 'POST',
@@ -18001,12 +18004,17 @@ async function addToExpensesList(data) {
             
             saveExpensesList(); // Backup
             renderExpensesList();
+            
+            // Remove loading e mostra sucesso
+            hideLoadingToast(loadingToast);
             showPopup('success', 'Adicionado!', 'Item adicionado à lista');
         } else {
+            hideLoadingToast(loadingToast);
             showPopup('error', 'Erro', 'Não foi possível adicionar o item');
         }
     } catch (error) {
         console.error('Erro ao adicionar:', error);
+        hideLoadingToast(loadingToast);
         showPopup('error', 'Erro', 'Falha na conexão com o servidor');
     }
 }

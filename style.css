@@ -21883,17 +21883,19 @@ body:has(.welcome-screen[style*='display: block']) {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     border-radius: 16px;
     margin: 0 0.25rem;
-    color: white;
+    color: white !important;
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .mobile-bottom-nav .nav-item-center i {
     font-size: 1.75rem;
+    color: white !important;
 }
 
 .mobile-bottom-nav .nav-item-center span {
     font-weight: 700;
+    color: white !important;
 }
 
 /* Efeito de brilho APENAS para o botão central quando ativo */
@@ -21902,6 +21904,11 @@ body:has(.welcome-screen[style*='display: block']) {
     filter: brightness(1.1);
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5), 
                 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Remove o ::before azul do botão central */
+.mobile-bottom-nav .nav-item-center.active::before {
+    display: none;
 }
 
 @keyframes navGlowCenter {
@@ -21920,7 +21927,13 @@ body:has(.welcome-screen[style*='display: block']) {
    =================================== */
 
 .modal-todo {
-    max-width: 540px;
+    max-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .modal-todo {
+        max-width: 95%;
+    }
 }
 
 .modal-todo .modal-header {
