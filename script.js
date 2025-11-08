@@ -16265,69 +16265,57 @@
             }
         }
 
-        function showToast(toastId, type, title, message) {
-            const toast = document.getElementById(toastId);
-            if (!toast) return;
-
-            //Atualiza conteúdo
-            const titleEl = toast.querySelector('.toast-text h4');
-            const messageEl = toast.querySelector('.toast-text p');
-            const iconEl = toast.querySelector('.toast-icon');
-            const progressEl = toast.querySelector('.toast-progress');
-
-            if (titleEl) titleEl.textContent = title;
-            if (messageEl) messageEl.textContent = message;
-
-            //Define ícone e cor baseado no tipo
+        // Sistema de Popup Centralizado
+        function showPopup(type, title, message, buttons = null) {
+            const popup = document.getElementById('popupNotification');
+            const icon = document.getElementById('popupIcon');
+            const titleEl = document.getElementById('popupTitle');
+            const messageEl = document.getElementById('popupMessage');
+            const buttonsEl = document.getElementById('popupButtons');
+            
+            if (!popup) return;
+            
+            // Define ícone baseado no tipo
+            icon.className = `popup-icon ${type}`;
             if (type === 'success') {
-                iconEl.className = 'toast-icon toast-success';
-                iconEl.innerHTML = '<i class="ph ph-check-circle"></i>';
-                if (progressEl) {
-                    progressEl.className = 'toast-progress';
-                    progressEl.style.background = 'linear-gradient(90deg, #10b981 0%, #059669 100%)';
-                }
+                icon.innerHTML = '<i class="ph ph-check-circle"></i>';
             } else if (type === 'error') {
-                iconEl.className = 'toast-icon toast-error';
-                iconEl.innerHTML = '<i class="ph ph-x-circle"></i>';
-                if (progressEl) {
-                    progressEl.className = 'toast-progress red';
-                    progressEl.style.background = 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)';
-                }
+                icon.innerHTML = '<i class="ph ph-x-circle"></i>';
             } else if (type === 'info') {
-                iconEl.className = 'toast-icon toast-info';
-                iconEl.innerHTML = '<i class="ph ph-info"></i>';
-                if (progressEl) {
-                    progressEl.className = 'toast-progress blue';
-                    progressEl.style.background = 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)';
-                }
-            }
-
-            //Mostra toast
-            toast.classList.add('show');
-
-            //Remove animação da barra de progresso e reinicia
-            if (progressEl) {
-                progressEl.style.animation = 'none';
-                setTimeout(() => {
-                    progressEl.style.animation = 'toastProgress 3s linear forwards';
-                }, 10);
-            }
-
-            //✅ CORREÇÃO: Auto-hide após 5 segundos (aumentado para dar tempo de ler)
-            //Cancela qualquer timeout anterior para este toast
-            if (toast.autoHideTimeout) {
-                clearTimeout(toast.autoHideTimeout);
+                icon.innerHTML = '<i class="ph ph-info"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="ph ph-warning"></i>';
             }
             
-            toast.autoHideTimeout = setTimeout(() => {
-                closeToast(toastId);
-            }, 5000);
+            // Define conteúdo
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Define botões
+            if (buttons) {
+                buttonsEl.innerHTML = buttons;
+            } else {
+                buttonsEl.innerHTML = '<button class="popup-btn popup-btn-primary" onclick="closePopup()">OK</button>';
+            }
+            
+            // Mostra popup
+            popup.style.display = 'flex';
+        }
+        
+        function closePopup() {
+            const popup = document.getElementById('popupNotification');
+            if (popup) {
+                popup.style.display = 'none';
+            }
+        }
+        
+        // Wrapper para compatibilidade com código antigo (showToast → showPopup)
+        function showToast(toastId, type, title, message) {
+            showPopup(type, title, message);
         }
 
         function closeToast(toastId) {
-            const toast = document.getElementById(toastId);
-            if (toast) {
-                toast.classList.remove('show');
+            closePopup();
             }
         }
 
@@ -17985,43 +17973,53 @@ function deleteExpensesListItem(id) {
     const item = expensesList.find(e => e.id === id);
     if (!item) return;
     
-    // Mostrar aviso antes de pedir confirmação
-    showToast('generalNotification', 'info', 'Confirmar Exclusão', 
-        `Deseja remover "${item.name}" da lista?`);
+    // Popup de confirmação com botões
+    const buttons = `
+        <button class="popup-btn popup-btn-secondary" onclick="closePopup()">
+            <i class="ph ph-x"></i> Cancelar
+        </button>
+        <button class="popup-btn popup-btn-danger" onclick="confirmDeleteExpenseItem(${id})">
+            <i class="ph ph-trash"></i> Remover
+        </button>
+    `;
     
-    // Pequeno delay para o usuário ver a notificação
-    setTimeout(() => {
-        const shouldDelete = confirm(`Confirma a exclusão de "${item.name}"?`);
-        if (shouldDelete) {
-            expensesList = expensesList.filter(e => e.id !== id);
-            saveExpensesList();
-            renderExpensesList();
-            showToast('generalNotification', 'success', 'Removido!', 'Item removido da lista');
-        }
-    }, 300);
+    showPopup('warning', 'Confirmar Exclusão', 
+        `Deseja remover "${item.name}" da lista?`, buttons);
+}
+
+function confirmDeleteExpenseItem(id) {
+    expensesList = expensesList.filter(e => e.id !== id);
+    saveExpensesList();
+    renderExpensesList();
+    showPopup('success', 'Removido!', 'Item removido da lista');
 }
 
 //Limpa lista completa
 function clearExpensesList() {
     if (expensesList.length === 0) {
-        showToast('generalNotification', 'info', 'Aviso', 'A lista já está vazia');
+        showPopup('info', 'Aviso', 'A lista já está vazia');
         return;
     }
     
-    // Mostrar aviso antes de pedir confirmação
-    showToast('generalNotification', 'info', 'Confirmar Limpeza', 
-        `Deseja apagar todos os ${expensesList.length} itens da lista?`);
+    // Popup de confirmação com botões
+    const buttons = `
+        <button class="popup-btn popup-btn-secondary" onclick="closePopup()">
+            <i class="ph ph-x"></i> Cancelar
+        </button>
+        <button class="popup-btn popup-btn-danger" onclick="confirmClearExpensesList()">
+            <i class="ph ph-trash"></i> Apagar Tudo
+        </button>
+    `;
     
-    // Pequeno delay para o usuário ver a notificação
-    setTimeout(() => {
-        const shouldClear = confirm(`Confirma a exclusão de todos os ${expensesList.length} itens?`);
-        if (shouldClear) {
-            expensesList = [];
-            saveExpensesList();
-            renderExpensesList();
-            showToast('generalNotification', 'success', 'Limpo!', 'Lista apagada completamente');
-        }
-    }, 300);
+    showPopup('warning', 'Confirmar Limpeza', 
+        `Deseja apagar todos os ${expensesList.length} itens da lista?`, buttons);
+}
+
+function confirmClearExpensesList() {
+    expensesList = [];
+    saveExpensesList();
+    renderExpensesList();
+    showPopup('success', 'Limpo!', 'Lista apagada completamente');
 }
 
 //Atualiza badge contador
@@ -18186,14 +18184,25 @@ function renderExpensesList() {
 //Registra TODA a lista como transações
 function registerExpensesListAsTransactions() {
     if (expensesList.length === 0) {
-        showToast('generalNotification', 'info', 'Aviso', 'A lista está vazia');
+        showPopup('info', 'Aviso', 'A lista está vazia');
         return;
     }
     
-    if (!confirm(`Registrar ${expensesList.length} despesa(s) como transações oficiais? A lista será apagada após.`)) {
-        return;
-    }
+    // Popup de confirmação com botões
+    const buttons = `
+        <button class="popup-btn popup-btn-secondary" onclick="closePopup()">
+            <i class="ph ph-x"></i> Cancelar
+        </button>
+        <button class="popup-btn popup-btn-primary" onclick="confirmRegisterExpensesList()">
+            <i class="ph ph-check"></i> Registrar
+        </button>
+    `;
     
+    showPopup('info', 'Registrar Despesas', 
+        `Registrar ${expensesList.length} despesa(s) como transações oficiais? A lista será apagada após.`, buttons);
+}
+
+function confirmRegisterExpensesList() {
     expensesList.forEach(item => {
         const transaction = {
             id: Date.now() + Math.random(),
@@ -18219,7 +18228,7 @@ function registerExpensesListAsTransactions() {
     updateBalance();
     loadTransactions();
     
-    showToast('generalNotification', 'success', 'Sucesso!', 'Despesas registradas e lista limpa');
+    showPopup('success', 'Sucesso!', 'Despesas registradas e lista limpa');
 }
 
 //Formata data

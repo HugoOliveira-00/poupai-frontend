@@ -94,7 +94,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <!-- Stylesheets -->
-  <link href="style.css?v=20251108004" rel="stylesheet">
+  <link href="style.css?v=20251108005" rel="stylesheet">
 </head>
 <body>
   <!-- Theme Color Dynamic Update -->
@@ -973,7 +973,7 @@
        </div>
        
        <div class="filter-row">
-        <div class="filter-section">
+        <div class="filter-section hide-on-mobile">
          <label>
           <i class="ph ph-calendar-blank"></i>
           Período:
@@ -3532,20 +3532,19 @@
   </div>
 
   <!-- Notificação: Geral (Azul) -->
-  <div id="generalNotification" class="toast-notification">
-    <div class="toast-content">
-      <div class="toast-icon toast-info">
+  <!-- Popup de Notificação Centralizado -->
+  <div id="popupNotification" class="popup-notification" style="display: none;">
+    <div class="popup-overlay" onclick="closePopup()"></div>
+    <div class="popup-content">
+      <div class="popup-icon" id="popupIcon">
         <i class="ph ph-info"></i>
       </div>
-      <div class="toast-text">
-        <h4>Notificação</h4>
-        <p>Mensagem</p>
+      <h3 id="popupTitle">Notificação</h3>
+      <p id="popupMessage">Mensagem</p>
+      <div class="popup-buttons" id="popupButtons">
+        <button class="popup-btn popup-btn-primary" onclick="closePopup()">OK</button>
       </div>
-      <button class="toast-close" onclick="closeToast('generalNotification')">
-        <i class="ph ph-x"></i>
-      </button>
     </div>
-    <div class="toast-progress blue"></div>
   </div>
 
   <!-- Modal: Resumo Mensal Automático -->
@@ -4043,7 +4042,7 @@
   </div>
   
   <!-- Main Dashboard Script -->
-  <script src="script.js?v=20251108004"></script>
+  <script src="script.js?v=20251108005"></script>
   
   <!-- ✅ Forçar cor preta na navigation bar (evita cache) -->
   <script>
