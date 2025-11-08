@@ -17982,12 +17982,23 @@ function editExpensesListItem(id, data) {
 
 //Remove item individual
 function deleteExpensesListItem(id) {
-    if (confirm('Remover este item da lista?')) {
-        expensesList = expensesList.filter(e => e.id !== id);
-        saveExpensesList();
-        renderExpensesList();
-        showToast('generalNotification', 'success', 'Removido!', 'Item removido da lista');
-    }
+    const item = expensesList.find(e => e.id === id);
+    if (!item) return;
+    
+    // Mostrar aviso antes de pedir confirmação
+    showToast('generalNotification', 'info', 'Confirmar Exclusão', 
+        `Deseja remover "${item.name}" da lista?`);
+    
+    // Pequeno delay para o usuário ver a notificação
+    setTimeout(() => {
+        const shouldDelete = confirm(`Confirma a exclusão de "${item.name}"?`);
+        if (shouldDelete) {
+            expensesList = expensesList.filter(e => e.id !== id);
+            saveExpensesList();
+            renderExpensesList();
+            showToast('generalNotification', 'success', 'Removido!', 'Item removido da lista');
+        }
+    }, 300);
 }
 
 //Limpa lista completa
@@ -17997,12 +18008,20 @@ function clearExpensesList() {
         return;
     }
     
-    if (confirm(`Apagar todos os ${expensesList.length} itens da lista?`)) {
-        expensesList = [];
-        saveExpensesList();
-        renderExpensesList();
-        showToast('generalNotification', 'success', 'Limpo!', 'Lista apagada completamente');
-    }
+    // Mostrar aviso antes de pedir confirmação
+    showToast('generalNotification', 'info', 'Confirmar Limpeza', 
+        `Deseja apagar todos os ${expensesList.length} itens da lista?`);
+    
+    // Pequeno delay para o usuário ver a notificação
+    setTimeout(() => {
+        const shouldClear = confirm(`Confirma a exclusão de todos os ${expensesList.length} itens?`);
+        if (shouldClear) {
+            expensesList = [];
+            saveExpensesList();
+            renderExpensesList();
+            showToast('generalNotification', 'success', 'Limpo!', 'Lista apagada completamente');
+        }
+    }, 300);
 }
 
 //Atualiza badge contador
