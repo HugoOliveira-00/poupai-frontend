@@ -1589,15 +1589,23 @@
         }
 
         function showSection(event, section) {
+            console.log(`🔍 showSection called with section: "${section}"`);
             event.preventDefault();
             
             document.querySelectorAll('[id^="section"]').forEach(el => el.classList.add('hidden'));
             
-            const targetSection = document.getElementById(`section${section.charAt(0).toUpperCase() + section.slice(1)}`);
+            const sectionId = `section${section.charAt(0).toUpperCase() + section.slice(1)}`;
+            console.log(`🔍 Looking for element with ID: "${sectionId}"`);
+            const targetSection = document.getElementById(sectionId);
+            
             if (targetSection) {
+                console.log(`✅ Section found! Removing .hidden class`);
+                console.log(`📊 Element classes BEFORE: "${targetSection.className}"`);
                 targetSection.classList.remove('hidden');
+                console.log(`📊 Element classes AFTER: "${targetSection.className}"`);
+                console.log(`📊 Element display style: "${window.getComputedStyle(targetSection).display}"`);
             } else {
-                console.error(`Section not found: section${section.charAt(0).toUpperCase() + section.slice(1)}`);
+                console.error(`❌ Section NOT FOUND: ${sectionId}`);
             }
             
             document.querySelectorAll('.navigation a').forEach(a => a.classList.remove('active'));
