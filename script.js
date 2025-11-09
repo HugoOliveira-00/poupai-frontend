@@ -3429,6 +3429,8 @@
             }
 
             //===== CORREÇÃO CRÍTICA: Verificar DIRETO NO BANCO antes de adicionar =====
+            //✅ IMPORTANTE: Pula verificação de duplicação no onboarding (isFirstTime = true)
+            //Isso garante que o salário seja sempre adicionado no primeiro acesso
             if (!isFirstTime) {
                 try {
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHECK] Verificando no banco de dados se salário já existe...');
@@ -3492,35 +3494,9 @@
                         return;
                     }
                 }
-            } else if (customDate) {
-                //✅ NOVO: Se for primeira vez com data customizada (onboarding), verifica duplicação no mês da data customizada
-                try {
-                    const customDateObj = new Date(customDate);
-                    const customMonth = customDateObj.getMonth();
-                    const customYear = customDateObj.getFullYear();
-                    
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHECK] Verificando se salário já existe para', customMonth + 1, '/', customYear);
-                    
-                    const response = await fetch(`${API_URL}/transacoes`);
-                    if (response.ok) {
-                        const allTransactions = await response.json();
-                        const salaryAlreadyExists = allTransactions.some(t => {
-                            const tDate = new Date(t.data);
-                            return t.tipo === 'receita' && 
-                                   t.categoria === 'Salário' && 
-                                   t.descricao === 'Salário' &&
-                                   tDate.getMonth() === customMonth &&
-                                   tDate.getFullYear() === customYear;
-                        });
-
-                        if (salaryAlreadyExists) {
-                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Salário do mês anterior já existe, abortando');
-                            return;
-                        }
-                    }
-                } catch (error) {
-                    console.error('[ERROR][ERROR] Erro ao verificar salário do mês anterior:', error);
-                }
+            } else {
+                //✅ ONBOARDING: Não verifica duplicação, sempre adiciona
+                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][ONBOARDING] Primeira vez (onboarding) - pulando verificação de duplicação');
             }
 
             //Verifica se é adição retroativa
