@@ -2967,23 +2967,14 @@
                 onboardingData.rendaMensal = incomeValue;
                 onboardingData.diaRecebimento = paymentDay;
                 
-                //✅ NOVO: No onboarding, o salário sempre vem como se fosse do mês anterior
+                //✅ NOVO: No onboarding, o salário é SEMPRE adicionado imediatamente no mês atual
+                //Não importa se o dia já passou ou não - é o primeiro acesso, então adiciona
                 //Isso permite que o usuário tenha saldo imediato para usar o sistema
-                if (paymentDay) {
-                    const today = new Date();
-                    const currentMonth = today.getMonth();
-                    const currentYear = today.getFullYear();
-                    
-                    //Cria data do mês anterior com o dia de pagamento configurado
-                    const lastMonthSalary = new Date(currentYear, currentMonth - 1, paymentDay);
-                    
-                    //Marca como NÃO agendado (ou seja, já recebido)
-                    onboardingData.salarioAgendado = false;
-                    onboardingData.dataSalarioAgendado = lastMonthSalary.toISOString();
-                    
-                    console.log('[ONBOARDING] Salário registrado como já recebido em:', lastMonthSalary.toLocaleDateString());
-                    console.log('[ONBOARDING] Usuário terá saldo imediato de R$', incomeValue);
-                }
+                onboardingData.salarioAgendado = false; //Nunca agenda no onboarding
+                onboardingData.dataSalarioAgendado = null; //Não precisa de data específica
+                
+                console.log('[ONBOARDING] Salário será adicionado IMEDIATAMENTE no mês atual');
+                console.log('[ONBOARDING] Dia configurado:', paymentDay, '- Usuário terá saldo imediato de R$', incomeValue);
                 
                 //Pega o valor do radio button selecionado
                 const selectedGoal = document.querySelector('input[name="goalOption"]:checked');
@@ -3214,22 +3205,21 @@
                         };
                         localStorage.setItem('scheduled_salary', JSON.stringify(scheduledSalary));
                     } else {
-                        //✅ NOVO: Adiciona o salário com a data do mês anterior
+                        //✅ NOVO: Adiciona o salário IMEDIATAMENTE no mês atual
                         try {
-                            //Pega a data que foi calculada anteriormente (mês anterior)
-                            const salaryDate = onboardingData.dataSalarioAgendado;
-                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][ONBOARDING] Adicionando salário do mês anterior:', new Date(salaryDate).toLocaleDateString());
+                            console.log('[ONBOARDING] Adicionando salário IMEDIATAMENTE no mês atual');
+                            console.log('[ONBOARDING] Valor: R$', currentUser.rendaMensal, '- Dia configurado:', currentUser.diaRecebimento);
                             
-                            //Passa a data customizada para a função
-                            await checkAndAddMonthlySalary(true, salaryDate);
-                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Processo de salário concluído com sucesso');
+                            //isFirstTime = true, customDate = null → adiciona no mês atual, sem agendar
+                            await checkAndAddMonthlySalary(true, null);
+                            console.log('[SUCCESS] Salário adicionado com sucesso no mês atual!');
                             
                             //CRÍTICO: Aguarda um pouco mais para garantir que tudo foi salvo
                             await new Promise(resolve => setTimeout(resolve, 500));
                             
                             //FORÇA atualização completa após adicionar salário
                             await loadTransactions();
-                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHARTS] Renderizando todos os gráficos após onboarding...');
+                            console.log('[CHARTS] Renderizando todos os gráficos após onboarding...');
                             renderTransactions();
                             renderChart();
                             renderMonthlyChart();
@@ -3503,26 +3493,33 @@
             const isRetroactive = !isFirstTime && currentDay > currentUser.diaRecebimento;
             
             if (isRetroactive) {
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][RETROACTIVE] ADIÇÃO RETROATIVA: Você acessou após o dia', currentUser.diaRecebimento);
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Adicionando salário do mês', currentMonth + 1, '/', currentYear, 'com data retroativa');
+                console.log('[RETROACTIVE] ADIÇÃO RETROATIVA: Você acessou após o dia', currentUser.diaRecebimento);
+                console.log('[SALARY] Adicionando salário do mês', currentMonth + 1, '/', currentYear, 'com data retroativa');
+            } else if (isFirstTime) {
+                console.log('[ONBOARDING] PRIMEIRO ACESSO: Adicionando salário IMEDIATAMENTE no mês atual');
+                console.log('[SALARY] Usuário terá saldo de R$', currentUser.rendaMensal, 'disponível AGORA');
             } else {
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Condições atendidas! Adicionando salário do mês', currentMonth + 1, '/', currentYear);
+                console.log('[SALARY] Condições atendidas! Adicionando salário do mês', currentMonth + 1, '/', currentYear);
             }
             
             try {
-                //✅ NOVO: Se customDate foi fornecida (onboarding), usa ela. Senão, usa mês atual
+                //✅ NOVA LÓGICA: 
+                // - No onboarding (customDate = null): adiciona no DIA ATUAL do mês atual
+                // - Após onboarding (customDate = null): adiciona no dia configurado do mês atual
                 let salaryDate;
-                if (customDate) {
-                    salaryDate = new Date(customDate);
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][ONBOARDING] Usando data customizada do onboarding:', salaryDate.toLocaleDateString());
+                if (isFirstTime) {
+                    //ONBOARDING: Adiciona HOJE (para dar saldo imediato)
+                    salaryDate = new Date();
+                    console.log('[ONBOARDING] Adicionando salário HOJE:', salaryDate.toLocaleDateString());
                 } else {
+                    //NORMAL: Adiciona no dia configurado do mês atual
                     salaryDate = new Date(currentYear, currentMonth, currentUser.diaRecebimento);
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Usando data normal (mês atual):', salaryDate.toLocaleDateString());
+                    console.log('[SALARY] Usando data normal (mês atual):', salaryDate.toLocaleDateString());
                 }
                 
                 const formattedDate = formatDateToInput(salaryDate);
                 
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][DATE] Data do salário:', formattedDate, '(dia', currentUser.diaRecebimento, 'configurado)');
+                console.log('[DATE] Data do salário:', formattedDate);
                 
                 const salaryTransaction = {
                     descricao: 'Salário',
@@ -3533,9 +3530,9 @@
                     usuarioId: currentUser.id
                 };
 
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📤 === ENVIANDO TRANSAÇÃO DE SALÁRIO ===');
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📤 Payload completo:', JSON.stringify(salaryTransaction, null, 2));
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📤 URL:', `${API_URL}/transacoes`);
+                console.log('📤 === ENVIANDO TRANSAÇÃO DE SALÁRIO ===');
+                console.log('📤 Payload completo:', JSON.stringify(salaryTransaction, null, 2));
+                console.log('📤 URL:', `${API_URL}/transacoes`);
 
                 const response = await fetch(`${API_URL}/transacoes`, {
                     method: 'POST',
@@ -3545,9 +3542,9 @@
                     body: JSON.stringify(salaryTransaction)
                 });
 
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📥 === RESPOSTA DO SERVIDOR ===');
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📥 Status:', response.status);
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📥 Status Text:', response.statusText);
+                console.log('📥 === RESPOSTA DO SERVIDOR ===');
+                console.log('📥 Status:', response.status);
+                console.log('📥 Status Text:', response.statusText);
 
                 if (response.ok) {
                     const result = await response.json();
