@@ -2967,23 +2967,22 @@
                 onboardingData.rendaMensal = incomeValue;
                 onboardingData.diaRecebimento = paymentDay;
                 
-                //Verifica se data é futura para agendar
+                //✅ NOVO: No onboarding, o salário sempre vem como se fosse do mês anterior
+                //Isso permite que o usuário tenha saldo imediato para usar o sistema
                 if (paymentDay) {
                     const today = new Date();
-                    const currentDay = today.getDate();
                     const currentMonth = today.getMonth();
                     const currentYear = today.getFullYear();
                     
-                    //Se o dia configurado for maior que hoje, é um agendamento futuro
-                    if (paymentDay > currentDay) {
-                        const futureDate = new Date(currentYear, currentMonth, paymentDay);
-                        onboardingData.salarioAgendado = true;
-                        onboardingData.dataSalarioAgendado = futureDate.toISOString();
-                        console.log('[ONBOARDING] Salário agendado para:', futureDate.toLocaleDateString());
-                    } else {
-                        onboardingData.salarioAgendado = false;
-                        onboardingData.dataSalarioAgendado = null;
-                    }
+                    //Cria data do mês anterior com o dia de pagamento configurado
+                    const lastMonthSalary = new Date(currentYear, currentMonth - 1, paymentDay);
+                    
+                    //Marca como NÃO agendado (ou seja, já recebido)
+                    onboardingData.salarioAgendado = false;
+                    onboardingData.dataSalarioAgendado = lastMonthSalary.toISOString();
+                    
+                    console.log('[ONBOARDING] Salário registrado como já recebido em:', lastMonthSalary.toLocaleDateString());
+                    console.log('[ONBOARDING] Usuário terá saldo imediato de R$', incomeValue);
                 }
                 
                 //Pega o valor do radio button selecionado
@@ -3215,9 +3214,14 @@
                         };
                         localStorage.setItem('scheduled_salary', JSON.stringify(scheduledSalary));
                     } else {
-                        //Adiciona o salário normalmente
+                        //✅ NOVO: Adiciona o salário com a data do mês anterior
                         try {
-                            await checkAndAddMonthlySalary(true);
+                            //Pega a data que foi calculada anteriormente (mês anterior)
+                            const salaryDate = onboardingData.dataSalarioAgendado;
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][ONBOARDING] Adicionando salário do mês anterior:', new Date(salaryDate).toLocaleDateString());
+                            
+                            //Passa a data customizada para a função
+                            await checkAndAddMonthlySalary(true, salaryDate);
                             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Processo de salário concluído com sucesso');
                             
                             //CRÍTICO: Aguarda um pouco mais para garantir que tudo foi salvo
@@ -3359,7 +3363,8 @@
 
         //SISTEMA DE ADIÇÃO AUTOMÁTICA DE SALÁRIO MENSAL
         //Este sistema adiciona automaticamente o salário todo mês no dia configurado
-        async function checkAndAddMonthlySalary(isFirstTime = false) {
+        //✅ NOVO: customDate permite especificar a data do salário (usado no onboarding para mês anterior)
+        async function checkAndAddMonthlySalary(isFirstTime = false, customDate = null) {
             //✅ CORREÇÃO: Só executa se estiver no dashboard (não no landing page)
             const isDashboard = document.getElementById('dashboard')?.style.display !== 'none';
             const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
@@ -3487,6 +3492,35 @@
                         return;
                     }
                 }
+            } else if (customDate) {
+                //✅ NOVO: Se for primeira vez com data customizada (onboarding), verifica duplicação no mês da data customizada
+                try {
+                    const customDateObj = new Date(customDate);
+                    const customMonth = customDateObj.getMonth();
+                    const customYear = customDateObj.getFullYear();
+                    
+                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][CHECK] Verificando se salário já existe para', customMonth + 1, '/', customYear);
+                    
+                    const response = await fetch(`${API_URL}/transacoes`);
+                    if (response.ok) {
+                        const allTransactions = await response.json();
+                        const salaryAlreadyExists = allTransactions.some(t => {
+                            const tDate = new Date(t.data);
+                            return t.tipo === 'receita' && 
+                                   t.categoria === 'Salário' && 
+                                   t.descricao === 'Salário' &&
+                                   tDate.getMonth() === customMonth &&
+                                   tDate.getFullYear() === customYear;
+                        });
+
+                        if (salaryAlreadyExists) {
+                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Salário do mês anterior já existe, abortando');
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('[ERROR][ERROR] Erro ao verificar salário do mês anterior:', error);
+                }
             }
 
             //Verifica se é adição retroativa
@@ -3500,8 +3534,16 @@
             }
             
             try {
-                //Cria a data com o dia de recebimento configurado pelo usuário
-                const salaryDate = new Date(currentYear, currentMonth, currentUser.diaRecebimento);
+                //✅ NOVO: Se customDate foi fornecida (onboarding), usa ela. Senão, usa mês atual
+                let salaryDate;
+                if (customDate) {
+                    salaryDate = new Date(customDate);
+                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][ONBOARDING] Usando data customizada do onboarding:', salaryDate.toLocaleDateString());
+                } else {
+                    salaryDate = new Date(currentYear, currentMonth, currentUser.diaRecebimento);
+                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SALARY] Usando data normal (mês atual):', salaryDate.toLocaleDateString());
+                }
+                
                 const formattedDate = formatDateToInput(salaryDate);
                 
                 console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][DATE] Data do salário:', formattedDate, '(dia', currentUser.diaRecebimento, 'configurado)');
