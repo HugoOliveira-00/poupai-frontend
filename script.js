@@ -123,6 +123,27 @@
             //Até 1024px = tablets (iPad Pro 11", Samsung Tab, etc)
             return isMobileUA || (hasTouch && window.innerWidth <= 1024);
         }
+
+        //✅ FIX CRÍTICO: Bloqueia bounce/overscroll no iOS/Safari
+        (function blockIOSBounce() {
+            let startY = 0;
+            
+            document.addEventListener('touchstart', e => {
+                if (e.touches.length !== 1) return;
+                startY = e.touches[0].clientY;
+            }, {passive: true});
+
+            document.addEventListener('touchmove', e => {
+                if (e.touches.length !== 1) return;
+                const currentY = e.touches[0].clientY;
+                const atTop = (window.scrollY === 0 && currentY > startY);
+                const atBottom = (window.innerHeight + window.scrollY >= document.body.scrollHeight && currentY < startY);
+                
+                if (atTop || atBottom) {
+                    e.preventDefault();
+                }
+            }, {passive: false});
+        })();
         
         //Função para focar no primeiro input de um modal (mobile e tablet)
         function focusFirstInputMobile(modalElement, delay = 300) {
@@ -946,18 +967,25 @@
             //CRÍTICO: Reset da navegação - sempre inicia no Dashboard
             resetNavigation();
             
-            //✅ CORREÇÃO: Aguarda carregar dados do backend ANTES de atualizar UI
-            await loadDashboardData();
+            //✅ OTIMIZAÇÃO: Mostra onboarding IMEDIATAMENTE se for novo usuário
+            //Não precisa esperar carregar dados do backend
+            const shouldShowOnboarding = (
+                localStorage.getItem('onboardingCompleted') !== 'true' &&
+                (localStorage.getItem('isNewUser') === 'true' || !currentUser.ocupacao || !currentUser.rendaMensal)
+            );
             
-            //Agora sim atualiza a UI com dados carregados
-            updateProfileUI();
-            updateWeeklySummary();
-            updateInsights();
-            
-            //Aguarda renderização completa do dashboard antes de verificar onboarding
-            setTimeout(() => {
+            if (shouldShowOnboarding) {
+                console.log('[ONBOARDING] ⚡ Novo usuário detectado - mostrando onboarding IMEDIATAMENTE');
                 checkAndShowOnboarding();
-            }, 500);
+            }
+            
+            //✅ CORREÇÃO: Carrega dados do backend em paralelo (não bloqueia onboarding)
+            loadDashboardData().then(() => {
+                //Atualiza a UI com dados carregados
+                updateProfileUI();
+                updateWeeklySummary();
+                updateInsights();
+            });
         }
         
         function resetNavigation() {

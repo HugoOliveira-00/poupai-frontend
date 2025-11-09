@@ -76,12 +76,29 @@
             display: none;
         }
 
-        body {
+        /* ✅ FIX CRÍTICO: Evita scroll lateral e bounce no iOS */
+        html, body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #FFFFFF;
             color: #111827;
             /* Força orientação portrait em mobile */
             -webkit-text-size-adjust: 100%;
+            /* Evita overflow horizontal */
+            overflow-x: hidden;
+            max-width: 100%;
+            /* Desativa bounce/overscroll do iOS */
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            /* Fixa posição no iOS */
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Garante que imagens/videos/iframes não quebrem layout */
+        img, video, iframe {
+            max-width: 100%;
+            height: auto;
         }
         
         /* Força layout mobile em qualquer orientação de celular */
@@ -89,6 +106,7 @@
             html, body {
                 max-width: 100vw;
                 overflow-x: hidden;
+                overscroll-behavior: none;
             }
             
             /* Remove flash/highlight em elementos interativos no mobile */
@@ -13429,12 +13447,17 @@
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
+    overflow: hidden; /* Impede scroll no fundo */
+    overscroll-behavior: none; /* Bloqueia bounce no iOS */
 }
 
 .modal-content {
@@ -18483,7 +18506,7 @@ body.modal-open {
     position: fixed;
     top: 80px;
     right: 20px;
-    z-index: 10002;
+    z-index: 100000; /* ✅ ACIMA de todos os modais (10000) */
     opacity: 0;
     transform: translateX(400px);
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
