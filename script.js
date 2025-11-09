@@ -5298,23 +5298,32 @@
             
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Renderizando gráfico MENSAL com', validTransactions.length, 'transações válidas (de', transactions.length, 'totais)');
             
-            //=== GRÁFICO MENSAL: DIA 1 ATÉ O ÚLTIMO DIA DO MÊS ===
+            //=== GRÁFICO MENSAL: MOSTRA TODO O HISTÓRICO (TODOS OS MESES) ===
             const today = new Date();
-            const currentYear = today.getFullYear();
-            const currentMonth = today.getMonth();
             
-            //Primeiro dia do mês atual (sempre dia 1)
-            const monthStart = new Date(currentYear, currentMonth, 1);
+            //✅ NOVO: Encontra a transação mais antiga para definir início do período
+            let oldestDate = today;
+            if (validTransactions.length > 0) {
+                validTransactions.forEach(t => {
+                    const tDate = parseLocalDate(t.data);
+                    if (tDate < oldestDate) {
+                        oldestDate = tDate;
+                    }
+                });
+            }
+            
+            //Começa no primeiro dia do mês da transação mais antiga
+            const monthStart = new Date(oldestDate.getFullYear(), oldestDate.getMonth(), 1);
             monthStart.setHours(0, 0, 0, 0);
             
-            //CORRIGIDO: Último dia do mês (não apenas até hoje)
+            //Termina no último dia do mês atual
+            const currentYear = today.getFullYear();
+            const currentMonth = today.getMonth();
             const monthEnd = new Date(currentYear, currentMonth + 1, 0);
             monthEnd.setHours(23, 59, 59, 999);
             
-            const daysInMonth = monthEnd.getDate();
-            
             console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📅 Período do gráfico:', monthStart.toLocaleDateString(), 'até', monthEnd.toLocaleDateString());
-            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Mostrando todos os', daysInMonth, 'dias do mês');
+            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Mostrando todo o histórico de transações');
             
             const labels = [];
             const incomeData = [];
@@ -8067,6 +8076,18 @@
                         '<i class="ph ph-check-circle"></i> Abaixo da meta: Você está economizando',
                         '<i class="ph ph-warning-circle"></i> Acima da meta: Você ultrapassou o limite planejado',
                         '<i class="ph ph-chart-bar"></i> A barra vermelha mostra o progresso visualmente'
+                    ]
+                },
+                'previsoes': {
+                    title: 'Previsões Financeiras',
+                    icon: 'ph-crystal-ball',
+                    description: 'O sistema analisa seus gastos anteriores e prevê quanto você gastará até o final do mês.',
+                    formula: 'Previsão = (Gasto Médio por Dia) × Dias Restantes + Gastos Atuais',
+                    example: 'Se você gasta R$ 100 por dia e faltam 15 dias, a previsão é R$ 1.500 + seus gastos atuais.',
+                    interpretation: [
+                        '<i class="ph ph-trending-up"></i> Previsão alta: Você pode precisar economizar nos próximos dias',
+                        '<i class="ph ph-check-circle"></i> Dentro da meta: Mantenha esse ritmo de gastos',
+                        '<i class="ph ph-warning-circle"></i> Acima da meta prevista: Considere reduzir despesas'
                     ]
                 }
             };
