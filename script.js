@@ -359,12 +359,34 @@
          * EXCEÇÃO: Apenas durante onboarding o scroll deve estar bloqueado
          */
         function enableBodyScroll() {
+            console.log('[SCROLL] ✅ enableBodyScroll() chamado');
+            console.log('[SCROLL] 📊 overflow ANTES:', document.body.style.overflow);
             document.body.style.overflow = '';
             document.body.style.position = '';
             document.body.style.width = '';
             document.body.style.height = '';
             document.body.classList.remove('onboarding-active');
+            console.log('[SCROLL] 📊 overflow DEPOIS:', document.body.style.overflow);
+            console.log('[SCROLL] 📊 Classe onboarding-active:', document.body.classList.contains('onboarding-active'));
             console.log('[SCROLL] ✅ Scroll liberado');
+            
+            //⚠️ DEBUG: Verifica após 1 segundo se overflow mudou
+            setTimeout(() => {
+                if (document.body.style.overflow === 'hidden' || document.body.style.overflow === 'auto') {
+                    console.error('[SCROLL] ⚠️ ALERTA: Overflow foi ALTERADO após enableBodyScroll!');
+                    console.error('[SCROLL] ⚠️ Overflow atual:', document.body.style.overflow);
+                    console.error('[SCROLL] ⚠️ Stack trace:', new Error().stack);
+                }
+            }, 1000);
+            
+            //⚠️ DEBUG: Verifica após 3 segundos
+            setTimeout(() => {
+                if (document.body.style.overflow === 'hidden' || document.body.style.overflow === 'auto') {
+                    console.error('[SCROLL] ⚠️ ALERTA: Overflow foi ALTERADO após 3s!');
+                    console.error('[SCROLL] ⚠️ Overflow atual:', document.body.style.overflow);
+                    console.error('[SCROLL] ⚠️ Stack trace:', new Error().stack);
+                }
+            }, 3000);
         }
         
         /**
@@ -1050,6 +1072,7 @@
         }
 
         function openAboutPage() {
+            console.log('[SCROLL] 📖 openAboutPage() chamado - bloqueando scroll (esperado)');
             document.getElementById('aboutPage').classList.add('active');
             document.body.style.overflow = 'hidden';
             
@@ -1060,13 +1083,12 @@
         }
 
         function closeAboutPage() {
+            console.log('[SCROLL] 📖 closeAboutPage() chamado - restaurando scroll');
             document.getElementById('aboutPage').classList.remove('active');
-            document.body.style.overflow = 'auto';
+            enableBodyScroll(); //✅ Usa função utilitária
             
             //Reset scroll ao fechar
             window.scrollTo(0, 0);
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
         }
 
         function backToLanding() {
