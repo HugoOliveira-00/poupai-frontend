@@ -14428,26 +14428,33 @@
         function showSecurityVerificationModal() {
             const modal = `
                 <div class="modal-overlay active" id="securityVerificationModal">
-                    <div class="modal-content">
+                    <div class="modal-content" style="max-width: 450px;">
                         <div class="modal-header">
-                            <h2>
-                                <i class="ph ph-shield-check"></i>
+                            <h2 style="display: flex; align-items: center; gap: 0.75rem; margin: 0;">
+                                <i class="ph ph-shield-check" style="color: #3b82f6; font-size: 1.75rem;"></i>
                                 Verificação de Segurança
                             </h2>
                             <button class="close-modal" onclick="closeSecurityVerificationModal()">
                                 <i class="ph ph-x"></i>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            <div class="alert-info">
-                                <i class="ph ph-info"></i>
-                                <p>Por favor, confirme sua senha para acessar as perguntas de segurança.</p>
+                        <div class="modal-body" style="padding: 2rem;">
+                            <div style="background: #eff6ff; border: 2px solid #bfdbfe; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                    <i class="ph ph-info" style="color: #3b82f6; font-size: 1.5rem; flex-shrink: 0;"></i>
+                                    <div>
+                                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.25rem; font-size: 1rem;">🔒 Área Protegida</div>
+                                        <div style="color: #1e3a8a; font-size: 0.9rem; line-height: 1.5;">
+                                            Por favor, confirme sua senha para acessar as perguntas de segurança.
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <form id="securityVerificationForm" onsubmit="verifySecurityCredentials(event)">
-                                <div class="input-group">
-                                    <label for="verifyEmail">
-                                        <i class="ph ph-envelope"></i>
+                                <div class="input-group" style="margin-bottom: 1.25rem;">
+                                    <label for="verifyEmail" style="font-weight: 600; color: #374151; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">
+                                        <i class="ph ph-envelope" style="margin-right: 0.5rem;"></i>
                                         E-mail
                                     </label>
                                     <input 
@@ -14455,47 +14462,49 @@
                                         id="verifyEmail" 
                                         value="${currentUser?.email || ''}"
                                         readonly
+                                        style="background: #f9fafb; cursor: not-allowed; border: 2px solid #e5e7eb; padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 0.95rem;"
                                         required
                                     />
                                 </div>
                                 
-                                <div class="input-group">
-                                    <label for="verifyPassword">
-                                        <i class="ph ph-lock"></i>
+                                <div class="input-group" style="margin-bottom: 1.5rem;">
+                                    <label for="verifyPassword" style="font-weight: 600; color: #374151; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">
+                                        <i class="ph ph-lock" style="margin-right: 0.5rem;"></i>
                                         Senha
                                     </label>
-                                    <div class="password-input-wrapper">
+                                    <div style="position: relative;">
                                         <input 
                                             type="password" 
                                             id="verifyPassword" 
                                             placeholder="Digite sua senha"
                                             required
                                             autocomplete="current-password"
+                                            style="padding: 0.75rem 3rem 0.75rem 1rem; border: 2px solid #d1d5db; border-radius: 8px; width: 100%; font-size: 0.95rem;"
                                         />
                                         <button 
                                             type="button" 
-                                            class="toggle-password"
                                             onclick="toggleVerifyPassword()"
+                                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6b7280; font-size: 1.25rem; padding: 0.5rem;"
                                         >
                                             <i class="ph ph-eye" id="verifyPasswordIcon"></i>
                                         </button>
                                     </div>
                                 </div>
                                 
-                                <div class="modal-actions">
+                                <div style="display: flex; gap: 0.75rem; margin-top: 2rem;">
                                     <button 
                                         type="button" 
-                                        class="btn-secondary" 
                                         onclick="closeSecurityVerificationModal()"
+                                        style="flex: 1; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; background: white; border: 2px solid #3b82f6; color: #3b82f6; cursor: pointer; transition: all 0.2s;"
                                     >
-                                        <i class="ph ph-x"></i>
+                                        <i class="ph ph-x" style="margin-right: 0.5rem;"></i>
                                         Cancelar
                                     </button>
                                     <button 
-                                        type="submit" 
-                                        class="btn-primary"
+                                        type="submit"
+                                        style="flex: 1; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; cursor: pointer; transition: all 0.2s;"
                                     >
-                                        <i class="ph ph-check"></i>
+                                        <i class="ph ph-check" style="margin-right: 0.5rem;"></i>
                                         Verificar
                                     </button>
                                 </div>

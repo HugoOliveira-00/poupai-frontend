@@ -11617,7 +11617,7 @@
         }
 
         .btn-logout-profile {
-            display: flex; /* ✅ Sempre visível */
+            display: flex !important; /* ✅ Sempre visível - FORÇADO */
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
