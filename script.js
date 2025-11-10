@@ -4097,7 +4097,7 @@
             updateNextHoliday();
             updatePotentialSavings();
             updateMonthEndProjection();
-            updateNextMonthForecast();
+            updateExpenseGrowthRate();
             updateBiggestExpense();
             updateSavingsRate();
             updateDaysToSalary();
@@ -5163,6 +5163,75 @@
 
             valueEl.textContent = formatCurrency(avgRecurringExpense);
             subtitleEl.innerHTML = `Baseado em <strong>${monthlyExpenses.length}</strong> ${monthlyExpenses.length === 1 ? 'mês' : 'meses'} (apenas recorrentes)`;
+        }
+
+        //Calcula a taxa de crescimento/redução dos gastos vs. mês anterior
+        function updateExpenseGrowthRate() {
+            const valueEl = document.getElementById('expenseGrowthRate');
+            const subtitleEl = document.getElementById('growthRateSubtitle');
+            
+            if (!valueEl || !subtitleEl) return;
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            //Mês anterior
+            let previousMonth = currentMonth - 1;
+            let previousYear = currentYear;
+            if (previousMonth < 0) {
+                previousMonth = 11;
+                previousYear -= 1;
+            }
+
+            //Gastos do mês atual
+            const currentMonthExpenses = transactions
+                .filter(t => {
+                    const tDate = parseLocalDate(t.data);
+                    return t.tipo === 'despesa' && 
+                           tDate.getMonth() === currentMonth &&
+                           tDate.getFullYear() === currentYear;
+                })
+                .reduce((sum, t) => {
+                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
+                        return sum + Math.abs(t.valorParcela);
+                    }
+                    return sum + Math.abs(t.valor);
+                }, 0);
+
+            //Gastos do mês anterior
+            const previousMonthExpenses = transactions
+                .filter(t => {
+                    const tDate = parseLocalDate(t.data);
+                    return t.tipo === 'despesa' && 
+                           tDate.getMonth() === previousMonth &&
+                           tDate.getFullYear() === previousYear;
+                })
+                .reduce((sum, t) => {
+                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
+                        return sum + Math.abs(t.valorParcela);
+                    }
+                    return sum + Math.abs(t.valor);
+                }, 0);
+
+            if (previousMonthExpenses === 0) {
+                valueEl.textContent = '--';
+                subtitleEl.textContent = 'Histórico insuficiente';
+                return;
+            }
+
+            //Calcula variação percentual
+            const growthRate = ((currentMonthExpenses - previousMonthExpenses) / previousMonthExpenses) * 100;
+            
+            //Formata com cor e símbolo
+            const sign = growthRate > 0 ? '+' : '';
+            const color = growthRate > 0 ? '#ef4444' : '#10b981'; //Vermelho se aumentou, verde se diminuiu
+            
+            valueEl.textContent = `${sign}${growthRate.toFixed(1)}%`;
+            valueEl.style.color = color;
+            
+            const trend = growthRate > 0 ? '📈 Aumentou' : growthRate < 0 ? '📉 Diminuiu' : '➡️ Estável';
+            subtitleEl.innerHTML = `${trend} vs. mês anterior`;
         }
 
         //Identifica o maior gasto do mês atual
@@ -8824,12 +8893,32 @@
             const diasRestantes = Math.ceil((fimDoMes - hoje) / (1000 * 60 * 60 * 24));
             const projecaoFimMes = currentStats.despesas + (mediaDiaria * diasRestantes);
             
-            //Previsão 2: Próximo Mês
-            const projecaoProximoMes = mediaDiaria * 30;
+            //Previsão 2: Taxa de crescimento
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+            let mesAnterior = mesAtual - 1;
+            let anoAnterior = anoAtual;
+            if (mesAnterior < 0) {
+                mesAnterior = 11;
+                anoAnterior -= 1;
+            }
+            
+            const gastosMesAtual = transactions.filter(t => {
+                const tDate = parseLocalDate(t.data);
+                return t.tipo === 'despesa' && tDate.getMonth() === mesAtual && tDate.getFullYear() === anoAtual;
+            }).reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            
+            const gastosMesAnterior = transactions.filter(t => {
+                const tDate = parseLocalDate(t.data);
+                return t.tipo === 'despesa' && tDate.getMonth() === mesAnterior && tDate.getFullYear() === anoAnterior;
+            }).reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            
+            const taxaCrescimento = gastosMesAnterior > 0 ? 
+                ((gastosMesAtual - gastosMesAnterior) / gastosMesAnterior) * 100 : 0;
             
             //Previsão 3: Economia possível
-            const metaMensal = currentUser?.metaMensal || projecaoProximoMes * 0.8;
-            const economiaPossivel = Math.max(0, projecaoProximoMes - metaMensal);
+            const metaMensal = currentUser?.metaMensal || currentStats.despesas * 0.8;
+            const economiaPossivel = Math.max(0, currentStats.despesas - metaMensal);
             
             const predictions = [
                 {
@@ -8843,13 +8932,13 @@
                     ]
                 },
                 {
-                    icon: 'ph ph-trend-up',
-                    title: 'Previsão Próximo Mês',
-                    subtitle: 'Baseado no padrão atual',
-                    value: formatCurrency(projecaoProximoMes),
+                    icon: 'ph ph-chart-line',
+                    title: 'Tendência de Gastos',
+                    subtitle: 'Comparado ao mês anterior',
+                    value: `${taxaCrescimento > 0 ? '+' : ''}${taxaCrescimento.toFixed(1)}%`,
                     details: [
-                        { label: 'Média diária', value: formatCurrency(mediaDiaria) },
-                        { label: 'Dias do mês', value: '30' }
+                        { label: 'Mês atual', value: formatCurrency(gastosMesAtual) },
+                        { label: 'Mês anterior', value: formatCurrency(gastosMesAnterior) }
                     ]
                 },
                 {
@@ -8859,7 +8948,7 @@
                     value: formatCurrency(economiaPossivel),
                     details: [
                         { label: 'Sua meta', value: formatCurrency(metaMensal) },
-                        { label: 'Projeção', value: formatCurrency(projecaoProximoMes) }
+                        { label: 'Gasto atual', value: formatCurrency(currentStats.despesas) }
                     ]
                 }
             ];
@@ -16685,7 +16774,7 @@
                 '#trendValue',
                 '#potentialSavings',
                 '#monthEndProjection',
-                '#nextMonthForecast',
+                '#expenseGrowthRate',
                 '#biggestExpenseValue',
                 
                 //Transações (Todas as abas)

@@ -527,18 +527,52 @@
       </h1>
      </div>
      <nav class="navigation">
-      <!-- Menu de navegação principal - v2.0 -->
+      <!-- Menu de navegação principal - v3.0 Reorganizado -->
+      
+      <!-- SEÇÃO: PRINCIPAL -->
       <a class="active" href="#" onclick="showSection(event, 'overview')">
        <i class="ph ph-house"></i>
        <span>
         Visão Geral
        </span>
       </a>
+      
+      <!-- SEÇÃO: FINANCEIRO -->
       <a href="#" onclick="showSection(event, 'transactions')">
        <i class="ph ph-arrows-left-right">
        </i>
        <span>
         Transações
+       </span>
+      </a>
+      <a href="#" onclick="showSection(event, 'reports')">
+       <i class="ph ph-chart-bar">
+       </i>
+       <span>
+        Relatórios
+       </span>
+      </a>
+      <a href="#" onclick="showSection(event, 'market')">
+       <i class="ph ph-trend-up">
+       </i>
+       <span>
+        Mercado
+       </span>
+      </a>
+      
+      <!-- SEÇÃO: FERRAMENTAS -->
+      <a href="#" onclick="showSection(event, 'simulators')">
+       <i class="ph ph-calculator">
+       </i>
+       <span>
+        Simuladores
+       </span>
+      </a>
+      <a href="#" onclick="showSection(event, 'calendar')">
+       <i class="ph ph-calendar">
+       </i>
+       <span>
+        Calendário
        </span>
       </a>
       <a href="#" onclick="showSection(event, 'todos')">
@@ -549,34 +583,8 @@
        </span>
        <span class="nav-badge" id="todoBadgeDesktop" style="display: none;">0</span>
       </a>
-      <a href="#" onclick="showSection(event, 'calendar')">
-       <i class="ph ph-calendar">
-       </i>
-       <span>
-        Calendário
-       </span>
-      </a>
-      <a href="#" onclick="showSection(event, 'market')">
-       <i class="ph ph-trend-up">
-       </i>
-       <span>
-        Mercado
-       </span>
-      </a>
-      <a href="#" onclick="showSection(event, 'simulators')">
-       <i class="ph ph-calculator">
-       </i>
-       <span>
-        Simuladores
-       </span>
-      </a>
-      <a href="#" onclick="showSection(event, 'reports')">
-       <i class="ph ph-chart-bar">
-       </i>
-       <span>
-        Relatórios
-       </span>
-      </a>
+      
+      <!-- SEÇÃO: SUPORTE -->
       <a href="#" onclick="showSection(event, 'education')">
        <i class="ph ph-book-open">
        </i>
@@ -591,6 +599,7 @@
         Ajuda
        </span>
       </a>
+      
       <a href="javascript:void(0)" onclick="logout(); return false;" class="sidebar-logout">
        <i class="ph ph-sign-out">
        </i>
@@ -847,15 +856,15 @@
            </div>
          </div>
 
-         <!-- Previsão Próximo Mês -->
+         <!-- Taxa de Crescimento -->
          <div class="mini-card">
            <div class="mini-card-header">
-             <i class="ph ph-crystal-ball"></i>
-             <h4>Previsão Próximo Mês</h4>
+             <i class="ph ph-chart-line"></i>
+             <h4>Tendência de Gastos</h4>
            </div>
            <div class="mini-card-content">
-             <div class="metric-value" id="nextMonthForecast">R$ 0,00</div>
-             <div class="metric-subtitle" id="forecastSubtitle">Últimos 3 meses</div>
+             <div class="metric-value" id="expenseGrowthRate">0%</div>
+             <div class="metric-subtitle" id="growthRateSubtitle">vs. mês anterior</div>
           </div>
         </div>
 
@@ -3973,14 +3982,14 @@
        MOBILE BOTTOM NAVIGATION (AppBar)
        =================================== -->
   <nav class="mobile-bottom-nav hidden">
-    <button class="nav-item" data-section="reports" onclick="showSectionMobile(event, 'reports')">
-      <i class="ph ph-chart-bar"></i>
-      <span>Relatórios</span>
-    </button>
-    
     <button class="nav-item" data-section="transactions" onclick="showSectionMobile(event, 'transactions')">
       <i class="ph ph-arrows-left-right"></i>
       <span>Transações</span>
+    </button>
+    
+    <button class="nav-item" data-section="reports" onclick="showSectionMobile(event, 'reports')">
+      <i class="ph ph-chart-bar"></i>
+      <span>Relatórios</span>
     </button>
     
     <button class="nav-item nav-item-center active" data-section="overview" onclick="showSectionMobile(event, 'overview')">
@@ -3988,10 +3997,9 @@
       <span>Início</span>
     </button>
     
-    <button class="nav-item" data-section="todos" onclick="showSectionMobile(event, 'todos')">
-      <i class="ph ph-note-pencil"></i>
-      <span>A Registrar</span>
-      <span class="nav-badge" id="todoBadge" style="display: none;">0</span>
+    <button class="nav-item" data-section="simulators" onclick="showSectionMobile(event, 'simulators')">
+      <i class="ph ph-calculator"></i>
+      <span>Simuladores</span>
     </button>
     
     <button class="nav-item" data-section="help" onclick="showSectionMobile(event, 'help')">
