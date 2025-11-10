@@ -5008,8 +5008,15 @@
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
 
-            //Define categorias IMPORTANTES (que NÃO devem ser sugeridas para corte)
-            const importantCategories = ['Moradia', 'Aluguel', 'Contas', 'Saúde', 'Educação', 'Transporte'];
+            //Define categorias ESSENCIAIS (que NÃO devem ser sugeridas para corte)
+            const essentialCategories = [
+                'Moradia', 'Aluguel', 'Condomínio', 'IPTU',
+                'Contas', 'Água', 'Luz', 'Energia', 'Gás', 'Internet',
+                'Saúde', 'Médico', 'Remédio', 'Farmácia', 'Plano de Saúde',
+                'Educação', 'Escola', 'Faculdade', 'Curso',
+                'Transporte', 'Combustível', 'Gasolina', 'Ônibus', 'Metrô',
+                'Mercado', 'Supermercado', 'Alimentação Básica'
+            ];
             
             //Busca despesas do mês que NÃO são essenciais
             const nonEssentialExpenses = transactions
@@ -5021,12 +5028,13 @@
                     
                     if (!isCurrentMonth) return false;
                     
-                    //Verifica se NÃO é uma categoria importante
-                    const isImportant = importantCategories.some(cat => 
-                        t.categoria.toLowerCase().includes(cat.toLowerCase())
+                    //Verifica se NÃO é uma categoria essencial
+                    const isEssential = essentialCategories.some(cat => 
+                        t.categoria.toLowerCase().includes(cat.toLowerCase()) ||
+                        t.descricao.toLowerCase().includes(cat.toLowerCase())
                     );
                     
-                    return !isImportant; //Retorna apenas despesas não essenciais
+                    return !isEssential; //Retorna apenas despesas não essenciais
                 })
                 .sort((a, b) => b.valor - a.valor); //Ordena do maior para o menor
 
@@ -5039,7 +5047,7 @@
                 subtitleEl.innerHTML = `Sem "<strong>${biggestExpense.descricao}</strong>"`;
             } else {
                 valueEl.textContent = 'R$ 0,00';
-                subtitleEl.textContent = 'Adicione gastos';
+                subtitleEl.textContent = 'Sem gastos não-essenciais';
             }
         }
 
@@ -5065,7 +5073,7 @@
                 return;
             }
 
-            //Gastos do mês até agora
+            //Gastos do mês até agora (APENAS despesas únicas e parcelas individuais)
             const monthExpenses = transactions
                 .filter(t => {
                     const tDate = parseLocalDate(t.data);
@@ -5073,7 +5081,14 @@
                            tDate.getMonth() === currentMonth &&
                            tDate.getFullYear() === currentYear;
                 })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+                .reduce((sum, t) => {
+                    //Para parceladas, usar apenas valorParcela (não valor total)
+                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
+                        return sum + Math.abs(t.valorParcela);
+                    }
+                    //Para fixas e únicas, usar valor normal
+                    return sum + Math.abs(t.valor);
+                }, 0);
 
             if (monthExpenses === 0) {
                 valueEl.textContent = 'R$ 0,00';
@@ -5102,7 +5117,7 @@
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
 
-            //Calcula gastos dos últimos 3 meses
+            //Calcula gastos RECORRENTES (fixas e parceladas) dos últimos 3 meses
             const monthlyExpenses = [];
             for (let i = 0; i < 3; i++) {
                 let targetMonth = currentMonth - i;
@@ -5117,11 +5132,20 @@
                 const monthTotal = transactions
                     .filter(t => {
                         const tDate = parseLocalDate(t.data);
+                        //APENAS despesas fixas e parceladas (NÃO únicas)
                         return t.tipo === 'despesa' && 
+                               (t.despesaTipo === 'fixa' || t.despesaTipo === 'parcelada') &&
                                tDate.getMonth() === targetMonth &&
                                tDate.getFullYear() === targetYear;
                     })
-                    .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+                    .reduce((sum, t) => {
+                        //Para parceladas, usar apenas valorParcela
+                        if (t.despesaTipo === 'parcelada' && t.valorParcela) {
+                            return sum + Math.abs(t.valorParcela);
+                        }
+                        //Para fixas, usar valor normal
+                        return sum + Math.abs(t.valor);
+                    }, 0);
 
                 if (monthTotal > 0) {
                     monthlyExpenses.push(monthTotal);
@@ -5134,27 +5158,11 @@
                 return;
             }
 
-            //Média dos últimos meses com dados
-            const avgMonthlyExpense = monthlyExpenses.reduce((a, b) => a + b, 0) / monthlyExpenses.length;
+            //Média dos gastos recorrentes
+            const avgRecurringExpense = monthlyExpenses.reduce((a, b) => a + b, 0) / monthlyExpenses.length;
 
-            //Adiciona despesas fixas confirmadas para o próximo mês
-            const nextMonth = (currentMonth + 1) % 12;
-            const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-            
-            const fixedExpensesNextMonth = transactions
-                .filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    return t.tipo === 'despesa' && 
-                           t.tipoGasto === 'fixa' &&
-                           tDate.getMonth() === nextMonth &&
-                           tDate.getFullYear() === nextYear;
-                })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
-
-            const forecast = avgMonthlyExpense + (fixedExpensesNextMonth * 0.1); //Ajuste conservador
-
-            valueEl.textContent = formatCurrency(forecast);
-            subtitleEl.innerHTML = `Baseado em <strong>${monthlyExpenses.length}</strong> ${monthlyExpenses.length === 1 ? 'mês' : 'meses'}`;
+            valueEl.textContent = formatCurrency(avgRecurringExpense);
+            subtitleEl.innerHTML = `Baseado em <strong>${monthlyExpenses.length}</strong> ${monthlyExpenses.length === 1 ? 'mês' : 'meses'} (apenas recorrentes)`;
         }
 
         //Identifica o maior gasto do mês atual
@@ -14427,7 +14435,7 @@
         //✅ NOVO: Modal de verificação de segurança para acessar perguntas
         function showSecurityVerificationModal() {
             const modal = `
-                <div class="modal-overlay active" id="securityVerificationModal" style="z-index: 999999;">
+                <div class="modal-overlay active" id="securityVerificationModal" style="z-index: 999999; align-items: flex-start; padding-top: 15vh;">
                     <div class="modal-content" style="max-width: 450px;">
                         <div class="modal-header">
                             <h2 style="display: flex; align-items: center; gap: 0.75rem; margin: 0;">
