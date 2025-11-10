@@ -1,13 +1,13 @@
-
-        /* ✅ FORÇAR color-scheme LIGHT em toda aplicação */
-        /* Mantém navigation bar preta através de meta tag HTML */
+﻿
+        /* âœ… FORÃ‡AR color-scheme LIGHT em toda aplicaÃ§Ã£o */
+        /* MantÃ©m navigation bar preta atravÃ©s de meta tag HTML */
         :root {
             color-scheme: light;
-            /* Variável para controle do ajuste óptico de centralização vertical */
+            /* VariÃ¡vel para controle do ajuste Ã³ptico de centralizaÃ§Ã£o vertical */
             --optical-shift: -6%;
         }
 
-        /* ✅ GARANTIR que todos os elementos usem modo claro */
+        /* âœ… GARANTIR que todos os elementos usem modo claro */
         *,
         *::before,
         *::after {
@@ -17,7 +17,7 @@
             -webkit-touch-callout: none;
         }
         
-        /* ✅ FORÇAR navigation bar/status bar PRETA no Android */
+        /* âœ… FORÃ‡AR navigation bar/status bar PRETA no Android */
         @supports (-webkit-touch-callout: none) {
             /* iOS */
             html {
@@ -26,7 +26,7 @@
         }
         
         @supports not (-webkit-touch-callout: none) {
-            /* Android - força background preto para navigation bar */
+            /* Android - forÃ§a background preto para navigation bar */
             html {
                 background: #000000;
             }
@@ -76,36 +76,36 @@
             display: none;
         }
 
-        /* ✅ FIX CRÍTICO: Evita scroll lateral e bounce no iOS */
+        /* âœ… FIX CRÃTICO: Evita scroll lateral e bounce no iOS */
         html, body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #FFFFFF;
             color: #111827;
-            /* Força orientação portrait em mobile */
+            /* ForÃ§a orientaÃ§Ã£o portrait em mobile */
             -webkit-text-size-adjust: 100%;
             /* Evita overflow horizontal */
             overflow-x: hidden;
             max-width: 100%;
-            /* ✅ SCROLL MOBILE FUNCIONAL - Removido overscroll-behavior */
+            /* âœ… SCROLL MOBILE FUNCIONAL - Removido overscroll-behavior */
             -webkit-overflow-scrolling: touch;
-            /* Fixa posição no iOS */
+            /* Fixa posiÃ§Ã£o no iOS */
             position: relative;
             width: 100%;
             height: 100%;
         }
 
-        /* Garante que imagens/videos/iframes não quebrem layout */
+        /* Garante que imagens/videos/iframes nÃ£o quebrem layout */
         img, video, iframe {
             max-width: 100%;
             height: auto;
         }
         
-        /* Força layout mobile em qualquer orientação de celular */
+        /* ForÃ§a layout mobile em qualquer orientaÃ§Ã£o de celular */
         @media screen and (max-device-width: 768px) {
             html, body {
                 max-width: 100vw;
                 overflow-x: hidden;
-                /* ✅ SCROLL MOBILE FUNCIONAL - Removido overscroll-behavior */
+                /* âœ… SCROLL MOBILE FUNCIONAL - Removido overscroll-behavior */
             }
             
             /* Remove flash/highlight em elementos interativos no mobile */
@@ -116,7 +116,7 @@
                 user-select: none;
             }
             
-            /* Permite seleção de texto apenas em inputs de texto */
+            /* Permite seleÃ§Ã£o de texto apenas em inputs de texto */
             input[type="text"],
             input[type="email"],
             input[type="password"],
@@ -143,7 +143,7 @@
                 -webkit-tap-highlight-color: transparent !important;
             }
             
-            /* FORÇA font-size 16px em TODOS os inputs para evitar zoom iOS */
+            /* FORÃ‡A font-size 16px em TODOS os inputs para evitar zoom iOS */
             input, textarea, select {
                 font-size: 16px !important;
                 -webkit-tap-highlight-color: transparent !important;
@@ -586,11 +586,11 @@
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
             line-height: 1.6;
-            padding: 0.5rem 2rem; /* ✅ Padding horizontal adicionado */
+            padding: 0.5rem 2rem; /* âœ… Padding horizontal adicionado */
             border-bottom: 1px solid #e5e7eb;
         }
 
-        /* ✅ Padding para o conteúdo do modal (formulários e resultados) */
+        /* âœ… Padding para o conteÃºdo do modal (formulÃ¡rios e resultados) */
         .simulator-modal-content form,
         .simulator-modal-content > div:not(.simulator-modal-header) {
             padding: 0 2rem 2rem 2rem;
@@ -735,7 +735,7 @@
             margin: 1.5rem 0;
         }
 
-        /* === INSIGHTS COMPACTOS COM ROTA��O DIN�MICA === */
+        /* === INSIGHTS COMPACTOS COM ROTAï¿½ï¿½O DINï¿½MICA === */
         .insights-compact {
             background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
             border: 1px solid #bfdbfe;
@@ -812,7 +812,7 @@
             line-height: 1.5;
         }
 
-        /* Pagina��o dentro do card compacto */
+        /* Paginaï¿½ï¿½o dentro do card compacto */
         .insights-pagination {
             display: flex;
             align-items: center;
@@ -869,7 +869,7 @@
             color: #9ca3af;
         }
 
-        /* Tipos de insights - cores no �cone */
+        /* Tipos de insights - cores no ï¿½cone */
         .insights-summary.alert .insights-summary-icon i {
             color: #dc2626;
         }
@@ -1586,7 +1586,7 @@
             width: 100%;
         }
         
-        /* Controle de exibi��o desktop/mobile */
+        /* Controle de exibiï¿½ï¿½o desktop/mobile */
         .landing-title-mobile {
             display: none;
         }
@@ -1657,7 +1657,7 @@
             z-index: 3000;
             overflow-y: auto;
             animation: fadeIn 0.4s ease-out;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); /* ✅ Azul gradiente */
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); /* âœ… Azul gradiente */
         }
 
         .about-page.active {
@@ -1671,11 +1671,11 @@
             width: 100%;
             height: 100vh;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); /* ✅ Azul gradiente */
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%); /* âœ… Azul gradiente */
             z-index: 1;
         }
 
-        /* ✅ ESFERAS GRADIENTES DO ABOUT PAGE (igual landing page) */
+        /* âœ… ESFERAS GRADIENTES DO ABOUT PAGE (igual landing page) */
         .about-page-background .gradient-sphere {
             position: absolute;
             border-radius: 50%;
@@ -1881,7 +1881,7 @@
             justify-content: flex-start;
             align-items: center;
             padding: 2rem 3rem;
-            padding-bottom: 3rem; /* Espaço extra para tablet */
+            padding-bottom: 3rem; /* EspaÃ§o extra para tablet */
             margin-top: 1rem;
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
@@ -1903,20 +1903,20 @@
             color: white;
         }
 
-        /* Esconder footer quando auth-screen está visível */
+        /* Esconder footer quando auth-screen estÃ¡ visÃ­vel */
         .auth-screen:not(.hidden) ~ .landing-page .landing-footer,
         body:has(.auth-screen:not([style*="display: none"])) .landing-footer {
             display: none !important;
         }
 
-        /* Tablet específico (1024px - 1280px) */
+        /* Tablet especÃ­fico (1024px - 1280px) */
         @media (min-width: 769px) and (max-width: 1280px) {
             .landing-footer {
-                padding-bottom: 4rem; /* Mais espaço para tablets maiores */
+                padding-bottom: 4rem; /* Mais espaÃ§o para tablets maiores */
             }
             
             .modal-todo {
-                max-width: 700px; /* Tamanho intermediário para tablet */
+                max-width: 700px; /* Tamanho intermediÃ¡rio para tablet */
             }
             
             /* Mostrar hint em tablet */
@@ -1924,7 +1924,7 @@
                 display: block !important;
             }
             
-            /* Centraliza conteúdo verticalmente em tablet landscape */
+            /* Centraliza conteÃºdo verticalmente em tablet landscape */
             body {
                 display: flex;
                 justify-content: center;
@@ -1937,7 +1937,7 @@
                 padding: 2rem;
             }
             
-            /* Ajusta sidebar para não ficar muito no topo */
+            /* Ajusta sidebar para nÃ£o ficar muito no topo */
             .sidebar {
                 margin-top: 2rem;
             }
@@ -1950,7 +1950,7 @@
                 min-height: calc(100vh - 4rem);
             }
             
-            /* Dashboard sections com melhor espaçamento */
+            /* Dashboard sections com melhor espaÃ§amento */
             .section {
                 margin-bottom: 2rem;
             }
@@ -1972,7 +1972,7 @@
                 transition: all 0.3s ease;
             }
 
-            /* P�gina Sobre redesenhada para mobile */
+            /* Pï¿½gina Sobre redesenhada para mobile */
             .about-container {
                 padding: 1.5rem;
                 margin: 3.5rem 1rem 2rem;
@@ -2047,7 +2047,7 @@
             100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* AUTENTICA��O */
+        /* AUTENTICAï¿½ï¿½O */
         .auth-screen {
             position: fixed;
             top: 0;
@@ -2090,7 +2090,7 @@
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.15);
         }
         
-        /* Desktop: garantir posição original do botão voltar */
+        /* Desktop: garantir posiÃ§Ã£o original do botÃ£o voltar */
         @media (min-width: 769px) {
             .auth-back-btn {
                 position: absolute !important;
@@ -2155,7 +2155,7 @@
             border-radius: 8px;
             color: #1a1a1a;
             font-family: 'Inter', sans-serif;
-            font-size: 16px; /* 16px mínimo para evitar zoom no iOS */
+            font-size: 16px; /* 16px mÃ­nimo para evitar zoom no iOS */
             transition: border-color 0.2s;
         }
 
@@ -2174,7 +2174,7 @@
             padding-right: 3rem;
         }
 
-        /* Remove o �cone nativo de mostrar/ocultar senha do navegador */
+        /* Remove o ï¿½cone nativo de mostrar/ocultar senha do navegador */
         .password-input-wrapper input::-ms-reveal,
         .password-input-wrapper input::-ms-clear {
             display: none;
@@ -2221,7 +2221,7 @@
             transform: translateY(-50%) scale(0.95);
         }
 
-        /* ===== INDICADOR DE FOR�A DA SENHA ===== */
+        /* ===== INDICADOR DE FORï¿½A DA SENHA ===== */
         .password-strength-indicator {
             margin-top: 0.75rem;
             padding: 0.75rem;
@@ -2248,7 +2248,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Estados de for�a da senha */
+        /* Estados de forï¿½a da senha */
         .password-strength-indicator.weak .strength-bar:nth-child(1) {
             background: #ef4444;
         }
@@ -2297,7 +2297,7 @@
             transition: none;
         }
 
-        /* Indicador de for�a da senha */
+        /* Indicador de forï¿½a da senha */
         .password-strength-indicator {
             margin-top: 0.5rem;
         }
@@ -2506,7 +2506,7 @@
         }
 
         /* ============================================== */
-        /* ESTILOS DA TELA DE PERGUNTAS DE SEGURANÇA    */
+        /* ESTILOS DA TELA DE PERGUNTAS DE SEGURANÃ‡A    */
         /* ============================================== */
         
         /* Container principal */
@@ -2523,7 +2523,7 @@
             overflow-y: auto;
         }
         
-        /* Quando ativo, mostrar com animação */
+        /* Quando ativo, mostrar com animaÃ§Ã£o */
         #securityQuestionsScreen[style*="display: flex"],
         #securityQuestionsScreen[style*="display:flex"] {
             display: flex !important;
@@ -2531,7 +2531,7 @@
             justify-content: center;
         }
         
-        /* Botão de voltar dentro do security questions screen */
+        /* BotÃ£o de voltar dentro do security questions screen */
         #securityQuestionsScreen .auth-back-btn {
             position: absolute;
             top: 1rem;
@@ -2563,12 +2563,12 @@
             height: 20px;
         }
 
-        /* Container de steps - NÃO MAIS NECESSÁRIO (usando .auth-box) */
+        /* Container de steps - NÃƒO MAIS NECESSÃRIO (usando .auth-box) */
         .security-step {
             display: none !important;
         }
 
-        /* Form dentro do step - NÃO MAIS NECESSÁRIO (usando .auth-box) */
+        /* Form dentro do step - NÃƒO MAIS NECESSÃRIO (usando .auth-box) */
         .auth-form {
             display: none !important;
         }
@@ -2598,7 +2598,7 @@
             opacity: 0.7;
         }
 
-        /* Indicador de força da senha */
+        /* Indicador de forÃ§a da senha */
         .password-strength-container {
             margin-top: 8px;
             display: flex;
@@ -2681,7 +2681,7 @@
             border-color: #3b82f6;
         }
 
-        /* Botão de submit */
+        /* BotÃ£o de submit */
         .auth-button {
             width: 100%;
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -2724,7 +2724,7 @@
             text-decoration: underline;
         }
 
-        /* Warning box (quando backend não está disponível) */
+        /* Warning box (quando backend nÃ£o estÃ¡ disponÃ­vel) */
         .auth-warning {
             background-color: #fef3c7;
             border-left: 4px solid #f59e0b;
@@ -2815,7 +2815,7 @@
         }
 
         /* ============================================== */
-        /* FIM DOS ESTILOS DE PERGUNTAS DE SEGURANÇA    */
+        /* FIM DOS ESTILOS DE PERGUNTAS DE SEGURANÃ‡A    */
         /* ============================================== */
 
         /* Responsividade Mobile - Auth Screen */
@@ -2867,8 +2867,8 @@
 
             .form-group input {
                 padding: 0.7rem 0.875rem;
-                font-size: 16px !important; /* FORÇA 16px para evitar zoom iOS */
-                /* Remove transição que causa flash no mobile */
+                font-size: 16px !important; /* FORÃ‡A 16px para evitar zoom iOS */
+                /* Remove transiÃ§Ã£o que causa flash no mobile */
                 transition: none !important;
                 -webkit-transition: none !important;
                 transform: none !important;
@@ -2931,9 +2931,9 @@
                 font-weight: 700 !important;
             }
             
-            /* Remove animações de foco no mobile */
+            /* Remove animaÃ§Ãµes de foco no mobile */
             .form-group input {
-                font-size: 16px !important; /* FORÇA 16px para evitar zoom iOS */
+                font-size: 16px !important; /* FORÃ‡A 16px para evitar zoom iOS */
                 transition: none !important;
                 -webkit-transition: none !important;
                 transform: none !important;
@@ -3260,7 +3260,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 100000 !important; /* ACIMA do bottom-nav (9999) */
-            /* Desktop: SEM ajuste - centralização natural do flexbox */
+            /* Desktop: SEM ajuste - centralizaÃ§Ã£o natural do flexbox */
         }
         
         /* Modal de logout deve aparecer ACIMA do modal de perfil */
@@ -3370,7 +3370,7 @@
             height: 100vh;
             z-index: 2000;
             overflow: hidden;
-            /* Desktop: SEM ajuste - centralização natural do flexbox */
+            /* Desktop: SEM ajuste - centralizaÃ§Ã£o natural do flexbox */
         }
 
         .welcome-modal-active {
@@ -3493,7 +3493,7 @@
             margin: 0;
         }
 
-        /* Welcome Features - Vers�o Web (Desktop) */
+        /* Welcome Features - Versï¿½o Web (Desktop) */
         .welcome-features {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -3589,7 +3589,7 @@
             margin: 0;
         }
         
-        /* Welcome Stats - Vers�o Web (Desktop) */
+        /* Welcome Stats - Versï¿½o Web (Desktop) */
         .welcome-stats {
             display: flex;
             align-items: center;
@@ -3643,7 +3643,7 @@
             background: #cbd5e1;
         }
 
-        /* Welcome Message - Vers�o Mobile */
+        /* Welcome Message - Versï¿½o Mobile */
         .welcome-message {
             display: none; /* Oculto no desktop */
             text-align: center;
@@ -3724,7 +3724,7 @@
             font-size: 1.5rem;
         }
 
-        /* Estado de loading do bot�o */
+        /* Estado de loading do botï¿½o */
         .welcome-cta .btn-primary-large:disabled {
             cursor: not-allowed !important;
             transform: none !important;
@@ -3764,10 +3764,10 @@
             }
         }
 
-        /* Mobile (768px ou menos) - Muda para vers�o simplificada */
+        /* Mobile (768px ou menos) - Muda para versï¿½o simplificada */
         @media (max-width: 768px) {
             .welcome-screen {
-                /* Ajuste óptico mobile - centralização visual perfeita */
+                /* Ajuste Ã³ptico mobile - centralizaÃ§Ã£o visual perfeita */
                 transform: translateY(var(--optical-shift)) !important;
             }
             
@@ -3776,7 +3776,7 @@
                 max-width: 680px;
             }
 
-            /* Esconde vers�o web (features e stats) */
+            /* Esconde versï¿½o web (features e stats) */
             .welcome-features {
                 display: none !important;
             }
@@ -3789,7 +3789,7 @@
                 display: none !important;
             }
             
-            /* Mostra vers�o mobile (mensagem) */
+            /* Mostra versï¿½o mobile (mensagem) */
             .welcome-message {
                 display: block !important;
                 margin-bottom: 2rem;
@@ -4048,7 +4048,7 @@
             border-radius: 0 4px 4px 0;
         }
 
-        /* Botão Sair no menu lateral - Efeito de brilho */
+        /* BotÃ£o Sair no menu lateral - Efeito de brilho */
         .navigation a.sidebar-logout {
             margin-top: auto;
             color: rgba(255, 255, 255, 0.85);
@@ -4103,7 +4103,7 @@
             font-weight: 600;
             transition: all 0.3s;
             margin-top: 1rem;
-            display: none !important; /* Sempre escondido - usar apenas botão no modal de perfil */
+            display: none !important; /* Sempre escondido - usar apenas botÃ£o no modal de perfil */
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
@@ -4190,7 +4190,7 @@
             gap: 0.5rem;
         }
         
-        /* Espaçamento extra quando tem alerta informativo */
+        /* EspaÃ§amento extra quando tem alerta informativo */
         .section-header:has(.section-info-alert) {
             margin-bottom: 3rem;
         }
@@ -4230,7 +4230,7 @@
             margin: 0;
         }
 
-        /* Section header com a��es no canto */
+        /* Section header com aï¿½ï¿½es no canto */
         .section-header-with-actions {
             display: flex;
             justify-content: space-between;
@@ -4300,7 +4300,7 @@
             }
         }
 
-        /* Responsividade para section header com a��es */
+        /* Responsividade para section header com aï¿½ï¿½es */
         @media (max-width: 768px) {
             .section-header-with-actions {
                 flex-direction: column;
@@ -4341,7 +4341,7 @@
         }
 
         /* ========================================
-           BOTÃO DE PRIVACIDADE (OCULTAR VALORES)
+           BOTÃƒO DE PRIVACIDADE (OCULTAR VALORES)
            ======================================== */
         
         .privacy-toggle-btn {
@@ -4394,12 +4394,12 @@
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         }
 
-        /* 🔒 PRIVACIDADE: Botão só aparece no dashboard (sectionOverview) */
+        /* ðŸ”’ PRIVACIDADE: BotÃ£o sÃ³ aparece no dashboard (sectionOverview) */
         body:not(.section-overview) .privacy-toggle-btn {
             display: none !important;
         }
 
-        /* Estilo dos valores quando privacidade está ativa */
+        /* Estilo dos valores quando privacidade estÃ¡ ativa */
         .privacy-hidden {
             filter: blur(8px);
             user-select: none;
@@ -4491,7 +4491,7 @@
             border-color: #cbd5e1;
         }
 
-        /* Animação quando meta é atingida ou ultrapassada (>= 100%) */
+        /* AnimaÃ§Ã£o quando meta Ã© atingida ou ultrapassada (>= 100%) */
         .stat-card.limit-exceeded {
             background: #fef2f2;
             border: 1px solid #fca5a5;
@@ -4523,7 +4523,7 @@
         }
 
         /* ========================================
-           WIDGETS: COTAÇÕES E MERCADO - DESIGN MINIMALISTA
+           WIDGETS: COTAÃ‡Ã•ES E MERCADO - DESIGN MINIMALISTA
            ======================================== */
         
         .info-widgets {
@@ -4572,14 +4572,14 @@
         }
 
         .btn-refresh {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* ✅ AZUL ativo */
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* âœ… AZUL ativo */
             border: 1px solid rgba(59, 130, 246, 0.3);
             font-size: 1rem;
             cursor: pointer;
             padding: 0.4rem 0.5rem;
             border-radius: 6px;
             transition: all 0.2s ease;
-            color: white; /* ✅ Texto branco */
+            color: white; /* âœ… Texto branco */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -4603,14 +4603,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white; /* ✅ GARANTE seta branca */
+            color: white; /* âœ… GARANTE seta branca */
         }
 
         .btn-refresh:hover i {
             transform: rotate(180deg);
         }
 
-        /* Animação de loading para o botão */
+        /* AnimaÃ§Ã£o de loading para o botÃ£o */
         .btn-refresh.loading {
             pointer-events: none;
             opacity: 0.7;
@@ -4639,7 +4639,7 @@
             }
         }
 
-        /* Varia��o do bot�o para tema claro */
+        /* Variaï¿½ï¿½o do botï¿½o para tema claro */
         .btn-refresh.light {
             background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
             color: #2563eb;
@@ -4653,7 +4653,7 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
 
-        /* Bot�o compacto para espa�os menores */
+        /* Botï¿½o compacto para espaï¿½os menores */
         .btn-refresh.compact {
             padding: 0.35rem 0.45rem;
             font-size: 0.95rem;
@@ -4668,7 +4668,7 @@
             }
         }
 
-        /* Vers�o grande do bot�o refresh (com texto) */
+        /* Versï¿½o grande do botï¿½o refresh (com texto) */
         .btn-refresh-large {
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
@@ -4763,7 +4763,7 @@
             }
         }
 
-        /* Cotações - Design Minimalista */
+        /* CotaÃ§Ãµes - Design Minimalista */
         .currency-list {
             display: flex;
             flex-direction: column;
@@ -4935,7 +4935,7 @@
             flex: 1;
         }
 
-        /* Bot�o de informa��o (?) */
+        /* Botï¿½o de informaï¿½ï¿½o (?) */
         .info-tooltip-btn {
             width: 20px;
             height: 20px;
@@ -4964,7 +4964,7 @@
             gap: 0.5rem;
         }
 
-        /* Centralizar conte�do em cards simples (n�o transa��es e n�o vertical) */
+        /* Centralizar conteï¿½do em cards simples (nï¿½o transaï¿½ï¿½es e nï¿½o vertical) */
         .mini-card:not(.vertical-card) .mini-card-content:not(.transactions-content) {
             align-items: center;
             justify-content: center;
@@ -4972,7 +4972,7 @@
             min-height: 80px;
         }
 
-        /* Card de Transa��es - com scroll */
+        /* Card de Transaï¿½ï¿½es - com scroll */
         .transactions-content {
             max-height: 120px;
             overflow-y: auto;
@@ -5050,7 +5050,7 @@
             font-size: 0.85rem;
         }
 
-        /* M�tricas (gasto m�dio, comparativo, etc) */
+        /* Mï¿½tricas (gasto mï¿½dio, comparativo, etc) */
         .metric-value {
             font-size: 1.75rem;
             font-weight: 700;
@@ -5079,7 +5079,7 @@
             font-weight: 600;
         }
 
-        /* Tend�ncia mini chart - MELHORADO */
+        /* Tendï¿½ncia mini chart - MELHORADO */
         .trend-mini-chart {
             display: flex;
             justify-content: center;
@@ -5096,7 +5096,7 @@
             height: 45px;
         }
 
-        /* Subt�tulo com �cone */
+        /* Subtï¿½tulo com ï¿½cone */
         .metric-subtitle i {
             font-size: 0.875rem;
             margin-right: 0.25rem;
@@ -5135,7 +5135,7 @@
             transition: background 0.6s ease;
         }
 
-        /* Cores din�micas para lembretes baseado no tipo */
+        /* Cores dinï¿½micas para lembretes baseado no tipo */
         .vertical-card.reminder-urgent {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
         }
@@ -5347,7 +5347,7 @@
 
 
         /* ========================================
-           FASE 2: TESOURO DIRETO E INFLA��O
+           FASE 2: TESOURO DIRETO E INFLAï¿½ï¿½O
            ======================================== */
         
         .phase2-widgets {
@@ -5402,7 +5402,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Inflação - Minimalista */
+        /* InflaÃ§Ã£o - Minimalista */
         .inflacao-content {
             padding: 0.25rem 0;
         }
@@ -5951,7 +5951,7 @@
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
             flex-shrink: 0;
             transition: transform 0.3s ease;
-            color: #3b82f6; /* Azul para os ícones */
+            color: #3b82f6; /* Azul para os Ã­cones */
         }
 
         .simulator-card:hover .simulator-icon {
@@ -6029,7 +6029,7 @@
         .simulator-modal-content {
             background: white;
             border-radius: 20px;
-            padding: 0; /* ✅ Removido padding geral */
+            padding: 0; /* âœ… Removido padding geral */
             max-width: 1400px;
             width: 95%;
             max-height: 90vh;
@@ -6064,11 +6064,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem 2rem 1.5rem 2rem; /* ✅ Padding movido para o header */
-            margin-bottom: 0; /* ✅ Sem margem */
+            padding: 2rem 2rem 1.5rem 2rem; /* âœ… Padding movido para o header */
+            margin-bottom: 0; /* âœ… Sem margem */
             background: white;
             border-radius: 20px 20px 0 0;
-            position: sticky; /* ✅ FIXO no topo */
+            position: sticky; /* âœ… FIXO no topo */
             top: 0;
             z-index: 10;
             border-bottom: 1px solid #e2e8f0;
@@ -6092,7 +6092,7 @@
             margin: 0;
         }
 
-        /* Taxas de Refer�ncia nos Simuladores */
+        /* Taxas de Referï¿½ncia nos Simuladores */
         .rate-reference {
             margin-top: 0.5rem;
             padding: 0.75rem;
@@ -6262,7 +6262,7 @@
             border-color: #fecaca;
         }
 
-        /* ✅ Ícones com cores suaves e profissionais */
+        /* âœ… Ãcones com cores suaves e profissionais */
         .transfer-logo i {
             font-size: 1.75rem;
             line-height: 1;
@@ -6305,7 +6305,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* Legendas de tipo de transa��o */
+        /* Legendas de tipo de transaï¿½ï¿½o */
         .transaction-type-label {
             display: inline-flex;
             align-items: center;
@@ -6355,7 +6355,7 @@
             color: #dc2626; /* Vermelho suave */
         }
 
-        /* Transfer actions removidos - ações agora no modal */
+        /* Transfer actions removidos - aÃ§Ãµes agora no modal */
         /* .transfer-actions {
             display: flex;
             gap: 0.5rem;
@@ -6440,7 +6440,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        /* Caixa de Informa��o do Gr�fico - Abaixo do container */
+        /* Caixa de Informaï¿½ï¿½o do Grï¿½fico - Abaixo do container */
         .chart-info-box {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             border-radius: 12px;
@@ -6691,7 +6691,7 @@
 
         .calendar-day.holiday[data-day="25"]::after,
         .calendar-day.holiday.christmas::after {
-            content: '🎄';
+            content: 'ðŸŽ„';
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
@@ -6847,7 +6847,7 @@
             font-size: 0.85rem;
         }
 
-        /* Parceladas - �mbar suave */
+        /* Parceladas - ï¿½mbar suave */
         .calendar-transaction-indicator.installment {
             color: #b45309;
             background: rgba(255, 251, 235, 0.6);
@@ -6869,7 +6869,7 @@
             font-size: 0.85rem;
         }
 
-        /* Ícones minimalistas e finos - AUMENTADOS MAIS */
+        /* Ãcones minimalistas e finos - AUMENTADOS MAIS */
         .calendar-transaction-indicator i {
             font-size: 1rem;
             opacity: 0.7;
@@ -7349,7 +7349,7 @@
                 line-height: 1.3;
         }
 
-        /* Botão Registrar Lista Completa */
+        /* BotÃ£o Registrar Lista Completa */
         .btn-pull-todo {
             display: flex;
             align-items: center;
@@ -7428,14 +7428,14 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        /* Anima��o do spinner nos bot�es */
+        /* Animaï¿½ï¿½o do spinner nos botï¿½es */
         .btn-primary-large .ph-spinner,
         #nextButton .ph-spinner,
         #completeButton .ph-spinner {
             animation: spin 1s linear infinite;
         }
 
-        /* Bot�o Concluir - Estilo especial */
+        /* Botï¿½o Concluir - Estilo especial */
         #completeButton {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             padding: 0.9rem 2rem;
@@ -7593,9 +7593,9 @@
             top: 0 !important;
             left: 0 !important;
             width: 100% !important;
-            overscroll-behavior: contain; /* ✅ Previne scroll bounce no iOS */
-            -webkit-overflow-scrolling: auto; /* ✅ Remove momentum scroll */
-            /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
+            overscroll-behavior: contain; /* âœ… Previne scroll bounce no iOS */
+            -webkit-overflow-scrolling: auto; /* âœ… Remove momentum scroll */
+            /* âœ… SCROLL: Removido touch-action: none que bloqueava scroll */
         }
 
         #onboardingModal.show {
@@ -7604,7 +7604,7 @@
 
         body.onboarding-active {
             overflow: hidden !important;
-            position: fixed !important; /* ✅ CRÍTICO: Bloqueia scroll do body */
+            position: fixed !important; /* âœ… CRÃTICO: Bloqueia scroll do body */
             width: 100% !important;
             height: 100vh !important;
         }
@@ -7624,8 +7624,8 @@
             overflow: hidden !important;
             border: none;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            max-height: 100vh; /* ✅ Limita altura ao viewport */
-            /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
+            max-height: 100vh; /* âœ… Limita altura ao viewport */
+            /* âœ… SCROLL: Removido touch-action: none que bloqueava scroll */
         }
 
         .onboarding-header {
@@ -7890,7 +7890,7 @@
             font-size: 14px;
         }
 
-        /* ===== BOT�O DE FECHAR MODAL - PADR�O �NICO PARA TODO O SISTEMA ===== */
+        /* ===== BOTï¿½O DE FECHAR MODAL - PADRï¿½O ï¿½NICO PARA TODO O SISTEMA ===== */
         .close-modal,
         .close-simulator,
         .btn-close-modal,
@@ -8088,7 +8088,7 @@
     padding: 1.5rem;
 }
 
-/* Mobile: Adiciona margem lateral para não ficar colado */
+/* Mobile: Adiciona margem lateral para nÃ£o ficar colado */
 @media (max-width: 768px) {
     .modal-transaction {
         max-width: calc(100% - 2rem);
@@ -8255,10 +8255,10 @@
     padding-left: 3rem !important;
 }
 
-/* Bot�o de submit movido para se��o unificada de navega��o do formul�rio */
+/* Botï¿½o de submit movido para seï¿½ï¿½o unificada de navegaï¿½ï¿½o do formulï¿½rio */
 
 /* ========================================
-   MODAL DE DETALHES DA TRANSA��O
+   MODAL DE DETALHES DA TRANSAï¿½ï¿½O
    ======================================== */
 
 .transaction-detail-header {
@@ -8360,7 +8360,7 @@
 }
 
 /* ========================================
-   MODAIS DE TOOLTIP (EXPLICA��O)
+   MODAIS DE TOOLTIP (EXPLICAï¿½ï¿½O)
    ======================================== */
 
 .tooltip-modal-header {
@@ -8918,12 +8918,12 @@
             display: none !important;
         }
         
-        /* Transições suaves entre seções */
+        /* TransiÃ§Ãµes suaves entre seÃ§Ãµes */
         [id^="section"] {
             animation: fadeIn 0.3s ease-in-out;
-            overflow-y: auto; /* Permite rolagem do conteúdo */
-            flex: 1; /* Ocupa todo o espaço disponível */
-            padding-bottom: 2rem; /* Espaçamento inferior */
+            overflow-y: auto; /* Permite rolagem do conteÃºdo */
+            flex: 1; /* Ocupa todo o espaÃ§o disponÃ­vel */
+            padding-bottom: 2rem; /* EspaÃ§amento inferior */
         }
         
         @keyframes fadeIn {
@@ -8941,7 +8941,7 @@
             display: flex;
             gap: 1.5rem;
             margin-bottom: 2rem;
-            align-items: flex-start; /* Alinha pelo topo para que os botões fiquem na altura dos inputs */
+            align-items: flex-start; /* Alinha pelo topo para que os botÃµes fiquem na altura dos inputs */
             flex-wrap: wrap;
             background: white;
             padding: 1.5rem;
@@ -9150,7 +9150,7 @@
                 padding: 1rem !important;
                 z-index: 9999 !important;
                 overflow-y: auto !important;
-                /* Ajuste óptico mobile - centralização visual perfeita */
+                /* Ajuste Ã³ptico mobile - centralizaÃ§Ã£o visual perfeita */
                 transform: translateY(var(--optical-shift)) !important;
             }
             
@@ -9240,23 +9240,23 @@
                 opacity: 0.3;
             }
             
-            /* Esconder part�culas no mobile */
+            /* Esconder partï¿½culas no mobile */
             .particles-container {
                 display: none;
             }
             
-            /* === OCULTAR CALEND�RIO NO MOBILE === */
-            /* Oculta o link do calend�rio no sidebar */
+            /* === OCULTAR CALENDï¿½RIO NO MOBILE === */
+            /* Oculta o link do calendï¿½rio no sidebar */
             .app-sidebar a[onclick*="calendar"] {
                 display: none !important;
             }
             
-            /* Oculta toda a section do calend�rio */
+            /* Oculta toda a section do calendï¿½rio */
             #sectionCalendar {
                 display: none !important;
             }
             
-            /* Mostrar vers�o mobile dos textos */
+            /* Mostrar versï¿½o mobile dos textos */
             .landing-title-desktop {
                 display: none;
             }
@@ -9320,7 +9320,7 @@
                 gap: 0.75rem;
             }
             
-            /* Centralização perfeita no mobile */
+            /* CentralizaÃ§Ã£o perfeita no mobile */
             .landing-main {
                 padding: 0 1.5rem 2rem 1.5rem !important;
                 min-height: auto !important;
@@ -9356,7 +9356,7 @@
                 width: 100%;
             }
             
-            /* Bot�es MAIORES e mais grossos */
+            /* Botï¿½es MAIORES e mais grossos */
             .landing-cta {
                 gap: 1.5rem;
                 width: 100%;
@@ -9417,7 +9417,7 @@
                 padding: 1rem 0.875rem;
             }
 
-            /* Se��es */
+            /* Seï¿½ï¿½es */
             .section-header h2 {
                 font-size: 1.5rem;
             }
@@ -9431,7 +9431,7 @@
                 gap: 1rem;
             }
 
-            /* Cards de estat�sticas */
+            /* Cards de estatï¿½sticas */
             .stat-card {
                 padding: 1rem;
                 min-height: 110px;
@@ -9469,7 +9469,7 @@
                 font-size: 0.8rem;
             }
 
-            /* Transa��es mobile */
+            /* Transaï¿½ï¿½es mobile */
             .filter-row {
                 flex-direction: column;
                 padding: 1rem;
@@ -9551,7 +9551,7 @@
                 margin-bottom: 0.35rem;
             }
 
-                /* Cards de transa��o mobile */
+                /* Cards de transaï¿½ï¿½o mobile */
                 .transfer {
                     padding: 1rem;
                     margin-bottom: 0.625rem;
@@ -9644,7 +9644,7 @@
                 line-height: 1.2;
             }
             
-            /* Reduzir espaçamento dos campos no modal mobile */
+            /* Reduzir espaÃ§amento dos campos no modal mobile */
             #transactionModal .form-group,
             #editTransactionModal .form-group {
                 margin-bottom: 0.75rem;
@@ -9764,7 +9764,7 @@
                 padding: 0.7rem 0.875rem;
             }
 
-            /* Transa��es mobile */
+            /* Transaï¿½ï¿½es mobile */
             .transfer {
                 padding: 0.75rem;
             }
@@ -9798,7 +9798,7 @@
                 width: 100%;
             }
 
-            /* Bot�es mobile */
+            /* Botï¿½es mobile */
             .button-group {
                 flex-direction: column;
                 gap: 0.75rem;
@@ -9829,7 +9829,7 @@
                 width: 100%;
             }
 
-            /* Calend�rio mobile */
+            /* Calendï¿½rio mobile */
             .calendar-container {
                 padding: 0.75rem;
                 overflow: visible !important;
@@ -10050,18 +10050,18 @@
                 font-size: 2.5rem;
             }
 
-            /* Gr�ficos mobile */
+            /* Grï¿½ficos mobile */
             .chart-container {
                 padding: 1rem;
                 overflow: visible !important;
             }
 
-            /* Se��o de Educa��o mobile */
+            /* Seï¿½ï¿½o de Educaï¿½ï¿½o mobile */
             .education-cards {
                 grid-template-columns: 1fr;
             }
 
-            /* Relat�rios mobile */
+            /* Relatï¿½rios mobile */
             .report-card {
                 padding: 1rem;
             }
@@ -10187,7 +10187,7 @@
                 font-size: 0.75rem;
             }
 
-            /* Gr�ficos mobile */
+            /* Grï¿½ficos mobile */
             .chart-container h3 {
                 font-size: 1.1rem;
                 margin-bottom: 1rem;
@@ -10243,14 +10243,14 @@
                 font-size: 0.85rem;
             }
             
-            /* Footer centralizado tamb�m em 480px */
+            /* Footer centralizado tambï¿½m em 480px */
             .landing-footer {
                 padding: 1rem 1rem;
                 margin-top: auto;
                 position: relative;
             }
             
-            /* Centraliza��o perfeita em telas pequenas */
+            /* Centralizaï¿½ï¿½o perfeita em telas pequenas */
             .landing-main {
                 padding: 2rem 1.25rem !important;
                 min-height: auto !important;
@@ -10281,7 +10281,7 @@
                 font-weight: 500;
             }
             
-            /* Bot�es grandes para telas pequenas */
+            /* Botï¿½es grandes para telas pequenas */
             .landing-cta {
                 max-width: 300px;
                 gap: 0.9rem;
@@ -10554,10 +10554,10 @@
         
         /* Landscape tablet (uso deitado) */
         @media (min-width: 769px) and (max-width: 1280px) and (orientation: landscape) {
-            /* Conteúdo centralizado verticalmente */
+            /* ConteÃºdo centralizado verticalmente */
             .dashboard-main {
                 padding-top: 3rem;
-                padding-bottom: 5rem; /* Mesmo espaço do landing-footer (4rem + margem) */
+                padding-bottom: 5rem; /* Mesmo espaÃ§o do landing-footer (4rem + margem) */
                 max-width: 95%;
                 margin: 0 auto;
             }
@@ -10571,20 +10571,20 @@
                 padding: 1.25rem;
             }
             
-            /* Gráficos mais compactos */
+            /* GrÃ¡ficos mais compactos */
             .chart-container {
                 max-height: 350px;
             }
             
-            /* Bottom nav invisível em tablet landscape */
+            /* Bottom nav invisÃ­vel em tablet landscape */
             .bottom-nav,
             .mobile-bottom-nav {
                 display: none !important;
             }
             
-            /* Main content com padding suficiente para não cortar */
+            /* Main content com padding suficiente para nÃ£o cortar */
             .main-content {
-                padding-bottom: 5rem; /* Mesmo espaço do landing-footer */
+                padding-bottom: 5rem; /* Mesmo espaÃ§o do landing-footer */
                 margin-bottom: 0;
             }
             
@@ -10979,7 +10979,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            margin: 0 auto; /* Centraliza com espaçamento nas bordas */
+            margin: 0 auto; /* Centraliza com espaÃ§amento nas bordas */
         }
 
         .profile-section {
@@ -11591,24 +11591,24 @@
             transform: translateY(0);
         }
 
-        /* ✅ Container de Botões de Ação (Salvar + Sair) */
+        /* âœ… Container de BotÃµes de AÃ§Ã£o (Salvar + Sair) */
         .profile-actions-buttons {
             display: flex;
             gap: 0.75rem;
             margin-top: 1.5rem;
         }
 
-        /* Desktop: Botão Salvar ocupa todo espaço, Sair oculto */
+        /* Desktop: BotÃ£o Salvar ocupa todo espaÃ§o, Sair oculto */
         .profile-actions-buttons .btn-save-profile {
             flex: 1;
             margin-top: 0;
         }
 
         .btn-logout-profile {
-            display: none; /* Oculto por padrão no desktop */
+            display: none; /* Oculto por padrÃ£o no desktop */
         }
 
-        /* Mobile: Ambos os botões visíveis lado a lado */
+        /* Mobile: Ambos os botÃµes visÃ­veis lado a lado */
         @media (max-width: 768px) {
             .btn-logout-profile {
                 display: flex;
@@ -11654,7 +11654,7 @@
             }
         }
 
-        /* ✅ Botão de Logout Mobile (Profile) - REMOVIDO */
+        /* âœ… BotÃ£o de Logout Mobile (Profile) - REMOVIDO */
         .profile-logout-mobile {
             display: none; /* Completamente removido */
         }
@@ -11707,7 +11707,7 @@
 
             .profile-modal-content {
                 max-width: 100%;
-                width: 95%; /* No mobile mantém 95% para melhor uso do espaço */
+                width: 95%; /* No mobile mantÃ©m 95% para melhor uso do espaÃ§o */
                 margin: 0;
                 border-radius: 0;
                 height: 100vh;
@@ -11801,22 +11801,22 @@
 
             /* Onboarding adjustments for mobile */
             #onboardingModal.modal {
-                /* Ajuste óptico mobile - centralização visual perfeita */
+                /* Ajuste Ã³ptico mobile - centralizaÃ§Ã£o visual perfeita */
                 transform: translateY(var(--optical-shift)) !important;
                 height: 100vh !important;
                 min-height: 100vh !important;
                 overflow: hidden !important;
                 position: fixed !important;
-                overscroll-behavior: contain !important; /* ✅ Previne scroll bounce */
+                overscroll-behavior: contain !important; /* âœ… Previne scroll bounce */
                 -webkit-overflow-scrolling: auto !important;
-                /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
+                /* âœ… SCROLL: Removido touch-action: none que bloqueava scroll */
             }
             
             .onboarding-modal-content {
                 max-width: 95%;
                 overflow: hidden !important;
                 max-height: 100vh;
-                /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
+                /* âœ… SCROLL: Removido touch-action: none que bloqueava scroll */
             }
 
             .onboarding-step {
@@ -11897,7 +11897,7 @@
            MERCADO SECTION STYLES - REDESIGN PROFISSIONAL
            ======================================== */
 
-        /* Banner de Ações (Design Minimalista) */
+        /* Banner de AÃ§Ãµes (Design Minimalista) */
         .stocks-banner {
             background: #ffffff;
             border-radius: 12px;
@@ -12015,7 +12015,7 @@
             text-align: center;
         }
 
-        /* Card específico: SELIC Meta */
+        /* Card especÃ­fico: SELIC Meta */
         .selic-card {
             background: #ffffff;
         }
@@ -12088,12 +12088,12 @@
             height: 120px !important;
         }
 
-        /* Card específico: Inflação */
+        /* Card especÃ­fico: InflaÃ§Ã£o */
         .inflacao-card {
             background: #ffffff;
         }
 
-        /* Card específico: CDI */
+        /* Card especÃ­fico: CDI */
         .cdi-card {
             background: #ffffff;
         }
@@ -12177,7 +12177,7 @@
             font-weight: 600;
         }
 
-        /* Card: Principais A��es (Stocks) */
+        /* Card: Principais Aï¿½ï¿½es (Stocks) */
         .stocks-card {
             background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
         }
@@ -12321,7 +12321,7 @@
             color: #ef4444;
         }
 
-        /* Card: Cota��es */
+        /* Card: Cotaï¿½ï¿½es */
         .cotacoes-card {
             background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
         }
@@ -12389,7 +12389,7 @@
             color: #dc2626;
         }
 
-        /* Card espec�fico: Cota��es (antigo) */
+        /* Card especï¿½fico: Cotaï¿½ï¿½es (antigo) */
         .currency-card {
             background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         }
@@ -12462,7 +12462,7 @@
             font-weight: 600;
         }
 
-        /* Como Interpretar - Se��o Educativa */
+        /* Como Interpretar - Seï¿½ï¿½o Educativa */
         .section-title-info {
             display: flex;
             align-items: center;
@@ -12671,7 +12671,7 @@
             color: #991b1b;
         }
 
-        /* Dicas R�pidas */
+        /* Dicas Rï¿½pidas */
         .quick-tips {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 2px solid #86efac;
@@ -12756,7 +12756,7 @@
         }
 
         /* ========================================
-           OTIMIZA��ES MOBILE COMPLETAS
+           OTIMIZAï¿½ï¿½ES MOBILE COMPLETAS
            ======================================== */
 
         @media (max-width: 768px) {
@@ -12785,7 +12785,7 @@
                 font-size: 1.1rem !important;
             }
 
-            /* Cards de estat�sticas */
+            /* Cards de estatï¿½sticas */
             .stat-card {
                 padding: 1rem !important;
                 min-height: auto !important;
@@ -12848,7 +12848,7 @@
                 right: 1rem !important;
             }
 
-            /* Formul�rios */
+            /* Formulï¿½rios */
             .form-group {
                 margin-bottom: 1rem !important;
             }
@@ -12865,7 +12865,7 @@
                 padding: 0.75rem !important;
             }
 
-            /* Bot�es */
+            /* Botï¿½es */
             .btn, button {
                 padding: 0.75rem 1.25rem !important;
                 font-size: 0.95rem !important;
@@ -12895,7 +12895,7 @@
                 height: 44px !important;
             }
 
-            /* Transa��es */
+            /* Transaï¿½ï¿½es */
             .transaction-item {
                 padding: 1rem !important;
                 flex-direction: column !important;
@@ -12911,7 +12911,7 @@
                 font-size: 1.25rem !important;
             }
             
-            /* Transa��es sem emoji no mobile - mais espa�o */
+            /* Transaï¿½ï¿½es sem emoji no mobile - mais espaï¿½o */
             .transfer {
                 padding: 1rem !important;
                 gap: 0 !important;
@@ -12962,7 +12962,7 @@
                 height: 10px !important;
             }
 
-            /* Navega��o */
+            /* Navegaï¿½ï¿½o */
             .navigation {
                 padding: 1rem 0.5rem !important;
             }
@@ -12981,7 +12981,7 @@
                 font-size: 1.5rem !important;
             }
 
-            /* Se��es */
+            /* Seï¿½ï¿½es */
             section {
                 padding: 1rem !important;
             }
@@ -12998,7 +12998,7 @@
                 font-size: 0.9rem !important;
             }
 
-            /* Calend�rio */
+            /* Calendï¿½rio */
             .calendar-grid {
                 gap: 0.25rem !important;
             }
@@ -13017,7 +13017,7 @@
                 padding: 0.6rem 0.4rem !important;
             }
 
-            /* Educa��o - Cards */
+            /* Educaï¿½ï¿½o - Cards */
             .education-card {
                 padding: 1.25rem !important;
             }
@@ -13191,7 +13191,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Bot�o de voltar movido para se��o unificada de navega��o do formul�rio */
+/* Botï¿½o de voltar movido para seï¿½ï¿½o unificada de navegaï¿½ï¿½o do formulï¿½rio */
 
 .simulator-view-title {
     position: relative;
@@ -13442,7 +13442,7 @@
 }
 
 /* Resultado da Simula??o */
-/* Resultado da Simula��o - Estilos Removidos - Ver se��o NOVO LAYOUT DE RESULTADO */
+/* Resultado da Simulaï¿½ï¿½o - Estilos Removidos - Ver seï¿½ï¿½o NOVO LAYOUT DE RESULTADO */
 
 @keyframes fadeInUp {
     from {
@@ -13537,7 +13537,7 @@
     transform: rotate(90deg) scale(1.1);
 }
 
-/* Estilo do bot�o close (X) - consolidado no seletor unificado acima */
+/* Estilo do botï¿½o close (X) - consolidado no seletor unificado acima */
 
 .scenario-comparison-grid {
     display: grid;
@@ -14123,7 +14123,7 @@
     font-weight: 600;
 }
 
-/* C�digo antigo removido - .summary-card duplicado */
+/* Cï¿½digo antigo removido - .summary-card duplicado */
 
 .summary-grid {
     display: grid;
@@ -14131,7 +14131,7 @@
     gap: 1.5rem;
 }
 
-/* C�digo antigo removido - .summary-col, .info-expandable n�o utilizados */
+/* Cï¿½digo antigo removido - .summary-col, .info-expandable nï¿½o utilizados */
 
 /* Actions Wrapper */
 .result-actions-wrapper {
@@ -14643,13 +14643,13 @@
         padding: 0.625rem;
     }
 
-    /* Ajusta espa�amento dos bot�es em modais */
+    /* Ajusta espaï¿½amento dos botï¿½es em modais */
     .modal-footer {
         gap: 0.75rem;
         margin-top: 1.25rem;
     }
 
-    /* Melhora bot�es CTA em mobile */
+    /* Melhora botï¿½es CTA em mobile */
     .btn-cta-primary,
     .btn-cta-secondary {
         padding: 1.35rem 2.25rem !important;
@@ -14709,14 +14709,7 @@
     }
 }
 
-/* Bloqueio de scroll quando modal est� aberto */
-body.modal-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-}
-
+/* SCROLL MOBILE: Classe modal-open removida - bloqueava scroll */
 /* Mobile Responsive - Profile Minimalista */
 @media (max-width: 768px) {
     .profile-modal-content {
@@ -14846,7 +14839,7 @@ body.modal-open {
         font-size: 1.25rem;
     }
 
-    /* Insights din�micos responsivo */
+    /* Insights dinï¿½micos responsivo */
     .insight-card-dynamic {
         flex-direction: column;
         align-items: flex-start;
@@ -14945,7 +14938,7 @@ body.modal-open {
     background: linear-gradient(90deg, #10b981, #059669);
 }
 
-/* Etapas do Formul�rio */
+/* Etapas do Formulï¿½rio */
 .form-step {
     animation: fadeInStep 0.3s ease-out;
     width: 100%;
@@ -14963,7 +14956,7 @@ body.modal-open {
     }
 }
 
-/* Navega��o do Formul�rio */
+/* Navegaï¿½ï¿½o do Formulï¿½rio */
 .form-navigation {
     display: flex;
     gap: 1rem;
@@ -14973,7 +14966,7 @@ body.modal-open {
     box-sizing: border-box;
 }
 
-/* Bot�es de navega��o do formul�rio - Tamanho igual e alinhados */
+/* Botï¿½es de navegaï¿½ï¿½o do formulï¿½rio - Tamanho igual e alinhados */
 .form-navigation .btn-back,
 .form-navigation .btn-next,
 .form-navigation .btn-submit-transaction {
@@ -15178,7 +15171,7 @@ body.modal-open {
     font-size: 1.05rem;
 }
 
-/* Badge de informa��o de parcela */
+/* Badge de informaï¿½ï¿½o de parcela */
 .installment-badge {
     display: inline-flex;
     align-items: center;
@@ -15221,7 +15214,7 @@ body.modal-open {
     margin-left: 0.5rem;
 }
 
-/* Transa��o agrupada */
+/* Transaï¿½ï¿½o agrupada */
 .transfer-grouped {
     cursor: pointer;
     transition: all 0.2s ease;
@@ -15244,7 +15237,7 @@ body.modal-open {
     font-style: italic;
 }
 
-/* Bot�o de a��o info */
+/* Botï¿½o de aï¿½ï¿½o info */
 .btn-action-info {
     background: #3b82f6;
     color: white;
@@ -15301,7 +15294,7 @@ body.modal-open {
     flex: 1;
 }
 
-/* Resumo de informa��es em linha - FIXO */
+/* Resumo de informaï¿½ï¿½es em linha - FIXO */
 .installment-summary {
     display: flex;
     gap: 2rem;
@@ -15470,7 +15463,7 @@ body.modal-open {
     background: #d1d5db;
 }
 
-/* Se��es de listas */
+/* Seï¿½ï¿½es de listas */
 .installment-sections {
     display: flex;
     flex-direction: column;
@@ -15662,7 +15655,7 @@ body.modal-open {
     color: #166534;
 }
 
-/* Cards de pr�ximos pagamentos (despesas fixas) */
+/* Cards de prï¿½ximos pagamentos (despesas fixas) */
 .fixed-pending-card {
     display: flex;
     justify-content: space-between;
@@ -15704,7 +15697,7 @@ body.modal-open {
     color: #111827;
 }
 
-/* Bot�es de a��o */
+/* Botï¿½es de aï¿½ï¿½o */
 .installment-actions {
     display: flex;
     gap: 0.75rem;
@@ -15757,7 +15750,7 @@ body.modal-open {
 
 /* Estilo consolidado no seletor unificado acima */
 
-/* Resumo de despesa �nica */
+/* Resumo de despesa ï¿½nica */
 .single-expense-summary {
     padding: 1.5rem 2rem;
     background: white;
@@ -15852,7 +15845,7 @@ body.modal-open {
     color: #ea580c;
 }
 
-/* A��es do Modal de Detalhes */
+/* Aï¿½ï¿½es do Modal de Detalhes */
 .modal-actions {
     display: flex;
     gap: 1rem;
@@ -15888,7 +15881,7 @@ body.modal-open {
 }
 
 /* ============================================ */
-/* NOVO MODAL DE DETALHES DE TRANSA��O - MINIMALISTA */
+/* NOVO MODAL DE DETALHES DE TRANSAï¿½ï¿½O - MINIMALISTA */
 /* ============================================ */
 
 .transaction-detail-modal-new {
@@ -15967,7 +15960,7 @@ body.modal-open {
     color: #111827;
 }
 
-/* Grid de Informa��es */
+/* Grid de Informaï¿½ï¿½es */
 .transaction-detail-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -15999,7 +15992,7 @@ body.modal-open {
     color: #111827;
 }
 
-/* Se��o de Progresso de Parcelas */
+/* Seï¿½ï¿½o de Progresso de Parcelas */
 .parcelas-progress-section {
     padding: 1.5rem;
     background: white;
@@ -16078,7 +16071,7 @@ body.modal-open {
     font-weight: 500;
 }
 
-/* Se��es de Parcelas (Accordions) */
+/* Seï¿½ï¿½es de Parcelas (Accordions) */
 .parcelas-sections {
     padding: 0 1.5rem 1.5rem;
     display: flex;
@@ -16164,7 +16157,7 @@ body.modal-open {
     background: white;
 }
 
-/* Bot�es de A��o do Modal */
+/* Botï¿½es de Aï¿½ï¿½o do Modal */
 .transaction-detail-actions {
     display: flex;
     gap: 10px;
@@ -16238,7 +16231,7 @@ body.modal-open {
     background: #fef2f2;
 }
 
-/* Modal de Exclus�o de Parcela */
+/* Modal de Exclusï¿½o de Parcela */
 .modal-small .modal-content {
     max-width: 500px;
 }
@@ -16547,7 +16540,7 @@ body.modal-open {
 }
 
 /* ============================================ */
-/* RELAT�RIO POR TIPO DE DESPESA               */
+/* RELATï¿½RIO POR TIPO DE DESPESA               */
 /* ============================================ */
 
 .expense-type-report {
@@ -16828,7 +16821,7 @@ body.modal-open {
     gap: 0.75rem;
     padding: 0;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Alinhado à esquerda */
+    justify-content: flex-start; /* Alinhado Ã  esquerda */
 }
 
 .type-filter-btn {
@@ -16907,7 +16900,7 @@ body.modal-open {
     .filter-type-section {
         background: #f8fafc;
         padding: 1rem;
-        padding-bottom: 1.5rem; /* Mais espaço para não cortar botões */
+        padding-bottom: 1.5rem; /* Mais espaÃ§o para nÃ£o cortar botÃµes */
         border-radius: 12px;
         margin-bottom: 1rem;
     }
@@ -16915,7 +16908,7 @@ body.modal-open {
     .expense-type-filters {
         gap: 0.375rem;
         padding: 0;
-        padding-bottom: 1rem; /* Evita cortar botões no mobile */
+        padding-bottom: 1rem; /* Evita cortar botÃµes no mobile */
         display: grid;
         grid-template-columns: repeat(6, 1fr);
     }
@@ -16934,10 +16927,10 @@ body.modal-open {
     }
     
     .type-filter-btn span {
-        display: none; /* Esconde texto no mobile, só ícone */
+        display: none; /* Esconde texto no mobile, sÃ³ Ã­cone */
     }
     
-    /* Botão de limpar filtros no grid */
+    /* BotÃ£o de limpar filtros no grid */
     .btn-clear-filters {
         background: #fee2e2;
         border-color: #fca5a5;
@@ -16951,7 +16944,7 @@ body.modal-open {
         color: white;
     }
     
-    /* Esconde filtro de período no mobile */
+    /* Esconde filtro de perÃ­odo no mobile */
     .hide-on-mobile {
         display: none !important;
     }
@@ -16971,7 +16964,7 @@ body.modal-open {
 }
 
 /* ============================================
-   RELAT�RIOS - DESIGN MINIMALISTA AZUL
+   RELATï¿½RIOS - DESIGN MINIMALISTA AZUL
    ============================================ */
 
 /* Filtros Minimalistas */
@@ -17002,15 +16995,15 @@ body.modal-open {
 .filter-buttons-minimal {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: nowrap; /* ✅ ISSUE #10: Não quebrar linha, permitir scroll horizontal */
-    overflow-x: auto; /* ✅ ISSUE #10: Permitir rolagem horizontal */
+    flex-wrap: nowrap; /* âœ… ISSUE #10: NÃ£o quebrar linha, permitir scroll horizontal */
+    overflow-x: auto; /* âœ… ISSUE #10: Permitir rolagem horizontal */
     overflow-y: hidden;
     scrollbar-width: thin;
     scrollbar-color: #3b82f6 #e5e7eb;
     padding-bottom: 0.5rem;
 }
 
-/* ✅ ISSUE #10: Estilo da scrollbar do filtro */
+/* âœ… ISSUE #10: Estilo da scrollbar do filtro */
 .filter-buttons-minimal::-webkit-scrollbar {
     height: 6px;
 }
@@ -17079,7 +17072,7 @@ body.modal-open {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Cores espec�ficas por tipo de card */
+/* Cores especï¿½ficas por tipo de card */
 .summary-balance {
     background: #f0f9ff;
     border-color: #bae6fd;
@@ -17150,7 +17143,7 @@ body.modal-open {
     margin-top: 0.25rem;
 }
 
-/* Modal de Explica��o dos Cards */
+/* Modal de Explicaï¿½ï¿½o dos Cards */
 .explanation-modal {
     background: white;
     border-radius: 20px;
@@ -17303,7 +17296,7 @@ body.modal-open {
     width: 0%;
 }
 
-/* Gr�ficos Side by Side */
+/* Grï¿½ficos Side by Side */
 .charts-row {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -17348,7 +17341,7 @@ body.modal-open {
     max-height: 100%;
 }
 
-/* An�lises Avan�adas (Tabs) */
+/* Anï¿½lises Avanï¿½adas (Tabs) */
 .advanced-analysis {
     background: white;
     border-radius: 16px;
@@ -17405,7 +17398,7 @@ body.modal-open {
     display: none;
 }
 
-/* Padr�es de Consumo */
+/* Padrï¿½es de Consumo */
 .patterns-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -17490,7 +17483,7 @@ body.modal-open {
     margin-top: 0.5rem;
 }
 
-/* An�lise por Categoria */
+/* Anï¿½lise por Categoria */
 .categories-analysis {
     display: flex;
     flex-direction: column;
@@ -17650,7 +17643,7 @@ body.modal-open {
     gap: 1rem;
 }
 
-/* Previs�es */
+/* Previsï¿½es */
 .predictions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -17748,7 +17741,7 @@ body.modal-open {
         padding: 0 2rem;
     }
     
-    /* Cards de relatório */
+    /* Cards de relatÃ³rio */
     .report-card {
         padding: 1.5rem;
     }
@@ -17777,13 +17770,13 @@ body.modal-open {
         overflow-x: auto !important;
     }
     
-    /* Calendário otimizado */
+    /* CalendÃ¡rio otimizado */
     .calendar-day {
         min-height: 100px;
         padding: 0.75rem;
     }
     
-    /* Transações - melhor uso do espaço */
+    /* TransaÃ§Ãµes - melhor uso do espaÃ§o */
     .transaction-list {
         gap: 0.75rem;
     }
@@ -17796,15 +17789,15 @@ body.modal-open {
 
 /* ============================================
    MOBILE - PORTRAIT E LANDSCAPE
-   Força layout mobile em qualquer orientação de celular
+   ForÃ§a layout mobile em qualquer orientaÃ§Ã£o de celular
    ============================================ */
 @media (max-width: 896px), 
        screen and (max-device-width: 896px),
        (orientation: portrait) and (max-width: 1024px),
        (orientation: landscape) and (max-height: 600px) {
-    /* === RELATÓRIOS: MELHOR RESPONSIVIDADE NO MOBILE === */
+    /* === RELATÃ“RIOS: MELHOR RESPONSIVIDADE NO MOBILE === */
     
-    /* Report Cards - Reduzir padding e espaçamento */
+    /* Report Cards - Reduzir padding e espaÃ§amento */
     .report-card {
         padding: 1.25rem !important;
         margin-bottom: 1rem !important;
@@ -17833,7 +17826,7 @@ body.modal-open {
         font-size: 1.75rem !important;
     }
     
-    /* Filtros de per�odo - Stacked no mobile */
+    /* Filtros de perï¿½odo - Stacked no mobile */
     .report-filters-minimal {
         flex-direction: column;
         align-items: flex-start;
@@ -17858,7 +17851,7 @@ body.modal-open {
         min-width: fit-content;
     }
     
-    /* Ocultar botão "Ano Inteiro" no mobile */
+    /* Ocultar botÃ£o "Ano Inteiro" no mobile */
     .filter-btn-minimal[data-period="1year"] {
         display: none !important;
     }
@@ -17882,7 +17875,7 @@ body.modal-open {
         overflow: visible !important;
     }
     
-    /* Específico para gráfico de pizza */
+    /* EspecÃ­fico para grÃ¡fico de pizza */
     #categoryPieChart {
         max-height: 100% !important;
     }
@@ -17921,7 +17914,7 @@ body.modal-open {
         padding: 1.25rem !important;
     }
     
-    /* Category Details - Melhor espa�amento */
+    /* Category Details - Melhor espaï¿½amento */
     .category-detail-card {
         padding: 1.25rem !important;
     }
@@ -17964,7 +17957,7 @@ body.modal-open {
     }
 }
 
-/* ================== GLOSS�RIO FINANCEIRO ================== */
+/* ================== GLOSSï¿½RIO FINANCEIRO ================== */
 .glossary-modal {
     position: fixed;
     top: 0;
@@ -18401,7 +18394,7 @@ body.modal-open {
     justify-content: center;
 }
 
-/* ===== POPUP DE CONFIRMA��O DE EXCLUS�O ===== */
+/* ===== POPUP DE CONFIRMAï¿½ï¿½O DE EXCLUSï¿½O ===== */
 .confirm-popup-overlay {
     display: none;
     position: fixed;
@@ -18525,15 +18518,15 @@ body.modal-open {
 }
 
 /* ========================================
-   RESUMO MENSAL AUTOMÁTICO
+   RESUMO MENSAL AUTOMÃTICO
    ======================================== */
 
-/* Pop-up de Notificação */
+/* Pop-up de NotificaÃ§Ã£o */
 .monthly-notification {
     position: fixed;
     top: 80px;
     right: 20px;
-    z-index: 999999 !important; /* ✅ SEMPRE ACIMA DE TUDO (modais, loading, onboarding) */
+    z-index: 999999 !important; /* âœ… SEMPRE ACIMA DE TUDO (modais, loading, onboarding) */
     opacity: 0;
     transform: translateX(400px);
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -18644,7 +18637,7 @@ body.modal-open {
    TOAST NOTIFICATION (PDF Export)
    ======================================== */
 /* ===================================
-   POPUP DE NOTIFICAÇÃO CENTRALIZADO
+   POPUP DE NOTIFICAÃ‡ÃƒO CENTRALIZADO
    =================================== */
 
 .popup-notification {
@@ -19241,7 +19234,7 @@ body.modal-open {
    3-LEVEL HIERARCHY STYLES
    ======================================== */
 
-/* NÍVEL 1: RESUMO PRINCIPAL - Cards principais com destaque */
+/* NÃVEL 1: RESUMO PRINCIPAL - Cards principais com destaque */
 .level-1-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -19279,7 +19272,7 @@ body.modal-open {
     background: #fef2f2;
 }
 
-/* NÍVEL 2: MOVIMENTAÇÕES E DESEMPENHO - Monitoramento ativo */
+/* NÃVEL 2: MOVIMENTAÃ‡Ã•ES E DESEMPENHO - Monitoramento ativo */
 .level-2-cards {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -19287,7 +19280,7 @@ body.modal-open {
     margin-bottom: 40px;
 }
 
-/* Transações Recentes - Card largo com scroll */
+/* TransaÃ§Ãµes Recentes - Card largo com scroll */
 .mini-card-wide {
     grid-column: span 1;
 }
@@ -19297,7 +19290,7 @@ body.modal-open {
     overflow-y: auto;
 }
 
-/* Transações compactas no dashboard */
+/* TransaÃ§Ãµes compactas no dashboard */
 .mini-card-wide .transfer {
     padding: 0.875rem !important;
     margin-bottom: 0.625rem !important;
@@ -19368,7 +19361,7 @@ body.modal-open {
     font-size: 1.0625rem;
 }
 
-/* Layout inline para métricas do stack (valor + subtítulo) */
+/* Layout inline para mÃ©tricas do stack (valor + subtÃ­tulo) */
 .inline-metric {
     display: flex;
     align-items: baseline;
@@ -19395,7 +19388,7 @@ body.modal-open {
     text-overflow: ellipsis;
 }
 
-/* NÍVEL 3: PROJEÇÕES E ANÁLISES - Cards padrão */
+/* NÃVEL 3: PROJEÃ‡Ã•ES E ANÃLISES - Cards padrÃ£o */
 .level-3-header {
     margin-top: 48px;
     margin-bottom: 24px;
@@ -19428,7 +19421,7 @@ body.modal-open {
     height: 100%;
 }
 
-/* Valores dos cards de Análises em azul e menores */
+/* Valores dos cards de AnÃ¡lises em azul e menores */
 .level-3-cards .metric-value {
     color: #1e40af !important;
     font-size: 1.25rem !important;
@@ -19558,7 +19551,7 @@ body.modal-open {
    NOVOS ESTILOS - MERCADO MODERNO E COLORIDO V2
    ================================================ */
 
-/* Seção de Cotações em Destaque */
+/* SeÃ§Ã£o de CotaÃ§Ãµes em Destaque */
 .featured-section {
     margin-top: 2rem;
 }
@@ -19612,7 +19605,7 @@ body.modal-open {
     color: #f59e0b;
 }
 
-/* Tons de Azul para Cotações em Destaque */
+/* Tons de Azul para CotaÃ§Ãµes em Destaque */
 .highlight-blue-light {
     border-left: 4px solid #60a5fa;
     background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
@@ -19651,7 +19644,7 @@ body.modal-open {
     gap: 1.25rem;
 }
 
-/* Gráfico Principal com Chart.js */
+/* GrÃ¡fico Principal com Chart.js */
 .main-chart-section {
     margin-top: 2rem;
 }
@@ -19728,7 +19721,7 @@ body.modal-open {
     font-size: 1rem;
 }
 
-/* Notícias do Mercado - Grid Simples */
+/* NotÃ­cias do Mercado - Grid Simples */
 .news-section {
     margin-top: 2rem;
 }
@@ -20149,7 +20142,7 @@ body.modal-open {
     font-size: 1.125rem;
 }
 
-/* Notícias do Mercado */
+/* NotÃ­cias do Mercado */
 .news-section {
     margin-top: 2rem;
 }
@@ -20235,7 +20228,7 @@ body.modal-open {
     color: #3b82f6;
 }
 
-/* Gráficos Interativos */
+/* GrÃ¡ficos Interativos */
 .charts-section {
     margin-top: 2rem;
 }
@@ -20246,7 +20239,7 @@ body.modal-open {
     gap: 1.5rem;
 }
 
-/* Gráfico Principal (Grande) */
+/* GrÃ¡fico Principal (Grande) */
 .main-chart-section {
     margin-top: 2rem;
 }
@@ -20428,7 +20421,7 @@ body.modal-open {
     }
 }
 
-/* Animações */
+/* AnimaÃ§Ãµes */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -20451,7 +20444,7 @@ body.modal-open {
 .featured-grid > *:nth-child(2) { animation-delay: 0.2s; }
 .featured-grid > *:nth-child(3) { animation-delay: 0.3s; }
 
-/* 🧪 Badge Beta para dados aproximados */
+/* ðŸ§ª Badge Beta para dados aproximados */
 .beta-data-badge {
     display: inline-flex;
     align-items: center;
@@ -20542,7 +20535,7 @@ body.modal-open {
     padding: 0.1875rem 0.5rem;
 }
 
-/* Badge na seção de notícias */
+/* Badge na seÃ§Ã£o de notÃ­cias */
 .section-subtitle-featured .beta-data-badge {
     margin-left: 0.75rem;
     font-size: 0.75rem;
@@ -20668,7 +20661,7 @@ body.modal-open {
     margin: 0;
 }
 
-/* Remover estilos de vídeo tutorials e recursos úteis (não utilizados) */
+/* Remover estilos de vÃ­deo tutorials e recursos Ãºteis (nÃ£o utilizados) */
 
 
 
@@ -20687,7 +20680,7 @@ body.modal-open {
 
 
 
-/* Badge para transa��es agendadas (futuras) */
+/* Badge para transaï¿½ï¿½es agendadas (futuras) */
 .scheduled-badge {
     display: inline-flex;
     align-items: center;
@@ -20702,7 +20695,7 @@ body.modal-open {
     margin-left: 0.5rem;
 }
 
-/* Estilo visual para transa��es agendadas */
+/* Estilo visual para transaï¿½ï¿½es agendadas */
 .transfer-scheduled {
     opacity: 0.75;
     border-left: 3px solid #3b82f6;
@@ -20758,7 +20751,7 @@ body.modal-open {
 }
 
 
-/* Mensagem de fim das transa��es */
+/* Mensagem de fim das transaï¿½ï¿½es */
 .transactions-end-message {
     text-align: center;
     padding: 1.5rem 1rem;
@@ -20871,7 +20864,7 @@ body.modal-open {
 }
 
 
-/* SOLU��O CORRETA: Blur no conte�do, n�o no overlay */
+/* SOLUï¿½ï¿½O CORRETA: Blur no conteï¿½do, nï¿½o no overlay */
 @media (max-width: 768px) {
     /* Overlay simples SEM blur */
     .mobile-menu-overlay {
@@ -20881,7 +20874,7 @@ body.modal-open {
         z-index: 9998 !important;
     }
     
-    /* Blur aplicado no CONTE�DO quando menu est� aberto */
+    /* Blur aplicado no CONTEï¿½DO quando menu estï¿½ aberto */
     .app-content.blurred {
         filter: blur(8px);
         -webkit-filter: blur(8px);
@@ -20889,7 +20882,7 @@ body.modal-open {
         pointer-events: none;
     }
     
-    /* Menu SEMPRE n�tido e acima de tudo */
+    /* Menu SEMPRE nï¿½tido e acima de tudo */
     .app-sidebar {
         filter: none !important;
         -webkit-filter: none !important;
@@ -20904,7 +20897,7 @@ body.modal-open {
 }
 
 
-/* SOLU��O DEFINITIVA: Overlay simples sem blur */
+/* SOLUï¿½ï¿½O DEFINITIVA: Overlay simples sem blur */
 @media (max-width: 768px) {
     /* Overlay escuro SIMPLES - sem blur */
     .mobile-menu-overlay {
@@ -20922,7 +20915,7 @@ body.modal-open {
         transition: opacity 0.3s ease !important;
     }
     
-    /* Menu lateral - sempre acima e n�tido */
+    /* Menu lateral - sempre acima e nï¿½tido */
     .app-sidebar {
         z-index: 10001 !important;
         position: fixed !important;
@@ -20932,7 +20925,7 @@ body.modal-open {
         -webkit-filter: none !important;
     }
     
-    /* Remover blur do conte�do */
+    /* Remover blur do conteï¿½do */
     .app-content,
     .app-content.blurred {
         filter: none !important;
@@ -21015,7 +21008,7 @@ body.modal-open {
         -webkit-filter: none !important;
     }
     
-    /* 5. Conte�do - sem altera��es */
+    /* 5. Conteï¿½do - sem alteraï¿½ï¿½es */
     .app-content {
         margin-left: 0 !important;
         width: 100% !important;
@@ -21041,7 +21034,7 @@ body.modal-open {
    MOBILE BOTTOM NAVIGATION (AppBar) - NOVO
    ============================================ */
 
-/* Esconder o AppBar no desktop por padrão */
+/* Esconder o AppBar no desktop por padrÃ£o */
 .mobile-bottom-nav,
 .mobile-more-menu {
     display: none;
@@ -21067,7 +21060,7 @@ body.onboarding-active .mobile-bottom-nav {
         display: none !important;
     }
     
-    /* 2. AppBar fixo na parte inferior - MOSTRA quando não tem classe hidden */
+    /* 2. AppBar fixo na parte inferior - MOSTRA quando nÃ£o tem classe hidden */
     .mobile-bottom-nav:not(.hidden) {
         display: flex;
         position: fixed;
@@ -21085,7 +21078,7 @@ body.onboarding-active .mobile-bottom-nav {
         align-items: center;
     }
     
-    /* 3. Itens de navega��o */
+    /* 3. Itens de navegaï¿½ï¿½o */
     .nav-item,
     .nav-item-more {
         flex: 1;
@@ -21118,7 +21111,7 @@ body.onboarding-active .mobile-bottom-nav {
         white-space: nowrap;
     }
     
-    /* 4. Item ativo - Mantém cor padrão */
+    /* 4. Item ativo - MantÃ©m cor padrÃ£o */
     .nav-item.active {
         color: #3b82f6;
         position: relative;
@@ -21147,7 +21140,7 @@ body.onboarding-active .mobile-bottom-nav {
         background: #f8fafc;
     }
     
-    /* 6. Ajustar padding do app-body para n�o ficar atr�s do AppBar */
+    /* 6. Ajustar padding do app-body para nï¿½o ficar atrï¿½s do AppBar */
     .app-body {
         padding-bottom: 85px !important;
     }
@@ -21157,7 +21150,7 @@ body.onboarding-active .mobile-bottom-nav {
    AJUSTES MOBILE RESPONSIVOS
    ============================================ */
 @media (max-width: 768px) {
-    /* Ajustar botão de privacidade para mobile */
+    /* Ajustar botÃ£o de privacidade para mobile */
     .privacy-toggle-btn {
         padding: 0.5rem 0.75rem !important;
         height: 38px !important;
@@ -21172,7 +21165,7 @@ body.onboarding-active .mobile-bottom-nav {
         font-size: 0.8125rem !important;
     }
     
-    /* Header actions - perfil alinhado à direita */
+    /* Header actions - perfil alinhado Ã  direita */
     .app-header {
         padding: 1rem;
     }
@@ -21207,7 +21200,7 @@ body.onboarding-active .mobile-bottom-nav {
         font-size: 1.75rem;
     }
     
-    /* Relat�rios - rolagem horizontal */
+    /* Relatï¿½rios - rolagem horizontal */
     .section-header-with-actions {
         overflow: visible !important;
         -webkit-overflow-scrolling: auto !important;
@@ -21228,7 +21221,7 @@ body.onboarding-active .mobile-bottom-nav {
         flex-shrink: 0;
     }
     
-    /* Gr�fico responsivo */
+    /* Grï¿½fico responsivo */
     .chart-container {
         width: 100% !important;
         height: auto !important;
@@ -21251,7 +21244,7 @@ body.onboarding-active .mobile-bottom-nav {
     }
 }
 
-/* Corre��o: Ocultar R$ no mobile */
+/* Correï¿½ï¿½o: Ocultar R$ no mobile */
 @media (max-width: 768px) {
     .input-icon {
         display: none !important;
@@ -21263,10 +21256,10 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* ============================================
-   CORRE��ES MOBILE - RELAT�RIOS
+   CORREï¿½ï¿½ES MOBILE - RELATï¿½RIOS
    ============================================ */
 @media (max-width: 768px) {
-    /* T�tulo e subt�tulo de Relat�rios */
+    /* Tï¿½tulo e subtï¿½tulo de Relatï¿½rios */
     .section-header h2 {
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
@@ -21283,7 +21276,7 @@ body.onboarding-active .mobile-bottom-nav {
         gap: 1rem;
     }
     
-    /* Bot�es de exportar - responsivos */
+    /* Botï¿½es de exportar - responsivos */
     .export-buttons {
         width: 100%;
         flex-direction: column;
@@ -21306,7 +21299,7 @@ body.onboarding-active .mobile-bottom-nav {
         font-size: 0.9rem;
     }
     
-    /* Filtros de per�odo - scroll horizontal */
+    /* Filtros de perï¿½odo - scroll horizontal */
     .report-filters-minimal {
         overflow: visible !important;
         -webkit-overflow-scrolling: auto !important;
@@ -21381,7 +21374,7 @@ body.onboarding-active .mobile-bottom-nav {
    CARDS DO GRID - RESPONSIVIDADE MOBILE
    ============================================ */
 @media (max-width: 768px) {
-    /* Grid de resumo em coluna �nica */
+    /* Grid de resumo em coluna ï¿½nica */
     .report-summary-grid {
         grid-template-columns: 1fr !important;
         gap: 1rem;
@@ -21479,7 +21472,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* ============================================
-   GR�FICO FLUXO FINANCEIRO - ALTURA MAIOR NO MOBILE
+   GRï¿½FICO FLUXO FINANCEIRO - ALTURA MAIOR NO MOBILE
    ============================================ */
 @media (max-width: 768px) {
     .chart-container {
@@ -21502,7 +21495,7 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* ============================================
-   OCULTAR APPBAR QUANDO MODAL EST� ABERTO
+   OCULTAR APPBAR QUANDO MODAL ESTï¿½ ABERTO
    ============================================ */
 @media (max-width: 768px) {
     /* Ocultar AppBar quando qualquer modal estiver aberto */
@@ -21523,10 +21516,10 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* ============================================
-   SEÇÃO AJUDA - RESPONSIVIDADE MOBILE
+   SEÃ‡ÃƒO AJUDA - RESPONSIVIDADE MOBILE
    ============================================ */
 @media (max-width: 768px) {
-    /* Cards de contato r�pido */
+    /* Cards de contato rï¿½pido */
     .help-quick-contact {
         display: grid;
         grid-template-columns: 1fr;
@@ -21620,7 +21613,7 @@ body.onboarding-active .mobile-bottom-nav {
     }
 }
 
-/* Corre��o adicional - aumentar ainda mais o gr�fico */
+/* Correï¿½ï¿½o adicional - aumentar ainda mais o grï¿½fico */
 @media (max-width: 768px) {
     .chart-container > div {
         height: 500px !important;
@@ -21632,7 +21625,7 @@ body.onboarding-active .mobile-bottom-nav {
     }
 }
 
-/* Bot�o Ajuda como bot�o normal de navega��o */
+/* Botï¿½o Ajuda como botï¿½o normal de navegaï¿½ï¿½o */
 @media (max-width: 768px) {
     .mobile-bottom-nav .nav-item[data-section='help'] {
         flex: 1;
@@ -21676,10 +21669,10 @@ body.onboarding-active .mobile-bottom-nav {
 }
 
 /* ============================================
-   CORRIGIR SCROLL DO GR�FICO FLUXO FINANCEIRO
+   CORRIGIR SCROLL DO GRï¿½FICO FLUXO FINANCEIRO
    ============================================ */
 @media (max-width: 768px) {
-    /* Remover scroll interno do gr�fico */
+    /* Remover scroll interno do grï¿½fico */
     .chart-container {
         overflow-x: visible !important;
         overflow-y: visible !important;
@@ -21696,7 +21689,7 @@ body.onboarding-active .mobile-bottom-nav {
         overflow: visible !important;
     }
     
-    /* Canvas do gr�fico */
+    /* Canvas do grï¿½fico */
     .chart-container canvas,
     #mainChart {
         width: 100% !important;
@@ -21718,14 +21711,14 @@ body.onboarding-active .mobile-bottom-nav {
         max-height: none !important;
     }
     
-    /* FAQ expandida deve ter altura autom�tica */
+    /* FAQ expandida deve ter altura automï¿½tica */
     .faq-answer.show {
         max-height: fit-content !important;
         height: auto !important;
         overflow: visible !important;
     }
     
-    /* Garantir que o conte�do dos cards seja vis�vel */
+    /* Garantir que o conteï¿½do dos cards seja visï¿½vel */
     .help-contact-card * {
         overflow: visible !important;
     }
@@ -21736,7 +21729,7 @@ body.onboarding-active .mobile-bottom-nav {
    OCULTAR FAQ NO MOBILE
    ============================================ */
 @media (max-width: 768px) {
-    /* Ocultar completamente a se��o de FAQ no mobile */
+    /* Ocultar completamente a seï¿½ï¿½o de FAQ no mobile */
     .faq-list,
     #sectionHelp .chart-container {
         display: none !important;
@@ -21745,15 +21738,15 @@ body.onboarding-active .mobile-bottom-nav {
 
 
 /* ============================================
-   SIMPLIFICAR TRANSA��ES NO MOBILE
+   SIMPLIFICAR TRANSAï¿½ï¿½ES NO MOBILE
    ============================================ */
 @media (max-width: 768px) {
-    /* Ocultar �cone da transa��o */
+    /* Ocultar ï¿½cone da transaï¿½ï¿½o */
     .transfer-logo {
         display: none !important;
     }
     
-    /* Ocultar tags de tipo (Fixa, Parcelada, �nica, Receita) */
+    /* Ocultar tags de tipo (Fixa, Parcelada, ï¿½nica, Receita) */
     .transaction-type-label,
     .transfer-category {
         display: none !important;
@@ -21780,7 +21773,7 @@ body.onboarding-active .mobile-bottom-nav {
         color: #6b7280 !important;
     }
     
-    /* Manter apenas Nome, Data e Valor vis�veis */
+    /* Manter apenas Nome, Data e Valor visï¿½veis */
     .transfer {
         padding: 0.875rem !important;
         display: flex !important;
@@ -21801,7 +21794,7 @@ body.onboarding-active .mobile-bottom-nav {
 
 
 /* ============================================
-   CORRIGIR BARRA DE NAVEGA��O ANDROID (NAVIGATION BAR)
+   CORRIGIR BARRA DE NAVEGAï¿½ï¿½O ANDROID (NAVIGATION BAR)
    ============================================ */
 
 /* Garante que o background da tela de login seja azul (sem branco) */
@@ -21810,7 +21803,7 @@ body.onboarding-active .mobile-bottom-nav {
     min-height: 100vh !important;
 }
 
-/* Garantir que o HTML e BODY tamb�m usem fundo azul quando na tela de login */
+/* Garantir que o HTML e BODY tambï¿½m usem fundo azul quando na tela de login */
 html:has(.welcome-screen[style*='display: block']),
 body:has(.welcome-screen[style*='display: block']) {
     background: #1e40af !important;
@@ -21818,20 +21811,20 @@ body:has(.welcome-screen[style*='display: block']) {
 
 
 /* ============================================
-   FOR�AR COR AZUL NA BARRA DE NAVEGA��O DO CHROME ANDROID
+   FORï¿½AR COR AZUL NA BARRA DE NAVEGAï¿½ï¿½O DO CHROME ANDROID
    ============================================ */
 @media (max-width: 768px) {
-    /* Background padrão branco para o body */
+    /* Background padrÃ£o branco para o body */
     body {
         background: #FFFFFF !important;
     }
     
-    /* Fundo azul APENAS quando landing page estiver visível */
+    /* Fundo azul APENAS quando landing page estiver visÃ­vel */
     body:has(.landing-page:not(.hidden)) {
         background: #1e40af !important;
     }
     
-    /* Fundo azul APENAS quando welcome screen estiver visível */
+    /* Fundo azul APENAS quando welcome screen estiver visÃ­vel */
     body:has(.welcome-screen[style*="display: block"]),
     body:has(.welcome-screen:not([style*="display: none"])) {
         background: #1e40af !important;
@@ -21847,7 +21840,7 @@ body:has(.welcome-screen[style*='display: block']) {
         z-index: 1;
     }
     
-    /* O app principal mantém fundo branco */
+    /* O app principal mantÃ©m fundo branco */
     .app-container {
         background: #FFFFFF;
         min-height: 100vh;
@@ -21867,7 +21860,7 @@ body:has(.welcome-screen[style*='display: block']) {
         opacity: 0 !important;
     }
     
-    /* Tamb�m remove as esferas do gradiente para deixar mais limpo */
+    /* Tambï¿½m remove as esferas do gradiente para deixar mais limpo */
     .gradient-sphere {
         display: none !important;
     }
@@ -21880,10 +21873,10 @@ body:has(.welcome-screen[style*='display: block']) {
 
 
 /* ============================================
-   ✅ PREVENIR ZOOM AUTOMÁTICO EM INPUTS NO MOBILE
+   âœ… PREVENIR ZOOM AUTOMÃTICO EM INPUTS NO MOBILE
    ============================================ */
 @media (max-width: 768px) {
-    /* Força font-size mínimo de 16px em todos os inputs para prevenir zoom no iOS/Android */
+    /* ForÃ§a font-size mÃ­nimo de 16px em todos os inputs para prevenir zoom no iOS/Android */
     input[type="text"],
     input[type="email"],
     input[type="password"],
@@ -21896,7 +21889,7 @@ body:has(.welcome-screen[style*='display: block']) {
         font-size: 16px !important;
     }
     
-    /* Garante que placeholders também tenham 16px */
+    /* Garante que placeholders tambÃ©m tenham 16px */
     input::placeholder,
     textarea::placeholder {
         font-size: 16px !important;
@@ -21904,7 +21897,7 @@ body:has(.welcome-screen[style*='display: block']) {
 }
 
 /* ========================================
-   🎉 POPUP DE NOVIDADES
+   ðŸŽ‰ POPUP DE NOVIDADES
    ======================================== */
 
 .whats-new-modal {
@@ -21915,7 +21908,7 @@ body:has(.welcome-screen[style*='display: block']) {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
-    z-index: 10000 !important; /* Acima do onboarding (z-index padrão de modals é ~1000) */
+    z-index: 10000 !important; /* Acima do onboarding (z-index padrÃ£o de modals Ã© ~1000) */
 }
 
 /* Header fixo e minimalista */
@@ -21931,7 +21924,7 @@ body:has(.welcome-screen[style*='display: block']) {
     padding: 1.5rem 2rem;
 }
 
-/* Conteúdo com scroll */
+/* ConteÃºdo com scroll */
 .whats-new-content {
     flex: 1;
     overflow-y: auto;
@@ -22065,7 +22058,7 @@ body:has(.welcome-screen[style*='display: block']) {
         font-size: 0.95rem;
     }
     
-    /* Esconde bottom nav quando popup está aberto */
+    /* Esconde bottom nav quando popup estÃ¡ aberto */
     .modal#whatsNewModal[style*="display: flex"] ~ .mobile-bottom-nav,
     body:has(.modal#whatsNewModal[style*="display: flex"]) .mobile-bottom-nav {
         display: none !important;
@@ -22073,7 +22066,7 @@ body:has(.welcome-screen[style*='display: block']) {
 }
 
 /* ============================================ */
-/* LISTA RÁPIDA DE DESPESAS */
+/* LISTA RÃPIDA DE DESPESAS */
 /* ============================================ */
 
 /* Badge contador */
@@ -22113,7 +22106,7 @@ body:has(.welcome-screen[style*='display: block']) {
     right: 8px;
 }
 
-/* Botão central destacado */
+/* BotÃ£o central destacado */
 .mobile-bottom-nav .nav-item-center {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     border-radius: 16px;
@@ -22133,7 +22126,7 @@ body:has(.welcome-screen[style*='display: block']) {
     color: white !important;
 }
 
-/* Efeito de brilho APENAS para o botão central quando ativo */
+/* Efeito de brilho APENAS para o botÃ£o central quando ativo */
 .mobile-bottom-nav .nav-item-center.active {
     animation: navGlowCenter 0.3s ease;
     filter: brightness(1.1);
@@ -22141,7 +22134,7 @@ body:has(.welcome-screen[style*='display: block']) {
                 0 0 20px rgba(59, 130, 246, 0.3);
 }
 
-/* Remove o ::before azul do botão central */
+/* Remove o ::before azul do botÃ£o central */
 .mobile-bottom-nav .nav-item-center.active::before {
     display: none;
 }
@@ -22158,7 +22151,7 @@ body:has(.welcome-screen[style*='display: block']) {
 }
 
 /* ===================================
-   MODAL LISTA DE CONTAS - ESTILO ÚNICO (TEMA AZUL)
+   MODAL LISTA DE CONTAS - ESTILO ÃšNICO (TEMA AZUL)
    =================================== */
 
 .modal-todo {
@@ -22173,7 +22166,7 @@ body:has(.welcome-screen[style*='display: block']) {
     }
 }
 
-/* Botão de fechar padrão (canto superior direito) */
+/* BotÃ£o de fechar padrÃ£o (canto superior direito) */
 .modal-todo .close-modal {
     position: absolute;
     top: 1.5rem;
@@ -22199,7 +22192,7 @@ body:has(.welcome-screen[style*='display: block']) {
     transform: rotate(90deg);
 }
 
-/* Título e subtítulo simples (sem header azul) */
+/* TÃ­tulo e subtÃ­tulo simples (sem header azul) */
 .modal-title-simple {
     color: #1e293b;
     font-size: 1.5rem;
@@ -22347,7 +22340,7 @@ body:has(.welcome-screen[style*='display: block']) {
    LISTA DE CONTAS - DESIGN PROFISSIONAL
    =================================== */
 
-/* Botões da seção header */
+/* BotÃµes da seÃ§Ã£o header */
 .section-header-actions {
     display: flex;
     gap: 0.75rem;
@@ -22433,7 +22426,7 @@ body:has(.welcome-screen[style*='display: block']) {
     transform: translateY(-2px);
 }
 
-/* Informações principais */
+/* InformaÃ§Ãµes principais */
 .expense-item-info {
     display: flex;
     flex-direction: column;
@@ -22498,7 +22491,7 @@ body:has(.welcome-screen[style*='display: block']) {
     letter-spacing: -0.025em;
 }
 
-/* Botões de ação */
+/* BotÃµes de aÃ§Ã£o */
 .expense-item-actions {
     display: flex;
     gap: 0.5rem;
@@ -22546,7 +22539,7 @@ body:has(.welcome-screen[style*='display: block']) {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* Rodapé com totais - Minimalista */
+/* RodapÃ© com totais - Minimalista */
 .expenses-list-footer {
     background: white;
     border: 1px solid #e5e7eb;
@@ -22694,4 +22687,5 @@ body:has(.welcome-screen[style*='display: block']) {
         font-size: 1.5rem;
     }
 }
+
 
