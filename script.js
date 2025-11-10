@@ -956,8 +956,10 @@
             if (mobileBottomNav) mobileBottomNav.classList.remove('hidden');
             if (mobileMoreMenu) mobileMoreMenu.classList.remove('hidden');
             
-            //Previne scroll no body
-            document.body.style.overflow = 'hidden';
+            //🔓 SCROLL: LIBERA scroll no body (estava bloqueado!)
+            document.body.style.overflow = '';
+            document.body.classList.remove('onboarding-active');
+            console.log('[SCROLL] ✅ Scroll liberado no dashboard');
             
             //Reset scroll
             window.scrollTo(0, 0);
@@ -3280,7 +3282,14 @@
                 //Fecha modal com animação de sucesso (DEPOIS de adicionar salário)
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
-                document.body.classList.remove('onboarding-active'); //Desbloqueia scroll
+                
+                //🔓 SCROLL: Libera completamente o scroll após onboarding
+                document.body.classList.remove('onboarding-active');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                console.log('[SCROLL] ✅ Scroll completamente liberado após onboarding');
 
                 //Mostra mensagem de sucesso
                 showSuccessMessage('Perfil configurado com sucesso!');
@@ -3320,7 +3329,14 @@
                 //Fecha modal DEPOIS
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
-                document.body.classList.remove('onboarding-active'); //Desbloqueia scroll
+                
+                //🔓 SCROLL: Libera completamente o scroll mesmo com erro
+                document.body.classList.remove('onboarding-active');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                console.log('[SCROLL] ✅ Scroll liberado após erro no onboarding');
                 
                 showSuccessMessage('Perfil salvo localmente (atualize o backend)');
             }
@@ -3331,7 +3347,15 @@
             if (confirm('Você pode completar seu perfil depois nas configurações. Deseja pular agora?')) {
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
-                document.body.classList.remove('onboarding-active'); //Desbloqueia scroll
+                
+                //🔓 SCROLL: Libera completamente o scroll ao pular onboarding
+                document.body.classList.remove('onboarding-active');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                console.log('[SCROLL] ✅ Scroll liberado ao pular onboarding');
+                
                 currentOnboardingStep = 1;
                 onboardingData = {};
                 
