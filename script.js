@@ -350,6 +350,33 @@
         const API_URL = "https://poupai-backend-694972193726.southamerica-east1.run.app/api";
         
         //========================================
+        //FUNÇÕES UTILITÁRIAS DE SCROLL
+        //========================================
+        
+        /**
+         * 🔓 FUNÇÃO CRÍTICA: Libera scroll no body
+         * Deve ser chamada sempre que precisar garantir que o scroll está funcionando
+         * EXCEÇÃO: Apenas durante onboarding o scroll deve estar bloqueado
+         */
+        function enableBodyScroll() {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            document.body.classList.remove('onboarding-active');
+            console.log('[SCROLL] ✅ Scroll liberado');
+        }
+        
+        /**
+         * 🔒 FUNÇÃO CRÍTICA: Bloqueia scroll no body (APENAS para onboarding)
+         * Deve ser usada APENAS durante o onboarding para evitar zoom/pan no iPhone
+         */
+        function disableBodyScroll() {
+            document.body.classList.add('onboarding-active');
+            console.log('[SCROLL] 🔒 Scroll bloqueado (onboarding)');
+        }
+        
+        //========================================
         //FUNÇÕES UTILITÁRIAS DE DATA
         //========================================
         
@@ -910,8 +937,8 @@
                 metaThemeColor.content = '#000000';
             }
             
-            //Previne scroll no body
-            document.body.style.overflow = 'hidden';
+            //🔓 SCROLL: Landing page precisa de scroll livre
+            document.body.style.overflow = '';
             
             //Reset scroll
             window.scrollTo(0, 0);
@@ -956,10 +983,8 @@
             if (mobileBottomNav) mobileBottomNav.classList.remove('hidden');
             if (mobileMoreMenu) mobileMoreMenu.classList.remove('hidden');
             
-            //🔓 SCROLL: LIBERA scroll no body (estava bloqueado!)
-            document.body.style.overflow = '';
-            document.body.classList.remove('onboarding-active');
-            console.log('[SCROLL] ✅ Scroll liberado no dashboard');
+            //🔓 SCROLL: Libera scroll usando função utilitária
+            enableBodyScroll();
             
             //Reset scroll
             window.scrollTo(0, 0);
@@ -1066,8 +1091,8 @@
                 metaThemeColor.content = '#000000';
             }
             
-            //Restaura scroll no body
-            document.body.style.overflow = 'hidden';
+            //🔓 SCROLL: Auth screen precisa de scroll livre (teclado mobile)
+            document.body.style.overflow = '';
             
             //2. Reset da navegação
             resetNavigation();
@@ -1584,8 +1609,8 @@
                 metaThemeColor.content = '#000000';
             }
             
-            //Restaura scroll no body
-            document.body.style.overflow = 'hidden';
+            //🔓 SCROLL: Landing page precisa de scroll livre
+            document.body.style.overflow = '';
             
             //Limpeza de estilos inline para garantir CSS correto
             const landingMain = document.querySelector('.landing-main');
@@ -2828,7 +2853,7 @@
                 const modal = document.getElementById('onboardingModal');
                 if (modal) {
                     modal.style.display = 'flex';
-                    document.body.classList.add('onboarding-active'); //Bloqueia scroll
+                    disableBodyScroll(); //🔒 Bloqueia scroll APENAS durante onboarding
                     currentOnboardingStep = 1;
                     updateOnboardingProgress();
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]✅ Onboarding modal EXIBIDO');
@@ -3283,13 +3308,8 @@
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
                 
-                //🔓 SCROLL: Libera completamente o scroll após onboarding
-                document.body.classList.remove('onboarding-active');
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-                document.body.style.height = '';
-                console.log('[SCROLL] ✅ Scroll completamente liberado após onboarding');
+                //🔓 SCROLL: Libera usando função utilitária
+                enableBodyScroll();
 
                 //Mostra mensagem de sucesso
                 showSuccessMessage('Perfil configurado com sucesso!');
@@ -3330,13 +3350,8 @@
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
                 
-                //🔓 SCROLL: Libera completamente o scroll mesmo com erro
-                document.body.classList.remove('onboarding-active');
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-                document.body.style.height = '';
-                console.log('[SCROLL] ✅ Scroll liberado após erro no onboarding');
+                //🔓 SCROLL: Libera usando função utilitária mesmo com erro
+                enableBodyScroll();
                 
                 showSuccessMessage('Perfil salvo localmente (atualize o backend)');
             }
@@ -3348,13 +3363,8 @@
                 const modal = document.getElementById('onboardingModal');
                 modal.style.display = 'none';
                 
-                //🔓 SCROLL: Libera completamente o scroll ao pular onboarding
-                document.body.classList.remove('onboarding-active');
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-                document.body.style.height = '';
-                console.log('[SCROLL] ✅ Scroll liberado ao pular onboarding');
+                //🔓 SCROLL: Libera usando função utilitária ao pular
+                enableBodyScroll();
                 
                 currentOnboardingStep = 1;
                 onboardingData = {};
