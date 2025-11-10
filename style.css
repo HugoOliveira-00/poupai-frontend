@@ -81,14 +81,15 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #FFFFFF;
             color: #111827;
-            /* ForÃ§a orientaÃ§Ã£o portrait em mobile */
+            /* Força orientação portrait em mobile */
             -webkit-text-size-adjust: 100%;
             /* Evita overflow horizontal */
             overflow-x: hidden;
             max-width: 100%;
-            /* âœ… SCROLL MOBILE FUNCIONAL - Removido overscroll-behavior */
+            /* ✅ SCROLL MOBILE FUNCIONAL - Garantir scroll vertical */
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* Fixa posiÃ§Ã£o no iOS */
+            /* Fixa posição no iOS */
             position: relative;
             width: 100%;
             height: 100%;
