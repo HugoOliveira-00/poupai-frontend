@@ -2129,6 +2129,11 @@
                     //Atribui o novo usuário criado
                     currentUser = newUserData;
                     
+                    //✅ SALVA SENHA TEMPORÁRIA para usar no onboarding (perguntas de segurança)
+                    //Será removida após salvar as perguntas por segurança
+                    localStorage.setItem('tempPassword', password);
+                    console.log('[SECURITY] 🔐 Senha temporária salva para configuração de perguntas de segurança');
+                    
                     //✅ ISSUE #15: Log seguro - dados sensíveis mascarados
                     secureLog('info', '🔍 Usuário criado com sucesso', currentUser);
                     secureLog('info', '🔍 Conta ativada', { userId: currentUser.id });
@@ -3118,67 +3123,50 @@
                     console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][WARNING] Dados salvos APENAS no localStorage (atualize a entidade Usuario no backend)');
                 }
                 
-                //✅ CORREÇÃO: Valida e salva pergunta de segurança se fornecida (apenas 1 no onboarding)
-                if (onboardingData.securityQuestion1 && onboardingData.securityAnswer1 && onboardingData.passwordConfirm) {
+                //✅ SALVA PERGUNTA DE SEGURANÇA (se fornecida no onboarding)
+                if (onboardingData.securityQuestion1 && onboardingData.securityAnswer1) {
                     try {
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SECURITY] Salvando pergunta de segurança do onboarding...');
+                        console.log('[SECURITY] 📝 Salvando pergunta de segurança do onboarding...');
                         
-                        //✅ CORREÇÃO CRÍTICA: Valida se a senha de confirmação está correta
-                        //Busca a senha original salva no registro
-                        const loginResponse = await fetch(`${API_URL}/auth/login`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                email: currentUser.email,
-                                senha: onboardingData.passwordConfirm
-                            })
-                        });
+                        //✅ IMPORTANTE: Backend precisa da SENHA ORIGINAL para validar
+                        //Mas usuário NÃO digita senha no onboarding (já está autenticado)
+                        //SOLUÇÃO: Pegar senha do localStorage (foi salva no registro)
+                        const savedPassword = localStorage.getItem('tempPassword'); //Senha temporária do registro
                         
-                        if (!loginResponse.ok) {
-                            //Senha incorreta!
-                            console.error('[ERROR] Senha de confirmação incorreta no onboarding!');
-                            showWarningNotification('Senha incorreta! Digite a senha que você usou no cadastro.');
-                            
-                            //Reabilita o botão
-                            if (btnComplete) {
-                                btnComplete.disabled = false;
-                                btnComplete.textContent = 'Concluir';
-                                btnComplete.style.opacity = '1';
-                                btnComplete.style.cursor = 'pointer';
-                            }
-                            return; //Para o processo aqui
-                        }
-                        
-                        console.log('[SUCCESS] Senha validada! Prosseguindo...');
-                        
-                        //✅ CORREÇÃO CRÍTICA: Usa API_URL correto para perguntas de segurança
-                        //No onboarding, o usuário configura apenas 1 pergunta
-                        //Então usamos placeholders para as outras 2 (backend exige 3)
-                        const securityResponse = await fetch(`${API_URL}/security-questions/update`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                email: currentUser.email,
-                                password: onboardingData.passwordConfirm,
-                                question1: onboardingData.securityQuestion1,
-                                answer1: onboardingData.securityAnswer1,
-                                question2: 'Pergunta não configurada',
-                                answer2: 'N/A',
-                                question3: 'Pergunta não configurada',
-                                answer3: 'N/A'
-                            })
-                        });
-
-                        if (securityResponse.ok) {
-                            console.log('[SUCCESS] ✅ Pergunta de segurança salva com sucesso no banco de dados!');
+                        if (!savedPassword) {
+                            console.warn('[WARNING] ⚠️ Senha não encontrada - pulando salvamento de pergunta de segurança');
+                            console.warn('[WARNING] ⚠️ Usuário pode configurar depois em Perfil > Segurança');
                         } else {
-                            const errorData = await securityResponse.json();
-                            console.warn('[WARNING] ⚠️ Erro ao salvar pergunta de segurança:', errorData.message);
-                            //Não bloqueia o onboarding, só loga o erro
+                            //Backend espera 3 perguntas obrigatoriamente
+                            //Onboarding tem apenas 1, então usamos placeholders para as outras 2
+                            const securityResponse = await fetch(`${API_URL}/security-questions/update`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    email: currentUser.email,
+                                    password: savedPassword, //Senha do registro
+                                    question1: onboardingData.securityQuestion1,
+                                    answer1: onboardingData.securityAnswer1,
+                                    question2: 'Não configurada',
+                                    answer2: 'pendente',
+                                    question3: 'Não configurada',
+                                    answer3: 'pendente'
+                                })
+                            });
+
+                            if (securityResponse.ok) {
+                                console.log('[SUCCESS] ✅ Pergunta de segurança salva no banco de dados!');
+                                //Limpa senha temporária do localStorage por segurança
+                                localStorage.removeItem('tempPassword');
+                            } else {
+                                const errorData = await securityResponse.json();
+                                console.warn('[WARNING] ⚠️ Erro ao salvar pergunta:', errorData.message);
+                                console.warn('[WARNING] ⚠️ Usuário pode configurar depois em Perfil > Segurança');
+                            }
                         }
                     } catch (error) {
-                        console.error('[ERROR][ERROR] Erro ao salvar pergunta de segurança:', error);
-                        //Não bloqueia o onboarding, só loga o erro
+                        console.error('[ERROR] Erro ao salvar pergunta de segurança:', error);
+                        console.warn('[WARNING] Usuário pode configurar depois em Perfil > Segurança');
                     }
                 }
                 
