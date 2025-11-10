@@ -70,6 +70,7 @@
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE/Edge */
             -webkit-tap-highlight-color: transparent; /* Remove flash ao toque */
+            touch-action: pan-x pan-y; /* ✅ CRÍTICO: Permite apenas scroll, bloqueia zoom */
         }
 
         /* Chrome/Safari/Opera */
@@ -90,6 +91,8 @@
             /* ✅ SCROLL MOBILE FUNCIONAL - Garantir scroll vertical */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            /* ✅ CRÍTICO: Bloqueia zoom pinch, permite apenas scroll */
+            touch-action: pan-x pan-y;
             /* Fixa posição no iOS */
             position: relative;
             width: 100%;
@@ -132,6 +135,7 @@
             textarea {
                 -webkit-user-select: text;
                 user-select: text;
+                touch-action: manipulation; /* ✅ Permite interação correta com inputs */
             }
             
             /* REMOVE TODOS OS BOX-SHADOWS DE FOCO NO MOBILE (causa flash/vulto) */
