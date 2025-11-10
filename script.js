@@ -3149,11 +3149,12 @@
                             return; //Para o processo aqui
                         }
                         
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Senha validada! Prosseguindo...');
+                        console.log('[SUCCESS] Senha validada! Prosseguindo...');
                         
+                        //✅ CORREÇÃO CRÍTICA: Usa API_BASE_URL correto para perguntas de segurança
                         //No onboarding, o usuário configura apenas 1 pergunta
                         //Então usamos placeholders para as outras 2 (backend exige 3)
-                        const securityResponse = await fetch(`${API_URL}/security-questions/update`, {
+                        const securityResponse = await fetch(`${API_BASE_URL}/api/security-questions/update`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -3169,10 +3170,10 @@
                         });
 
                         if (securityResponse.ok) {
-                            console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR][SUCCESS] Pergunta de segurança salva com sucesso!');
+                            console.log('[SUCCESS] ✅ Pergunta de segurança salva com sucesso no banco de dados!');
                         } else {
                             const errorData = await securityResponse.json();
-                            console.warn('[WARNING][WARNING] Erro ao salvar pergunta de segurança:', errorData.message);
+                            console.warn('[WARNING] ⚠️ Erro ao salvar pergunta de segurança:', errorData.message);
                             //Não bloqueia o onboarding, só loga o erro
                         }
                     } catch (error) {
@@ -3181,20 +3182,33 @@
                     }
                 }
                 
-                //Marca onboarding como completo no BACKEND
+                //✅ Marca onboarding como completo no BACKEND
                 try {
-                    await fetch(`${API_BASE_URL}/api/auth/complete-onboarding`, {
+                    console.log('[ONBOARDING] 📝 Marcando onboarding como completo no backend...');
+                    const onboardingResponse = await fetch(`${API_BASE_URL}/api/auth/complete-onboarding`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId: currentUser.id })
                     });
+                    
+                    if (onboardingResponse.ok) {
+                        const data = await onboardingResponse.json();
+                        console.log('[ONBOARDING] ✅ Onboarding marcado como completo no backend:', data);
+                        currentUser.onboardingCompleted = true; // Atualiza objeto local
+                    } else {
+                        console.error('[ONBOARDING] ❌ Erro ao marcar onboarding no backend');
+                    }
                 } catch (err) {
-                    console.error('Erro ao marcar onboarding no backend:', err);
+                    console.error('[ONBOARDING] ❌ Erro ao marcar onboarding no backend:', err);
                 }
                 
                 //Marca onboarding como completo localmente e remove flag de novo usuário
                 localStorage.setItem('onboardingCompleted', 'true');
                 localStorage.removeItem('isNewUser');
+
+                //Atualiza localStorage com onboardingCompleted
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                console.log('[ONBOARDING] ✅ Status salvo localmente: onboardingCompleted =', currentUser.onboardingCompleted);
 
                 //Atualiza UI
                 updateProfileUI();
@@ -17841,6 +17855,8 @@ function updatePasswordStrength() {
 
 const CURRENT_VERSION = '1.5';
 const RELEASE_DATE = '07/11/2024';
+
+console.log('🚀 [SYSTEM] PoupAI iniciado - Versão:', CURRENT_VERSION, '| Release:', RELEASE_DATE);
 
 const WHATS_NEW_CONTENT = {
     fixes: [
