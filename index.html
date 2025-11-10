@@ -2908,10 +2908,17 @@
               <input type="text" id="profileOccupation" placeholder="Ex: Desenvolvedor, Designer...">
             </div>
 
-            <button type="submit" class="btn-save-profile">
-              <i class="ph ph-check"></i>
-              Salvar
-            </button>
+            <!-- Botões de Ação -->
+            <div class="profile-actions-buttons">
+              <button type="submit" class="btn-save-profile">
+                <i class="ph ph-check"></i>
+                Salvar Perfil
+              </button>
+              <button type="button" class="btn-logout-profile" onclick="logout()">
+                <i class="ph ph-sign-out"></i>
+                <span class="btn-text">Sair</span>
+              </button>
+            </div>
           </form>
         </div>
 
@@ -3152,17 +3159,10 @@
               <small>Digite sua senha para confirmar as alterações</small>
             </div>
 
-            <!-- Botões de Ação -->
-            <div class="profile-actions-buttons">
-              <button type="submit" class="btn-save-profile">
-                <i class="ph ph-check"></i>
-                Salvar Perguntas
-              </button>
-              <button type="button" class="btn-logout-profile" onclick="logout()">
-                <i class="ph ph-sign-out"></i>
-                <span class="btn-text">Sair</span>
-              </button>
-            </div>
+            <button type="submit" class="btn-save-profile">
+              <i class="ph ph-check"></i>
+              Salvar Perguntas
+            </button>
           </form>
         </div>
       </div>

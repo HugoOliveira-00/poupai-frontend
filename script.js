@@ -14427,7 +14427,7 @@
         //✅ NOVO: Modal de verificação de segurança para acessar perguntas
         function showSecurityVerificationModal() {
             const modal = `
-                <div class="modal-overlay active" id="securityVerificationModal">
+                <div class="modal-overlay active" id="securityVerificationModal" style="z-index: 999999;">
                     <div class="modal-content" style="max-width: 450px;">
                         <div class="modal-header">
                             <h2 style="display: flex; align-items: center; gap: 0.75rem; margin: 0;">
@@ -14443,7 +14443,7 @@
                                 <div style="display: flex; align-items: start; gap: 0.75rem;">
                                     <i class="ph ph-info" style="color: #3b82f6; font-size: 1.5rem; flex-shrink: 0;"></i>
                                     <div>
-                                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.25rem; font-size: 1rem;">🔒 Área Protegida</div>
+                                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.25rem; font-size: 1rem;">Área Protegida</div>
                                         <div style="color: #1e3a8a; font-size: 0.9rem; line-height: 1.5;">
                                             Por favor, confirme sua senha para acessar as perguntas de segurança.
                                         </div>
