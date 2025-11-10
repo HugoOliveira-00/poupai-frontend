@@ -69,6 +69,7 @@
             box-sizing: border-box;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE/Edge */
+            -webkit-tap-highlight-color: transparent; /* Remove flash ao toque */
         }
 
         /* Chrome/Safari/Opera */
@@ -94,8 +95,14 @@
             width: 100%;
             height: 100%;
         }
+        
+        /* ✅ SEGURANÇA: Previne qualquer elemento de causar overflow horizontal */
+        #app, #root, .app-container, .main-content, .dashboard {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
 
-        /* Garante que imagens/videos/iframes nÃ£o quebrem layout */
+        /* Garante que imagens/videos/iframes não quebrem layout */
         img, video, iframe {
             max-width: 100%;
             height: auto;
