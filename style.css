@@ -11610,52 +11610,52 @@
             margin-top: 1.5rem;
         }
 
-        /* Desktop: BotÃ£o Salvar ocupa todo espaÃ§o, Sair oculto */
+        /* Botões lado a lado (Web e Mobile) */
         .profile-actions-buttons .btn-save-profile {
             flex: 1;
             margin-top: 0;
         }
 
         .btn-logout-profile {
-            display: none; /* Oculto por padrÃ£o no desktop */
+            display: flex; /* ✅ Sempre visível */
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
         }
 
-        /* Mobile: Ambos os botÃµes visÃ­veis lado a lado */
+        .btn-logout-profile i {
+            font-size: 1.25rem;
+        }
+
+        .btn-logout-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .btn-logout-profile:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile: Ajustes adicionais */
         @media (max-width: 768px) {
             .btn-logout-profile {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
                 min-width: 70px;
                 padding: 0.875rem 1rem;
-                background: linear-gradient(135deg, #ef4444, #dc2626);
-                color: white;
-                border: none;
-                border-radius: 10px;
-                font-size: 0.95rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
-            }
-
-            .btn-logout-profile i {
-                font-size: 1.25rem;
             }
 
             .btn-logout-profile .btn-text {
                 display: none; /* Oculta texto em telas muito pequenas */
-            }
-
-            .btn-logout-profile:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-                background: linear-gradient(135deg, #dc2626, #b91c1c);
-            }
-
-            .btn-logout-profile:active {
-                transform: translateY(0);
             }
 
             /* Em telas um pouco maiores, mostra o texto */
