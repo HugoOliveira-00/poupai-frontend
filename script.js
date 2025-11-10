@@ -124,9 +124,50 @@
             return isMobileUA || (hasTouch && window.innerWidth <= 1024);
         }
 
-        //✅ REMOVIDO: blockIOSBounce estava impedindo scroll com 1 dedo
-        //Bounce já está controlado via CSS (sem overscroll-behavior)
-        //Touch events não devem ter preventDefault() global
+        //✅ BLOQUEIO AGRESSIVO DE ZOOM - Previne pinch-to-zoom
+        (function preventZoom() {
+            // Bloqueia gesture events (iOS)
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                console.log('[ZOOM] 🚫 Gesture bloqueado (iOS pinch)');
+            }, { passive: false });
+            
+            document.addEventListener('gesturechange', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            document.addEventListener('gestureend', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            // Bloqueia touch com 2+ dedos (Android/iOS)
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                    console.log('[ZOOM] 🚫 Multi-touch bloqueado (pinch)');
+                }
+            }, { passive: false });
+            
+            // Bloqueia movimento com 2+ dedos
+            document.addEventListener('touchmove', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Previne duplo toque para zoom
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                    console.log('[ZOOM] 🚫 Duplo toque bloqueado');
+                }
+                lastTouchEnd = now;
+            }, { passive: false });
+            
+            console.log('[ZOOM] 🔒 Proteção anti-zoom ATIVADA (gesture + multi-touch + duplo toque)');
+        })();
         
         //Função para focar no primeiro input de um modal (mobile e tablet)
         function focusFirstInputMobile(modalElement, delay = 300) {
