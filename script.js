@@ -3151,10 +3151,10 @@
                         
                         console.log('[SUCCESS] Senha validada! Prosseguindo...');
                         
-                        //✅ CORREÇÃO CRÍTICA: Usa API_BASE_URL correto para perguntas de segurança
+                        //✅ CORREÇÃO CRÍTICA: Usa API_URL correto para perguntas de segurança
                         //No onboarding, o usuário configura apenas 1 pergunta
                         //Então usamos placeholders para as outras 2 (backend exige 3)
-                        const securityResponse = await fetch(`${API_BASE_URL}/api/security-questions/update`, {
+                        const securityResponse = await fetch(`${API_URL}/security-questions/update`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -3185,7 +3185,7 @@
                 //✅ Marca onboarding como completo no BACKEND
                 try {
                     console.log('[ONBOARDING] 📝 Marcando onboarding como completo no backend...');
-                    const onboardingResponse = await fetch(`${API_BASE_URL}/api/auth/complete-onboarding`, {
+                    const onboardingResponse = await fetch(`${API_URL}/auth/complete-onboarding`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId: currentUser.id })
@@ -17944,7 +17944,7 @@ async function closeWhatsNewModal() {
 
     try {
         //Marca versão como visualizada no backend
-        const response = await fetch(`${API_BASE_URL}/api/auth/mark-version-viewed`, {
+        const response = await fetch(`${API_URL}/auth/mark-version-viewed`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
