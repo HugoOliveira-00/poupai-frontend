@@ -7595,7 +7595,7 @@
             width: 100% !important;
             overscroll-behavior: contain; /* ✅ Previne scroll bounce no iOS */
             -webkit-overflow-scrolling: auto; /* ✅ Remove momentum scroll */
-            touch-action: none; /* ✅ Bloqueia gestos de scroll */
+            /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
         }
 
         #onboardingModal.show {
@@ -7625,7 +7625,7 @@
             border: none;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-height: 100vh; /* ✅ Limita altura ao viewport */
-            touch-action: none; /* ✅ Bloqueia gestos de scroll */
+            /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
         }
 
         .onboarding-header {
@@ -11591,51 +11591,72 @@
             transform: translateY(0);
         }
 
-        /* ✅ Botão de Logout Mobile (Apenas Ícone) */
-        .profile-logout-mobile {
-            display: none; /* Oculto por padrão (desktop) */
+        /* ✅ Container de Botões de Ação (Salvar + Sair) */
+        .profile-actions-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
         }
-        
-        /* Mostra apenas no mobile */
+
+        /* Desktop: Botão Salvar ocupa todo espaço, Sair oculto */
+        .profile-actions-buttons .btn-save-profile {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        .btn-logout-profile {
+            display: none; /* Oculto por padrão no desktop */
+        }
+
+        /* Mobile: Ambos os botões visíveis lado a lado */
         @media (max-width: 768px) {
-            .profile-logout-mobile {
+            .btn-logout-profile {
                 display: flex;
-                justify-content: center;
                 align-items: center;
-                padding: 1.5rem 0 0 0;
-                margin-top: 2rem;
-                border-top: 1px solid #e5e7eb;
+                justify-content: center;
+                gap: 0.5rem;
+                min-width: 70px;
+                padding: 0.875rem 1rem;
+                background: linear-gradient(135deg, #ef4444, #dc2626);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+            }
+
+            .btn-logout-profile i {
+                font-size: 1.25rem;
+            }
+
+            .btn-logout-profile .btn-text {
+                display: none; /* Oculta texto em telas muito pequenas */
+            }
+
+            .btn-logout-profile:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+                background: linear-gradient(135deg, #dc2626, #b91c1c);
+            }
+
+            .btn-logout-profile:active {
+                transform: translateY(0);
+            }
+
+            /* Em telas um pouco maiores, mostra o texto */
+            @media (min-width: 400px) {
+                .btn-logout-profile .btn-text {
+                    display: inline;
+                }
             }
         }
 
-        .btn-logout-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-logout-icon i {
-            font-size: 1.75rem;
-        }
-
-        .btn-logout-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-        }
-
-        .btn-logout-icon:active {
-            transform: scale(0.95);
+        /* ✅ Botão de Logout Mobile (Profile) - REMOVIDO */
+        .profile-logout-mobile {
+            display: none; /* Completamente removido */
         }
 
         /* Mobile Responsive - Profile */
@@ -11788,14 +11809,14 @@
                 position: fixed !important;
                 overscroll-behavior: contain !important; /* ✅ Previne scroll bounce */
                 -webkit-overflow-scrolling: auto !important;
-                touch-action: none !important; /* ✅ CRÍTICO: Bloqueia gestos de scroll */
+                /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
             }
             
             .onboarding-modal-content {
                 max-width: 95%;
                 overflow: hidden !important;
                 max-height: 100vh;
-                touch-action: none !important;
+                /* ✅ SCROLL: Removido touch-action: none que bloqueava scroll */
             }
 
             .onboarding-step {
