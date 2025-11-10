@@ -18506,7 +18506,7 @@ body.modal-open {
     position: fixed;
     top: 80px;
     right: 20px;
-    z-index: 100000; /* ✅ ACIMA de todos os modais (10000) */
+    z-index: 999999 !important; /* ✅ SEMPRE ACIMA DE TUDO (modais, loading, onboarding) */
     opacity: 0;
     transform: translateX(400px);
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
