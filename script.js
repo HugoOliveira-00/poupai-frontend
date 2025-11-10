@@ -14363,9 +14363,9 @@
                                 <div style="display: flex; align-items: start; gap: 0.75rem;">
                                     <i class="ph ph-shield-warning" style="color: #dc2626; font-size: 1.5rem; flex-shrink: 0;"></i>
                                     <div>
-                                        <div style="font-weight: 600; color: #991b1b; margin-bottom: 0.25rem;">Área Protegida</div>
-                                        <div style="color: #991b1b; font-size: 0.875rem;">
-                                            Para acessar suas perguntas de segurança, confirme sua identidade.
+                                        <div style="font-weight: 600; color: #991b1b; margin-bottom: 0.25rem; font-size: 1rem;">🔒 Área Protegida</div>
+                                        <div style="color: #7f1d1d; font-size: 0.9rem; line-height: 1.5;">
+                                            Suas perguntas de segurança são confidenciais. Por favor, confirme sua identidade antes de prosseguir.
                                         </div>
                                     </div>
                                 </div>
@@ -14373,9 +14373,9 @@
                             
                             <form id="securityVerificationForm" onsubmit="verifySecurityCredentials(event)">
                                 <div class="input-group-minimal" style="margin-bottom: 1.25rem;">
-                                    <label for="verifyEmail">
-                                        <i class="ph ph-envelope"></i>
-                                        E-mail
+                                    <label for="verifyEmail" style="font-weight: 600; color: #374151; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">
+                                        <i class="ph ph-envelope" style="margin-right: 0.5rem;"></i>
+                                        Seu E-mail
                                     </label>
                                     <input 
                                         type="email" 
@@ -14383,51 +14383,54 @@
                                         placeholder="seu@email.com"
                                         value="${currentUser?.email || ''}"
                                         readonly
-                                        style="background: #f3f4f6; cursor: not-allowed;"
+                                        style="background: #f9fafb; cursor: not-allowed; border: 2px solid #e5e7eb; padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 0.95rem;"
                                         required
                                     />
                                 </div>
                                 
                                 <div class="input-group-minimal" style="margin-bottom: 1.5rem;">
-                                    <label for="verifyPassword">
-                                        <i class="ph ph-lock"></i>
-                                        Senha
+                                    <label for="verifyPassword" style="font-weight: 600; color: #374151; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">
+                                        <i class="ph ph-lock" style="margin-right: 0.5rem;"></i>
+                                        Digite sua Senha
                                     </label>
                                     <div style="position: relative;">
                                         <input 
                                             type="password" 
                                             id="verifyPassword" 
-                                            placeholder="Digite sua senha"
+                                            placeholder="••••••••"
                                             required
                                             autocomplete="current-password"
+                                            style="padding: 0.75rem 3rem 0.75rem 1rem; border: 2px solid #d1d5db; border-radius: 8px; width: 100%; font-size: 0.95rem;"
                                         />
                                         <button 
                                             type="button" 
                                             class="toggle-password-btn"
                                             onclick="toggleVerifyPassword()"
-                                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6b7280; font-size: 1.25rem; padding: 0;"
+                                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6b7280; font-size: 1.25rem; padding: 0.5rem;"
+                                            title="Mostrar/Ocultar senha"
                                         >
                                             <i class="ph ph-eye" id="verifyPasswordIcon"></i>
                                         </button>
                                     </div>
                                 </div>
                                 
-                                <div style="display: flex; gap: 0.75rem;">
+                                <div style="display: flex; gap: 0.75rem; margin-top: 2rem;">
                                     <button 
                                         type="button" 
                                         class="btn-secondary-minimal" 
                                         onclick="closeSecurityVerificationModal()"
-                                        style="flex: 1;"
+                                        style="flex: 1; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem;"
                                     >
+                                        <i class="ph ph-x" style="margin-right: 0.5rem;"></i>
                                         Cancelar
                                     </button>
                                     <button 
                                         type="submit" 
                                         class="btn-primary-minimal"
-                                        style="flex: 1;"
+                                        style="flex: 1; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem;"
                                     >
-                                        <i class="ph ph-check"></i>
-                                        Verificar
+                                        <i class="ph ph-check" style="margin-right: 0.5rem;"></i>
+                                        Verificar Acesso
                                     </button>
                                 </div>
                             </form>
@@ -18037,9 +18040,13 @@ const WHATS_NEW_CONTENT = {
 };
 
 function checkAndShowWhatsNew() {
-    //REGRA: Só executa se o onboarding JÁ foi completado
-    //Para novos usuários, essa função será chamada APÓS o onboarding fechar
+    //🚫 DESATIVADO: Popup automático removido
+    //Nova funcionalidade: Usuário deve clicar em botão na página de Ajuda para ver novidades
     
+    console.log('ℹ️ Popup automático de novidades desativado - acessível via página de Ajuda');
+    return;
+    
+    /* CÓDIGO ORIGINAL DESATIVADO
     if (!currentUser || !currentUser.id) {
         console.log('❌ Usuário não autenticado, popup de novidades não será exibido');
         return;
@@ -18056,6 +18063,7 @@ function checkAndShowWhatsNew() {
     if (lastVersionViewed !== CURRENT_VERSION) {
         showWhatsNewModal();
     }
+    */
 }
 
 function showWhatsNewModal() {
