@@ -124,26 +124,9 @@
             return isMobileUA || (hasTouch && window.innerWidth <= 1024);
         }
 
-        //✅ FIX CRÍTICO: Bloqueia bounce/overscroll no iOS/Safari
-        (function blockIOSBounce() {
-            let startY = 0;
-            
-            document.addEventListener('touchstart', e => {
-                if (e.touches.length !== 1) return;
-                startY = e.touches[0].clientY;
-            }, {passive: true});
-
-            document.addEventListener('touchmove', e => {
-                if (e.touches.length !== 1) return;
-                const currentY = e.touches[0].clientY;
-                const atTop = (window.scrollY === 0 && currentY > startY);
-                const atBottom = (window.innerHeight + window.scrollY >= document.body.scrollHeight && currentY < startY);
-                
-                if (atTop || atBottom) {
-                    e.preventDefault();
-                }
-            }, {passive: false});
-        })();
+        //✅ REMOVIDO: blockIOSBounce estava impedindo scroll com 1 dedo
+        //Bounce já está controlado via CSS (sem overscroll-behavior)
+        //Touch events não devem ter preventDefault() global
         
         //Função para focar no primeiro input de um modal (mobile e tablet)
         function focusFirstInputMobile(modalElement, delay = 300) {
