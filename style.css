@@ -12779,7 +12779,7 @@
 
             body {
                 font-size: 0.9rem;
-                padding-bottom: 5rem !important; /* Espaço entre conteúdo e bottom nav */
+                padding-bottom: 7rem !important; /* Espaço entre conteúdo e bottom nav + gesture bar */
             }
 
             h1 {
