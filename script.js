@@ -9654,6 +9654,16 @@
                     mobileBottomNav.style.display = 'flex';
                 }
                 
+                //🔐 SEGURANÇA: Limpa sessão de acesso às perguntas ao fechar o perfil
+                if (modalId === 'profileModal' && securityAccessGranted) {
+                    securityAccessGranted = false;
+                    if (securityAccessTimer) {
+                        clearTimeout(securityAccessTimer);
+                        securityAccessTimer = null;
+                    }
+                    console.log('[SECURITY] 🔒 Sessão de segurança limpa ao fechar perfil');
+                }
+                
                 //🧹 Limpa flag de edição de despesa fixa ao fechar o modal de transação
                 if (modalId === 'transactionModal' && window.editingFixedGroupId) {
                     delete window.editingFixedGroupId;
@@ -14530,6 +14540,8 @@
            ======================================== */
 
         let currentProfileTab = 'info';
+        let securityAccessGranted = false; //Flag de acesso liberado
+        let securityAccessTimer = null; //Timer de 3 minutos
 
         //Toggle perfil (abre modal)
         function toggleProfile() {
@@ -14590,9 +14602,16 @@
             document.querySelectorAll('.profile-tab-minimal')[tabMap[tab]]?.classList.add('active');
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
             
-            //✅ NOVO: Se abriu a aba de perguntas, PRIMEIRO valida credenciais
+            //✅ NOVO: Se abriu a aba de perguntas, verifica se tem sessão válida
             if (tab === 'questions') {
-                showSecurityVerificationModal();
+                if (!securityAccessGranted) {
+                    //Sem sessão válida - pede verificação
+                    showSecurityVerificationModal();
+                } else {
+                    //Tem sessão válida - carrega perguntas direto
+                    console.log('[SECURITY] ✅ Sessão válida - acesso mantido');
+                    loadCurrentSecurityQuestions();
+                }
             }
         }
 
@@ -14715,8 +14734,10 @@
                 modal.remove();
             }
             
-            //Volta para a aba anterior (info)
-            switchProfileTab('info');
+            //✅ CORRIGIDO: Se cancelou, volta para a aba anterior (info) apenas se não tiver acesso
+            if (!securityAccessGranted) {
+                switchProfileTab('info');
+            }
         }
 
         async function verifySecurityCredentials(event) {
@@ -14738,11 +14759,27 @@
                 });
                 
                 if (response.ok) {
-                    //✅ Credenciais corretas - libera acesso
-                    console.log('[SECURITY] ✅ Credenciais verificadas - acesso liberado');
+                    //✅ Credenciais corretas - libera acesso por 3 minutos
+                    console.log('[SECURITY] ✅ Credenciais verificadas - acesso liberado por 3 minutos');
+                    
+                    //Ativa flag de acesso
+                    securityAccessGranted = true;
+                    
+                    //Limpa timer anterior se existir
+                    if (securityAccessTimer) {
+                        clearTimeout(securityAccessTimer);
+                    }
+                    
+                    //Configura timer de 3 minutos (180000ms)
+                    securityAccessTimer = setTimeout(() => {
+                        securityAccessGranted = false;
+                        console.log('[SECURITY] ⏰ Sessão de segurança expirou (3 minutos)');
+                        showNotification('Sessão de segurança expirada. Será necessário verificar novamente.', 'info');
+                    }, 180000); //3 minutos
+                    
                     closeSecurityVerificationModal();
                     loadCurrentSecurityQuestions(); //Agora sim carrega as perguntas
-                    showNotification('Acesso liberado! Você pode editar suas perguntas de segurança.', 'success');
+                    showNotification('Acesso liberado por 3 minutos! Você pode editar suas perguntas de segurança.', 'success');
                 } else {
                     //❌ Senha incorreta
                     console.error('[SECURITY] ❌ Credenciais inválidas');
