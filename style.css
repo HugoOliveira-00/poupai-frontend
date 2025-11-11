@@ -1571,8 +1571,8 @@
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.5);
         }
 
         .landing-main {
