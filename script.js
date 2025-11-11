@@ -17890,18 +17890,19 @@
         }
 
         function openTelegramSupport() {
-            //Substitua pelo seu username ou ID do grupo Telegram
-            const telegramLink = 'https://t.me/poupai_suporte';
-            window.open(telegramLink, '_blank');
+            //Função removida - Telegram não é mais usado
+            console.log('[HELP] Telegram support removed');
         }
 
         function openEmailSupport() {
-            window.location.href = 'mailto:suporte@poupai.com.br?subject=Dúvida sobre PoupAí';
+            const email = 'h.oliveira670@al.unieduk.com.br';
+            const subject = encodeURIComponent('Dúvida/Sugestão sobre PoupAí');
+            const body = encodeURIComponent('Olá!\n\nTenho uma dúvida/sugestão sobre o PoupAí:\n\n');
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
         }
 
         function openWhatsAppSupport() {
-            //Substitua pelo número real do WhatsApp Business
-            const phoneNumber = '5511999999999';
+            const phoneNumber = '5519998995623'; // Gabriel Toledo
             const message = encodeURIComponent('Olá! Tenho uma dúvida sobre o PoupAí.');
             window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         }
