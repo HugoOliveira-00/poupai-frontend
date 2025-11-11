@@ -3277,7 +3277,7 @@
         
         /* Modal de logout deve aparecer ACIMA do modal de perfil */
         #logoutModal {
-            z-index: 10001 !important;
+            z-index: 200000 !important; /* Muito acima de todos os outros modais */
         }
 
         .modal.show {
