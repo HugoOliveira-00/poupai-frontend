@@ -9772,10 +9772,13 @@
         }
 
         function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { 
-                style: 'currency', 
-                currency: 'BRL' 
+            //✅ Força o símbolo R$ explicitamente para evitar problemas de encoding
+            const formatted = new Intl.NumberFormat('pt-BR', { 
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }).format(value);
+            return `R$ ${formatted}`;
         }
 
         function formatDate(dateString) {
