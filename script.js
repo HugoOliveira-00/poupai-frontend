@@ -6943,6 +6943,8 @@
             const installments = parseInt(document.getElementById('installmentCount').value) || 0;
             const firstDate = document.getElementById('firstInstallmentDate').value;
             
+            console.log('[PREVIEW] Atualizando preview:', { amount, installments, firstDate });
+            
             if (amount > 0 && installments > 1 && firstDate) {
                 const preview = document.getElementById('installmentPreview');
                 const installmentValue = amount / installments;
@@ -6956,6 +6958,9 @@
                 const lastInstallmentDateInput = document.getElementById('lastInstallmentDate');
                 if (lastInstallmentDateInput) {
                     lastInstallmentDateInput.value = formatDateToInput(lastDateObj);
+                    console.log('[PREVIEW] ✅ Última data atualizada:', formatDateToInput(lastDateObj));
+                } else {
+                    console.warn('[PREVIEW] ⚠️ Campo lastInstallmentDate não encontrado!');
                 }
                 
                 document.getElementById('previewTotal').textContent = formatCurrency(amount);
