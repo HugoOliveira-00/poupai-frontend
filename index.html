@@ -2465,10 +2465,18 @@
        <div class="form-group">
         <label>
          <i class="ph ph-calendar-blank"></i>
-         Vencimento da Primeira Parcela
+         Período das Parcelas
         </label>
-        <input id="firstInstallmentDate" type="date"/>
-        <small class="form-hint">As demais parcelas serão geradas mensalmente</small>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+         <div>
+          <input id="firstInstallmentDate" type="date" placeholder="Primeira parcela"/>
+          <small class="form-hint">Data inicial</small>
+         </div>
+         <div>
+          <input id="lastInstallmentDate" type="date" readonly style="background: #f3f4f6; cursor: not-allowed;" placeholder="Última parcela"/>
+          <small class="form-hint">Calculado automaticamente</small>
+         </div>
+        </div>
        </div>
        <div class="installment-preview" id="installmentPreview" style="display: none;">
         <div class="preview-header">

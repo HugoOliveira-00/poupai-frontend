@@ -5073,7 +5073,7 @@
                 return;
             }
 
-            //Gastos do mês até agora (APENAS despesas únicas e parcelas individuais)
+            //Gastos do mês até agora (todas as despesas do mês)
             const monthExpenses = transactions
                 .filter(t => {
                     const tDate = parseLocalDate(t.data);
@@ -5081,14 +5081,7 @@
                            tDate.getMonth() === currentMonth &&
                            tDate.getFullYear() === currentYear;
                 })
-                .reduce((sum, t) => {
-                    //Para parceladas, usar apenas valorParcela (não valor total)
-                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
-                        return sum + Math.abs(t.valorParcela);
-                    }
-                    //Para fixas e únicas, usar valor normal
-                    return sum + Math.abs(t.valor);
-                }, 0);
+                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
             if (monthExpenses === 0) {
                 valueEl.textContent = 'R$ 0,00';
@@ -5138,14 +5131,7 @@
                                tDate.getMonth() === targetMonth &&
                                tDate.getFullYear() === targetYear;
                     })
-                    .reduce((sum, t) => {
-                        //Para parceladas, usar apenas valorParcela
-                        if (t.despesaTipo === 'parcelada' && t.valorParcela) {
-                            return sum + Math.abs(t.valorParcela);
-                        }
-                        //Para fixas, usar valor normal
-                        return sum + Math.abs(t.valor);
-                    }, 0);
+                    .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
                 if (monthTotal > 0) {
                     monthlyExpenses.push(monthTotal);
@@ -5192,12 +5178,7 @@
                            tDate.getMonth() === currentMonth &&
                            tDate.getFullYear() === currentYear;
                 })
-                .reduce((sum, t) => {
-                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
-                        return sum + Math.abs(t.valorParcela);
-                    }
-                    return sum + Math.abs(t.valor);
-                }, 0);
+                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
             //Gastos do mês anterior
             const previousMonthExpenses = transactions
@@ -5207,12 +5188,7 @@
                            tDate.getMonth() === previousMonth &&
                            tDate.getFullYear() === previousYear;
                 })
-                .reduce((sum, t) => {
-                    if (t.despesaTipo === 'parcelada' && t.valorParcela) {
-                        return sum + Math.abs(t.valorParcela);
-                    }
-                    return sum + Math.abs(t.valor);
-                }, 0);
+                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
             if (previousMonthExpenses === 0) {
                 valueEl.textContent = '--';
@@ -6117,9 +6093,13 @@
             
             //✅ Aguarda animação de fechamento antes de abrir próximo modal
             setTimeout(() => {
-                //Preenche o modal de edição
+                //✅ Preenche o modal de edição - LIMPA (X/X) da descrição
                 document.getElementById('transactionType').value = 'expense';
-                document.getElementById('transactionDescription').value = firstTransaction.descricao.replace(/\s*\(\d+\/\d+\)/, ''); // Remove (3/12) da descrição
+                const cleanDescription = firstTransaction.descricao
+                    .replace(/\s*\(\d+\/\d+\)\s*/g, '') // Remove (3/12) com espaços
+                    .trim(); // Remove espaços extras
+                document.getElementById('transactionDescription').value = cleanDescription;
+                
                 //✅ Calcula o valor total: se tiver valorTotal usa, senão calcula valor × totalParcelas
                 const totalAmount = Math.abs(firstTransaction.valorTotal || (firstTransaction.valor * firstTransaction.totalParcelas));
                 document.getElementById('transactionAmount').value = totalAmount;
@@ -6972,6 +6952,12 @@
                 const lastDateObj = addMonthsSafe(date, installments - 1);
                 const lastDate = lastDateObj.toLocaleDateString('pt-BR');
                 
+                //✅ Atualiza campo de última data (readonly)
+                const lastInstallmentDateInput = document.getElementById('lastInstallmentDate');
+                if (lastInstallmentDateInput) {
+                    lastInstallmentDateInput.value = formatDateToInput(lastDateObj);
+                }
+                
                 document.getElementById('previewTotal').textContent = formatCurrency(amount);
                 document.getElementById('previewInstallment').textContent = formatCurrency(installmentValue);
                 document.getElementById('previewLastDate').textContent = lastDate;
@@ -6979,6 +6965,11 @@
                 preview.style.display = 'block';
             } else {
                 document.getElementById('installmentPreview').style.display = 'none';
+                //Limpa campo de última data
+                const lastInstallmentDateInput = document.getElementById('lastInstallmentDate');
+                if (lastInstallmentDateInput) {
+                    lastInstallmentDateInput.value = '';
+                }
             }
         }
 
@@ -7782,10 +7773,11 @@
                 
                 const installmentValue = amount / installmentCount;
                 const startDate = parseLocalDate(firstDate);
-                const baseDescription = correctPortuguese(document.getElementById('transactionDescription').value);
+                const baseDescription = correctPortuguese(document.getElementById('transactionDescription').value)
+                    .replace(/\s*\(\d+\/\d+\)\s*/g, '') // ✅ GARANTE remoção de (X/X)
+                    .trim();
                 
                 //✅ ETAPA 1: Deletar TODAS as parcelas antigas
-                showLoading(`Removendo ${existingInstallments.length} parcelas antigas...`);
                 const deletePromises = existingInstallments.map(installment => 
                     fetch(`${API_URL}/transacoes/${installment.id}`, { method: 'DELETE' })
                 );
@@ -7794,7 +7786,6 @@
                 console.log(`[PARCELAS] ✅ ${existingInstallments.length} parcelas antigas removidas`);
                 
                 //✅ ETAPA 2: Criar novas parcelas com valores atualizados
-                showLoading(`Criando ${installmentCount} novas parcelas...`);
                 const creationPromises = [];
                 
                 for (let i = 0; i < installmentCount; i++) {
@@ -8163,11 +8154,7 @@
         }
 
         function calculatePeriodStats(transactionsInPeriod) {
-            //CORRIGIDO: Usa valorParcela para despesas parceladas
-            const despesas = transactionsInPeriod.filter(t => t.tipo === 'despesa').reduce((sum, t) => {
-                const valor = t.despesaTipo === 'parcelada' && t.valorParcela ? t.valorParcela : t.valor;
-                return sum + Math.abs(valor);
-            }, 0);
+            const despesas = transactionsInPeriod.filter(t => t.tipo === 'despesa').reduce((sum, t) => sum + Math.abs(t.valor), 0);
             const receitas = transactionsInPeriod.filter(t => t.tipo === 'receita').reduce((sum, t) => sum + t.valor, 0);
             const saldo = receitas - despesas;
             
@@ -8627,14 +8614,10 @@
             despesas.forEach(t => {
                 //Usa valorParcela para parceladas, senão usa valor
                 const valorDespesa = t.despesaTipo === 'parcelada' && t.valorParcela 
-                    ? t.valorParcela 
-                    : t.valor;
-                categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(valorDespesa);
-            });
-            
-            const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
-            const labels = sortedCategories.map(([cat]) => cat);
-            const data = sortedCategories.map(([, val]) => val);
+            const categoryTotals = {};
+            despesas.forEach(t => {
+                categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(t.valor);
+            });st data = sortedCategories.map(([, val]) => val);
             
             const colors = [
                 '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
@@ -9489,12 +9472,11 @@
             const categoryTotals = {};
             expensesOnly.forEach(t => {
                 const valor = t.despesaTipo === 'parcelada' && t.valorParcela ? t.valorParcela : t.valor;
-                categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(valor);
+            //Calcula totais por categoria
+            const categoryTotals = {};
+            expensesOnly.forEach(t => {
+                categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(t.valor);
             });
-            
-            const totalExpenses = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
-            const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
-            
             const html = sortedCategories.map(([category, total]) => {
                 const percentage = (total / totalExpenses) * 100;
                 const categoryIcons = {
@@ -9745,11 +9727,12 @@
         }
 
         function hideLoading() {
-            const loading = document.getElementById('loadingOverlay');
-            if (loading) {
+            //✅ Remove TODOS os overlays de loading (caso existam múltiplos)
+            const loadings = document.querySelectorAll('.loading-overlay');
+            loadings.forEach(loading => {
                 loading.style.animation = 'fadeOut 0.2s ease';
                 setTimeout(() => loading.remove(), 200);
-            }
+            });
         }
 
         function formatCurrency(value) {
