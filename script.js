@@ -6111,51 +6111,55 @@
             
             const firstTransaction = groupTransactions[0];
             
-            //Fecha o modal de detalhes
+            //✅ CORREÇÃO: Fecha TODOS os modais antes de abrir o de edição
             closeModal('installmentDetailsModal');
+            closeModal('transactionDetailModal'); // Caso esteja aberto
             
-            //Preenche o modal de edição
-            document.getElementById('transactionType').value = 'expense';
-            document.getElementById('transactionDescription').value = firstTransaction.descricao;
-            //✅ Calcula o valor total: se tiver valorTotal usa, senão calcula valor × totalParcelas
-            const totalAmount = firstTransaction.valorTotal || (Math.abs(firstTransaction.valor) * firstTransaction.totalParcelas);
-            document.getElementById('transactionAmount').value = totalAmount;
-            document.getElementById('installmentCount').value = firstTransaction.totalParcelas;
-            document.getElementById('firstInstallmentDate').value = firstTransaction.dataInicio || firstTransaction.data;
-            selectedCategory = firstTransaction.categoria;
-            
-            //Define que estamos editando um grupo de parcelas
-            editingTransactionId = currentInstallmentGroupId;
-            
-            //Atualiza o modal
-            const modalTitle = document.getElementById('transactionModalTitle');
-            const modalSubtitle = document.getElementById('transactionModalSubtitle');
-            const submitBtn = document.querySelector('#transactionModal .btn-submit-transaction');
-            
-            if (modalTitle) modalTitle.textContent = 'Editar Parcelamento';
-            if (modalSubtitle) modalSubtitle.textContent = 'Atualize os dados do parcelamento completo';
-            if (submitBtn) {
-                submitBtn.innerHTML = '<i class="ph ph-check-circle"></i> Atualizar Parcelamento';
-            }
-            
-            //Vai direto para o step 2 (detalhes de parcelamento)
-            selectedExpenseType = 'parcelada';
-            goToStep(2);
-            
-            //Atualiza preview
-            updateInstallmentPreview();
-            
-            //Atualiza categorias
-            const categorySelect = document.getElementById('categorySelect');
-            categorySelect.innerHTML = categories['expense'].map(c => `
-                <div class="category-item ${c.name === selectedCategory ? 'selected' : ''}" onclick="selectCategory('${c.name}')">
-                    <div class="category-icon">${renderIcon(c.icon)}</div>
-                    <div>${c.name}</div>
-                </div>
-            `).join('');
-            
-            //Abre o modal
-            document.getElementById('transactionModal').classList.add('show');
+            //✅ Aguarda animação de fechamento antes de abrir próximo modal
+            setTimeout(() => {
+                //Preenche o modal de edição
+                document.getElementById('transactionType').value = 'expense';
+                document.getElementById('transactionDescription').value = firstTransaction.descricao.replace(/\s*\(\d+\/\d+\)/, ''); // Remove (3/12) da descrição
+                //✅ Calcula o valor total: se tiver valorTotal usa, senão calcula valor × totalParcelas
+                const totalAmount = Math.abs(firstTransaction.valorTotal || (firstTransaction.valor * firstTransaction.totalParcelas));
+                document.getElementById('transactionAmount').value = totalAmount;
+                document.getElementById('installmentCount').value = firstTransaction.totalParcelas;
+                document.getElementById('firstInstallmentDate').value = firstTransaction.dataInicio || firstTransaction.data;
+                selectedCategory = firstTransaction.categoria;
+                
+                //Define que estamos editando um grupo de parcelas
+                editingTransactionId = currentInstallmentGroupId;
+                
+                //Atualiza o modal
+                const modalTitle = document.getElementById('transactionModalTitle');
+                const modalSubtitle = document.getElementById('transactionModalSubtitle');
+                const submitBtn = document.querySelector('#transactionModal .btn-submit-transaction');
+                
+                if (modalTitle) modalTitle.textContent = 'Editar Parcelamento';
+                if (modalSubtitle) modalSubtitle.textContent = 'Atualize os dados do parcelamento completo';
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="ph ph-check-circle"></i> Atualizar Parcelamento';
+                }
+                
+                //Vai direto para o step 2 (detalhes de parcelamento)
+                selectedExpenseType = 'parcelada';
+                goToStep(2);
+                
+                //Atualiza preview
+                updateInstallmentPreview();
+                
+                //Atualiza categorias
+                const categorySelect = document.getElementById('categorySelect');
+                categorySelect.innerHTML = categories['expense'].map(c => `
+                    <div class="category-item ${c.name === selectedCategory ? 'selected' : ''}" onclick="selectCategory('${c.name}')">
+                        <div class="category-icon">${renderIcon(c.icon)}</div>
+                        <div>${c.name}</div>
+                    </div>
+                `).join('');
+                
+                //Abre o modal
+                document.getElementById('transactionModal').classList.add('show');
+            }, 350); // Aguarda 350ms (tempo da animação de fechamento)
         }
 
         //Confirmar exclusão de parcela
@@ -7557,7 +7561,7 @@
                     parcelaDate.setMonth(startDate.getMonth() + i);
                     
                     const transaction = {
-                        descricao: `${baseDescription} (${i + 1}/${installmentCount})`, //Ex: "Notebook (3/12)"
+                        descricao: baseDescription, //✅ SEM (3/12) - já existe badge azul na exibição
                         valor: -installmentValue, //✅ Valor de UMA parcela
                         valorTotal: -amount, //✅ Valor TOTAL da compra (para referência)
                         tipo: 'despesa',
@@ -7798,7 +7802,7 @@
                     parcelaDate.setMonth(startDate.getMonth() + i);
                     
                     const transaction = {
-                        descricao: `${baseDescription} (${i + 1}/${installmentCount})`,
+                        descricao: baseDescription, //✅ SEM (3/12) - já existe badge azul na exibição
                         valor: -installmentValue,
                         valorTotal: -amount,
                         tipo: 'despesa',
