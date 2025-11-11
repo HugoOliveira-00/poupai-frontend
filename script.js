@@ -5157,7 +5157,10 @@
             const valueEl = document.getElementById('expenseGrowthRate');
             const subtitleEl = document.getElementById('growthRateSubtitle');
             
-            if (!valueEl || !subtitleEl) return;
+            if (!valueEl || !subtitleEl) {
+                console.warn('[TENDÊNCIA] ⚠️ Elementos não encontrados:', { valueEl: !!valueEl, subtitleEl: !!subtitleEl });
+                return;
+            }
 
             const now = new Date();
             const currentMonth = now.getMonth();
@@ -5170,6 +5173,12 @@
                 previousMonth = 11;
                 previousYear -= 1;
             }
+
+            console.log('[TENDÊNCIA] 📊 Calculando tendência:', {
+                mesAtual: `${currentMonth + 1}/${currentYear}`,
+                mesAnterior: `${previousMonth + 1}/${previousYear}`,
+                totalTransacoes: transactions.length
+            });
 
             //Gastos do mês atual
             const currentMonthExpenses = transactions
@@ -5191,9 +5200,15 @@
                 })
                 .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
+            console.log('[TENDÊNCIA] 💰 Valores:', {
+                mesAtual: formatCurrency(currentMonthExpenses),
+                mesAnterior: formatCurrency(previousMonthExpenses)
+            });
+
             if (previousMonthExpenses === 0) {
                 valueEl.textContent = '--';
                 subtitleEl.textContent = 'Histórico insuficiente';
+                console.log('[TENDÊNCIA] ⚠️ Sem dados do mês anterior');
                 return;
             }
 
@@ -5209,6 +5224,11 @@
             
             const trend = growthRate > 0 ? '📈 Aumentou' : growthRate < 0 ? '📉 Diminuiu' : '➡️ Estável';
             subtitleEl.innerHTML = `${trend} vs. mês anterior`;
+            
+            console.log('[TENDÊNCIA] ✅ Resultado:', {
+                variacao: `${sign}${growthRate.toFixed(1)}%`,
+                tendencia: trend
+            });
         }
 
         //Identifica o maior gasto do mês atual
