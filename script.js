@@ -18360,6 +18360,12 @@ function showWhatsNewModal() {
     //Preenche conteúdo
     document.getElementById('whatsNewVersion').textContent = CURRENT_VERSION;
     document.getElementById('whatsNewDate').textContent = `Atualizado em ${RELEASE_DATE}`;
+    
+    //✅ Atualiza o botão na página de ajuda
+    const buttonSubtitle = document.getElementById('whatsNewButtonSubtitle');
+    if (buttonSubtitle) {
+        buttonSubtitle.textContent = `Versão ${CURRENT_VERSION} • ${RELEASE_DATE}`;
+    }
 
     //Preenche listas
     const fixesList = document.getElementById('whatsNewFixes');
@@ -18962,6 +18968,13 @@ function formatDate(dateString) {
 //Inicializa ao carregar
 document.addEventListener('DOMContentLoaded', () => {
     initExpensesList();
+    
+    //✅ Atualiza o botão de novidades na página de ajuda
+    const buttonSubtitle = document.getElementById('whatsNewButtonSubtitle');
+    if (buttonSubtitle) {
+        buttonSubtitle.textContent = `Versão ${CURRENT_VERSION} • ${RELEASE_DATE}`;
+        console.log('[HELP] ✅ Botão de novidades atualizado');
+    }
     
     //🔍 DEBUG: Verifica se sectionTodos existe no DOM
     console.log('🔍 === VERIFICAÇÃO DO ELEMENTO sectionTodos ===');
