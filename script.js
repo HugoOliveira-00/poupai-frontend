@@ -612,8 +612,8 @@
         const phosphorToFA = {
             'ph-user': 'fa-user', 'ph-house': 'fa-house', 'ph-wallet': 'fa-wallet',
             'ph-chart-line': 'fa-chart-line', 'ph-chart-bar': 'fa-chart-bar',
-            'ph-calendar': 'fa-calendar', 'ph-arrow-bend-right-up': 'fa-arrow-up',
-            'ph-arrow-bend-right-down': 'fa-arrow-down', 'ph-check-circle': 'fa-circle-check',
+            'ph-calendar': 'fa-calendar', 'ph-arrow-bend-up-right': 'fa-arrow-up',
+            'ph-arrow-bend-down-right': 'fa-arrow-down', 'ph-check-circle': 'fa-circle-check',
             'ph-plus-circle': 'fa-circle-plus', 'ph-info': 'fa-circle-info',
             'ph-warning': 'fa-triangle-exclamation', 'ph-warning-circle': 'fa-circle-exclamation',
             'ph-warning-octagon': 'fa-octagon-exclamation', 'ph-lightbulb': 'fa-lightbulb',
@@ -5821,7 +5821,7 @@
                     iconClass = category.icon;
                 } else {
                     //Ícone padrão: seta para cima (receita) ou seta para baixo (despesa)
-                    iconClass = isIncome ? 'arrow-bend-right-up' : 'info';
+                    iconClass = isIncome ? 'arrow-bend-up-right' : 'arrow-bend-down-right';
                 }
                 
                 //Badge para tipo de despesa
@@ -8429,7 +8429,7 @@
                                 <span class="comparison-value-amount">${formatCurrency(item.previous)}</span>
                             </div>
                             <div class="comparison-change ${changeClass}">
-                                <i class="ph ${change >= 0 ? 'ph-arrow-bend-right-up' : 'ph-arrow-bend-right-down'}"></i>
+                                <i class="ph ${change >= 0 ? 'ph-arrow-bend-up-right' : 'ph-arrow-bend-down-right'}"></i>
                                 ${Math.abs(change).toFixed(1)}%
                             </div>
                         </div>
@@ -9359,7 +9359,7 @@
                 statusTitle = 'Atenção aos gastos';
                 statusMessage = 'Seus gastos estão um pouco acima do normal. Fique atento.';
                 statusColor = '#f59e0b';
-                insightIcon = 'ph-arrow-bend-right-up';
+                insightIcon = 'ph-arrow-bend-up-right';
             } else if (difference < -10) {
                 statusType = 'success';
                 statusIcon = 'ph-check-circle';
@@ -11124,7 +11124,7 @@
                 statusText = `Queda forte de ${variacao.toFixed(2)}%`;
             } else if (variacao < 0) {
                 statusClass += ' market-down';
-                statusIcon = '<i class="ph ph-arrow-bend-right-down"></i>';
+                statusIcon = '<i class="ph ph-arrow-bend-down-right"></i>';
                 statusText = `Em queda (${variacao.toFixed(2)}%)`;
             }
 
@@ -14298,7 +14298,7 @@
                 contentEl.innerHTML = dayTransactions.map(t => {
                     const categoryList = t.tipo === 'receita' ? categories.income : categories.expense;
                     const cat = categoryList.find(c => c.name === t.categoria);
-                    const iconName = cat ? cat.icon : (t.tipo === 'receita' ? 'trend-up' : 'arrow-bend-right-down');
+                    const iconName = cat ? cat.icon : (t.tipo === 'receita' ? 'trend-up' : 'arrow-bend-down-right');
                     
                     return `
                         <div class="day-transaction-item" onclick="openTransactionDetails(${t.id})">
@@ -14367,7 +14367,7 @@
             //Define o ícone da categoria
             const categoryList = transaction.tipo === 'receita' ? categories.income : categories.expense;
             const cat = categoryList.find(c => c.name === transaction.categoria);
-            const categoryIcon = cat ? cat.icon : (transaction.tipo === 'receita' ? 'trend-up' : 'arrow-bend-right-down');
+            const categoryIcon = cat ? cat.icon : (transaction.tipo === 'receita' ? 'trend-up' : 'arrow-bend-down-right');
             
             icon.innerHTML = renderIcon(categoryIcon);
             icon.style.background = transaction.tipo === 'receita' ? 
@@ -15861,7 +15861,7 @@
             //Atualizar ícone
             const icon = document.getElementById('transactionDetailIcon');
             icon.className = `transaction-detail-icon ${isIncome ? 'income' : 'expense'}`;
-            icon.innerHTML = `<i class="ph ph-${isIncome ? 'arrow-bend-right-up' : 'arrow-bend-right-down'}"></i>`;
+            icon.innerHTML = `<i class="ph ph-${isIncome ? 'arrow-bend-up-right' : 'arrow-bend-down-right'}"></i>`;
             
             //Atualizar conteúdo
             document.getElementById('transactionDetailDescription').textContent = transaction.descricao;
