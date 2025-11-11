@@ -612,7 +612,8 @@
         const phosphorToFA = {
             'ph-user': 'fa-user', 'ph-house': 'fa-house', 'ph-wallet': 'fa-wallet',
             'ph-chart-line': 'fa-chart-line', 'ph-chart-bar': 'fa-chart-bar',
-            'ph-calendar': 'fa-calendar', 'ph-arrow-bend-up-right': 'fa-arrow-up',
+            'ph-calendar': 'fa-calendar', 'ph-arrow-up': 'fa-arrow-up',
+            'ph-arrow-down': 'fa-arrow-down', 'ph-arrow-bend-up-right': 'fa-arrow-up',
             'ph-arrow-bend-down-right': 'fa-arrow-down', 'ph-check-circle': 'fa-circle-check',
             'ph-plus-circle': 'fa-circle-plus', 'ph-info': 'fa-circle-info',
             'ph-warning': 'fa-triangle-exclamation', 'ph-warning-circle': 'fa-circle-exclamation',
@@ -5842,7 +5843,7 @@
                     iconClass = category.icon;
                 } else {
                     //Ícone padrão: seta para cima (receita) ou seta para baixo (despesa)
-                    iconClass = isIncome ? 'arrow-bend-up-right' : 'arrow-bend-down-right';
+                    iconClass = isIncome ? 'arrow-up' : 'arrow-down';
                 }
                 
                 //Badge para tipo de despesa
