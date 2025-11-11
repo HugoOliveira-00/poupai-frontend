@@ -5821,7 +5821,7 @@
                     iconClass = category.icon;
                 } else {
                     //Ícone padrão: seta para cima (receita) ou seta para baixo (despesa)
-                    iconClass = isIncome ? 'arrow-bend-right-up' : 'arrow-bend-right-down';
+                    iconClass = isIncome ? 'arrow-bend-right-up' : 'info';
                 }
                 
                 //Badge para tipo de despesa
