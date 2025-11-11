@@ -7537,44 +7537,64 @@
             const installmentValue = amount / installmentCount;
             
             try {
-                showLoading('Criando despesa parcelada...');
+                showLoading(`Criando ${installmentCount} parcelas...`);
                 
-                //Cria APENAS UMA transação representando toda a despesa parcelada
+                //✅ CORREÇÃO CRÍTICA: Cria UMA transação para CADA parcela (cada mês)
                 const startDate = parseLocalDate(firstDate);
+                const baseDescription = correctPortuguese(document.getElementById('transactionDescription').value);
                 
-                const transaction = {
-                    descricao: correctPortuguese(document.getElementById('transactionDescription').value),
-                    valor: -installmentValue, //✅ Valor de UMA parcela (não o total)
-                    valorTotal: -amount, //✅ Valor TOTAL da compra (para compatibilidade e cálculos)
-                    tipo: 'despesa',
-                    categoria: selectedCategory,
-                    data: formatDateToInput(startDate),
-                    usuarioId: currentUser.id,
-                    despesaTipo: 'parcelada',
-                    grupoId: groupId,
-                    parcelaAtual: 1, //Começa na parcela 1
-                    totalParcelas: installmentCount,
-                    valorParcela: installmentValue, //Mantém também no campo específico
-                    dataInicio: firstDate,
-                    proximoVencimento: formatDateToInput(startDate)
-                };
+                console.log(`[PARCELAS] Criando ${installmentCount} transações separadas`);
+                console.log(`[PARCELAS] Valor total: ${formatCurrency(amount)}`);
+                console.log(`[PARCELAS] Valor por parcela: ${formatCurrency(installmentValue)}`);
                 
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📤 Enviando despesa parcelada para o backend:', transaction);
+                //Array para armazenar todas as promessas de criação
+                const creationPromises = [];
                 
-                const response = await fetch(`${API_URL}/transacoes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(transaction)
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.text();
-                    console.error('[ERROR]❌ Erro do backend:', errorData);
-                    throw new Error('Erro ao criar despesa parcelada');
+                //Cria uma transação para cada parcela
+                for (let i = 0; i < installmentCount; i++) {
+                    //Calcula a data de cada parcela (adiciona i meses à data inicial)
+                    const parcelaDate = new Date(startDate);
+                    parcelaDate.setMonth(startDate.getMonth() + i);
+                    
+                    const transaction = {
+                        descricao: `${baseDescription} (${i + 1}/${installmentCount})`, //Ex: "Notebook (3/12)"
+                        valor: -installmentValue, //✅ Valor de UMA parcela
+                        valorTotal: -amount, //✅ Valor TOTAL da compra (para referência)
+                        tipo: 'despesa',
+                        categoria: selectedCategory,
+                        data: formatDateToInput(parcelaDate),
+                        usuarioId: currentUser.id,
+                        despesaTipo: 'parcelada',
+                        grupoId: groupId,
+                        parcelaAtual: i + 1,
+                        totalParcelas: installmentCount,
+                        valorParcela: installmentValue,
+                        dataInicio: firstDate,
+                        proximoVencimento: formatDateToInput(parcelaDate)
+                    };
+                    
+                    console.log(`[PARCELAS] Criando parcela ${i + 1}/${installmentCount} - Data: ${formatDateToInput(parcelaDate)} - Valor: ${formatCurrency(installmentValue)}`);
+                    
+                    //Adiciona promessa ao array
+                    const promise = fetch(`${API_URL}/transacoes`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(transaction)
+                    });
+                    
+                    creationPromises.push(promise);
                 }
                 
-                const savedTransaction = await response.json();
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]✅ Transação salva no backend:', savedTransaction);
+                //Aguarda TODAS as transações serem criadas
+                const responses = await Promise.all(creationPromises);
+                
+                //Verifica se todas foram criadas com sucesso
+                const failedResponses = responses.filter(r => !r.ok);
+                if (failedResponses.length > 0) {
+                    throw new Error(`Erro ao criar ${failedResponses.length} parcelas`);
+                }
+                
+                console.log(`[PARCELAS] ✅ ${installmentCount} parcelas criadas com sucesso!`);
                 
                 await loadTransactions();
                 renderTransactions();
@@ -7746,41 +7766,70 @@
             try {
                 showLoading('Atualizando parcelamento...');
                 
-                //Busca a transação existente
-                const existingTransaction = transactions.find(t => t.grupoId === currentInstallmentGroupId);
-                if (!existingTransaction) {
+                //✅ Busca TODAS as transações do grupo (todas as parcelas)
+                const existingInstallments = transactions.filter(t => t.grupoId === currentInstallmentGroupId);
+                if (existingInstallments.length === 0) {
                     throw new Error('Parcelamento não encontrado');
                 }
                 
+                console.log(`[PARCELAS] Atualizando ${existingInstallments.length} parcelas existentes`);
+                console.log(`[PARCELAS] Novo valor total: ${formatCurrency(amount)}`);
+                console.log(`[PARCELAS] Novo número de parcelas: ${installmentCount}`);
+                
                 const installmentValue = amount / installmentCount;
                 const startDate = parseLocalDate(firstDate);
+                const baseDescription = correctPortuguese(document.getElementById('transactionDescription').value);
                 
-                const updatedTransaction = {
-                    descricao: correctPortuguese(document.getElementById('transactionDescription').value),
-                    valor: -installmentValue, //✅ Valor de UMA parcela (não o total)
-                    tipo: 'despesa',
-                    categoria: selectedCategory,
-                    data: formatDateToInput(startDate),
-                    usuarioId: currentUser.id,
-                    despesaTipo: 'parcelada',
-                    grupoId: currentInstallmentGroupId,
-                    parcelaAtual: 1,
-                    totalParcelas: installmentCount,
-                    valorParcela: installmentValue, //Mantém também no campo específico
-                    valorTotal: amount, //✅ Salva o valor total separadamente para referência
-                    dataInicio: firstDate,
-                    proximoVencimento: formatDateToInput(startDate)
-                };
+                //✅ ETAPA 1: Deletar TODAS as parcelas antigas
+                showLoading(`Removendo ${existingInstallments.length} parcelas antigas...`);
+                const deletePromises = existingInstallments.map(installment => 
+                    fetch(`${API_URL}/transacoes/${installment.id}`, { method: 'DELETE' })
+                );
                 
-                console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📤 Atualizando parcelamento:', updatedTransaction);
+                await Promise.all(deletePromises);
+                console.log(`[PARCELAS] ✅ ${existingInstallments.length} parcelas antigas removidas`);
                 
-                const response = await fetch(`${API_URL}/transacoes/${existingTransaction.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedTransaction)
-                });
+                //✅ ETAPA 2: Criar novas parcelas com valores atualizados
+                showLoading(`Criando ${installmentCount} novas parcelas...`);
+                const creationPromises = [];
                 
-                if (!response.ok) throw new Error('Erro ao atualizar parcelamento');
+                for (let i = 0; i < installmentCount; i++) {
+                    const parcelaDate = new Date(startDate);
+                    parcelaDate.setMonth(startDate.getMonth() + i);
+                    
+                    const transaction = {
+                        descricao: `${baseDescription} (${i + 1}/${installmentCount})`,
+                        valor: -installmentValue,
+                        valorTotal: -amount,
+                        tipo: 'despesa',
+                        categoria: selectedCategory,
+                        data: formatDateToInput(parcelaDate),
+                        usuarioId: currentUser.id,
+                        despesaTipo: 'parcelada',
+                        grupoId: currentInstallmentGroupId, //Mantém o mesmo grupoId
+                        parcelaAtual: i + 1,
+                        totalParcelas: installmentCount,
+                        valorParcela: installmentValue,
+                        dataInicio: firstDate,
+                        proximoVencimento: formatDateToInput(parcelaDate)
+                    };
+                    
+                    const promise = fetch(`${API_URL}/transacoes`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(transaction)
+                    });
+                    
+                    creationPromises.push(promise);
+                }
+                
+                const responses = await Promise.all(creationPromises);
+                const failedResponses = responses.filter(r => !r.ok);
+                if (failedResponses.length > 0) {
+                    throw new Error(`Erro ao criar ${failedResponses.length} parcelas`);
+                }
+                
+                console.log(`[PARCELAS] ✅ ${installmentCount} novas parcelas criadas com sucesso!`);
                 
                 await loadTransactions();
                 renderTransactions();
