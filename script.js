@@ -5972,8 +5972,17 @@
                 descricao: firstTransaction.descricao
             };
             
-            const installmentValue = Math.abs(firstTransaction.valor); //✅ Valor de UMA parcela
-            const totalValue = installmentValue * firstTransaction.totalParcelas; //✅ Total = valor da parcela × quantidade
+            // ✅ DETECÇÃO INTELIGENTE: se valorTotal existe, usa ele; senão, valor já é da parcela
+            let installmentValue, totalValue;
+            if (firstTransaction.valorTotal !== undefined && firstTransaction.valorTotal !== null) {
+                // Transação ANTIGA (antes da correção) - valorTotal está salvo
+                totalValue = Math.abs(firstTransaction.valorTotal);
+                installmentValue = totalValue / firstTransaction.totalParcelas;
+            } else {
+                // Transação NOVA (depois da correção) - valor é da parcela
+                installmentValue = Math.abs(firstTransaction.valor);
+                totalValue = installmentValue * firstTransaction.totalParcelas;
+            }
             const today = new Date();
             
             const paidTransactions = groupTransactions.filter(t => parseLocalDate(t.data) <= today);
@@ -6108,7 +6117,9 @@
             //Preenche o modal de edição
             document.getElementById('transactionType').value = 'expense';
             document.getElementById('transactionDescription').value = firstTransaction.descricao;
-            document.getElementById('transactionAmount').value = Math.abs(firstTransaction.valor);
+            //✅ Calcula o valor total: se tiver valorTotal usa, senão calcula valor × totalParcelas
+            const totalAmount = firstTransaction.valorTotal || (Math.abs(firstTransaction.valor) * firstTransaction.totalParcelas);
+            document.getElementById('transactionAmount').value = totalAmount;
             document.getElementById('installmentCount').value = firstTransaction.totalParcelas;
             document.getElementById('firstInstallmentDate').value = firstTransaction.dataInicio || firstTransaction.data;
             selectedCategory = firstTransaction.categoria;
@@ -7533,7 +7544,8 @@
                 
                 const transaction = {
                     descricao: correctPortuguese(document.getElementById('transactionDescription').value),
-                    valor: -amount, //Valor total
+                    valor: -installmentValue, //✅ Valor de UMA parcela (não o total)
+                    valorTotal: -amount, //✅ Valor TOTAL da compra (para compatibilidade e cálculos)
                     tipo: 'despesa',
                     categoria: selectedCategory,
                     data: formatDateToInput(startDate),
@@ -7542,7 +7554,7 @@
                     grupoId: groupId,
                     parcelaAtual: 1, //Começa na parcela 1
                     totalParcelas: installmentCount,
-                    valorParcela: installmentValue,
+                    valorParcela: installmentValue, //Mantém também no campo específico
                     dataInicio: firstDate,
                     proximoVencimento: formatDateToInput(startDate)
                 };
@@ -7745,7 +7757,7 @@
                 
                 const updatedTransaction = {
                     descricao: correctPortuguese(document.getElementById('transactionDescription').value),
-                    valor: -amount,
+                    valor: -installmentValue, //✅ Valor de UMA parcela (não o total)
                     tipo: 'despesa',
                     categoria: selectedCategory,
                     data: formatDateToInput(startDate),
@@ -7754,7 +7766,8 @@
                     grupoId: currentInstallmentGroupId,
                     parcelaAtual: 1,
                     totalParcelas: installmentCount,
-                    valorParcela: installmentValue,
+                    valorParcela: installmentValue, //Mantém também no campo específico
+                    valorTotal: amount, //✅ Salva o valor total separadamente para referência
                     dataInicio: firstDate,
                     proximoVencimento: formatDateToInput(startDate)
                 };
