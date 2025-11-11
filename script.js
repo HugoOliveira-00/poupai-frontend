@@ -8612,12 +8612,12 @@
             
             const categoryTotals = {};
             despesas.forEach(t => {
-                //Usa valorParcela para parceladas, senão usa valor
-                const valorDespesa = t.despesaTipo === 'parcelada' && t.valorParcela 
-            const categoryTotals = {};
-            despesas.forEach(t => {
                 categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(t.valor);
-            });st data = sortedCategories.map(([, val]) => val);
+            });
+            
+            const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+            const labels = sortedCategories.map(([cat]) => cat);
+            const data = sortedCategories.map(([, val]) => val);
             
             const colors = [
                 '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
@@ -9468,15 +9468,15 @@
                 return;
             }
             
-            //CORRIGIDO: Usa valorParcela para despesas parceladas
-            const categoryTotals = {};
-            expensesOnly.forEach(t => {
-                const valor = t.despesaTipo === 'parcelada' && t.valorParcela ? t.valorParcela : t.valor;
             //Calcula totais por categoria
             const categoryTotals = {};
             expensesOnly.forEach(t => {
                 categoryTotals[t.categoria] = (categoryTotals[t.categoria] || 0) + Math.abs(t.valor);
             });
+            
+            const totalExpenses = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
+            const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+            
             const html = sortedCategories.map(([category, total]) => {
                 const percentage = (total / totalExpenses) * 100;
                 const categoryIcons = {
