@@ -12993,9 +12993,10 @@
                 font-size: 1.5rem !important;
             }
 
-            /* Seï¿½ï¿½es */
+            /* Seções */
             section {
                 padding: 1rem !important;
+                padding-bottom: 5rem !important; /* Espaço extra no final para não grudar no bottom nav */
             }
 
             .section-header {
