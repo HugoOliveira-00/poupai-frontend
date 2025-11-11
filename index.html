@@ -49,6 +49,12 @@
       }
       
       function verifyIcons() {
+        // Aguarda o body estar disponível
+        if (!document.body) {
+          setTimeout(verifyIcons, 50);
+          return;
+        }
+        
         const testIcon = document.createElement('i');
         testIcon.className = 'ph ph-check';
         testIcon.style.cssText = 'position:absolute;visibility:hidden';
