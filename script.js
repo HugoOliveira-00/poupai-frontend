@@ -5012,10 +5012,11 @@
             const essentialCategories = [
                 'Moradia', 'Aluguel', 'Condomínio', 'IPTU',
                 'Contas', 'Água', 'Luz', 'Energia', 'Gás', 'Internet',
-                'Saúde', 'Médico', 'Remédio', 'Farmácia', 'Plano de Saúde',
-                'Educação', 'Escola', 'Faculdade', 'Curso',
-                'Transporte', 'Combustível', 'Gasolina', 'Ônibus', 'Metrô',
-                'Mercado', 'Supermercado', 'Alimentação Básica'
+                'Saúde', 'Médico', 'Remédio', 'Farmácia', 'Plano de Saúde', 'Hospital', 'Dentista',
+                'Educação', 'Escola', 'Faculdade', 'Curso', 'Material Escolar',
+                'Transporte', 'Combustível', 'Gasolina', 'Ônibus', 'Metrô', 'Uber', 'Táxi', 'Passagem',
+                'Mercado', 'Supermercado', 'Alimentação', 'Comida', 'Almoço', 'Jantar', 'Café',
+                'Higiene', 'Limpeza', 'Produtos de Limpeza'
             ];
             
             //Busca despesas do mês que NÃO são essenciais
