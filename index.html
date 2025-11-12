@@ -605,13 +605,6 @@
         Ajuda
        </span>
       </a>
-      <a href="#" onclick="showSection(event, 'share')">
-       <i class="ph ph-qrcode">
-       </i>
-       <span>
-        Compartilhar
-       </span>
-      </a>
       
       <a href="javascript:void(0)" onclick="logout(); return false;" class="sidebar-logout">
        <i class="ph ph-sign-out">
@@ -621,6 +614,16 @@
        </span>
       </a>
      </nav>
+     
+     <!-- Botão Compartilhar acima do footer -->
+     <a href="#" onclick="showSection(event, 'share')" class="sidebar-share-btn">
+      <i class="ph ph-share-network">
+      </i>
+      <span>
+       Compartilhar
+      </span>
+     </a>
+     
      <div class="sidebar-footer">
       <div>
        PoupAí © 2025
@@ -2170,15 +2173,6 @@
 
       <!-- 📱 Seção Compartilhar -->
       <section class="hidden" id="sectionShare">
-       <div class="section-header">
-        <h2>
-         <i class="ph ph-qrcode"></i> Compartilhar PoupAí
-        </h2>
-        <p>
-         Escaneie o QR Code e comece a usar agora
-        </p>
-       </div>
-
        <!-- Layout Principal: Texto + QR Code -->
        <div class="chart-container">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; padding: 3rem 2rem;">
@@ -2209,6 +2203,10 @@
            <div style="display: flex; align-items: center; gap: 1rem;">
             <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
              <i class="ph ph-check" style="color: white; font-size: 1.5rem; font-weight: bold;"></i>
+            </div>
+            <p style="margin: 0; font-size: 1.1rem; color: #374151; font-weight: 500;">Acesse de qualquer dispositivo</p>
+           </div>
+          </div>             <i class="ph ph-check" style="color: white; font-size: 1.5rem; font-weight: bold;"></i>
             </div>
             <p style="margin: 0; font-size: 1.1rem; color: #374151; font-weight: 500;">Acesse de qualquer dispositivo</p>
            </div>

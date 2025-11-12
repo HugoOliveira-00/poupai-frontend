@@ -1736,7 +1736,9 @@
                 simulators: 'Simuladores',
                 reports: 'Relatórios',
                 education: 'Aprenda',
-                help: 'Ajuda e Suporte'
+                help: 'Ajuda e Suporte',
+                market: 'Mercado',
+                share: 'Compartilhar PoupAí'
             };
             
             const headerTitle = document.getElementById('headerTitle');
