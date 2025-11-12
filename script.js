@@ -5113,13 +5113,13 @@
 
             //Define categorias ESSENCIAIS (que NÃO devem ser sugeridas para corte)
             const essentialCategories = [
-                'Moradia', 'Aluguel', 'Condomínio', 'IPTU',
-                'Contas', 'Água', 'Luz', 'Energia', 'Gás', 'Internet',
-                'Saúde', 'Médico', 'Remédio', 'Farmácia', 'Plano de Saúde', 'Hospital', 'Dentista',
-                'Educação', 'Escola', 'Faculdade', 'Curso', 'Material Escolar',
-                'Transporte', 'Combustível', 'Gasolina', 'Ônibus', 'Metrô', 'Uber', 'Táxi', 'Passagem',
-                'Mercado', 'Supermercado', 'Alimentação', 'Comida', 'Almoço', 'Jantar', 'Café',
-                'Higiene', 'Limpeza', 'Produtos de Limpeza'
+                'moradia', 'aluguel', 'condomínio', 'iptu',
+                'água', 'luz', 'energia', 'gás', 'internet',
+                'saúde', 'médico', 'remédio', 'farmácia', 'plano de saúde', 'hospital', 'dentista',
+                'educação', 'escola', 'faculdade', 'curso', 'material escolar',
+                'combustível', 'gasolina', 'ônibus', 'metrô', 'passagem',
+                'mercado', 'supermercado', 'feira',
+                'higiene', 'limpeza', 'produtos de limpeza'
             ];
             
             //Busca despesas do mês que NÃO são essenciais
@@ -5132,10 +5132,16 @@
                     
                     if (!isCurrentMonth) return false;
                     
-                    //Verifica se NÃO é uma categoria essencial
+                    //Normaliza categoria e descrição para comparação
+                    const categoryLower = (t.categoria || '').toLowerCase();
+                    const descriptionLower = (t.descricao || '').toLowerCase();
+                    
+                    //Verifica se É uma categoria essencial (comparação exata)
                     const isEssential = essentialCategories.some(cat => 
-                        t.categoria.toLowerCase().includes(cat.toLowerCase()) ||
-                        t.descricao.toLowerCase().includes(cat.toLowerCase())
+                        categoryLower === cat || 
+                        descriptionLower === cat ||
+                        categoryLower.startsWith(cat + ' ') ||
+                        descriptionLower.startsWith(cat + ' ')
                     );
                     
                     return !isEssential; //Retorna apenas despesas não essenciais
@@ -5215,9 +5221,7 @@
             //Mostra o SALDO FINAL projetado (não o total de gastos)
             valueEl.textContent = formatCurrency(projectedBalance);
             
-            //Adiciona ícone de alerta se o saldo projetado for negativo
-            const icon = projectedBalance < 0 ? '⚠️ ' : '';
-            subtitleEl.innerHTML = `${icon}<strong>${daysRemaining}</strong> dias restantes • Média: ${formatCurrency(avgDailyExpense)}/dia`;
+            subtitleEl.innerHTML = `<strong>${daysRemaining}</strong> dias restantes • Média: ${formatCurrency(avgDailyExpense)}/dia`;
         }
 
         //Prevê gastos do próximo mês baseado nos últimos 3 meses
@@ -8833,44 +8837,37 @@
                 value: `${transactionFrequency} registro${transactionFrequency !== 1 ? 's' : ''}`
             });
             
-            //Padrão 2: Horário de maior gasto
-            const expensesByHour = {};
+            //Padrão 2: Dia da semana com mais gastos
+            const expensesByWeekday = {};
+            const weekdayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            
             currentTransactions.filter(t => t.tipo === 'despesa').forEach(t => {
-                // Corrigir parsing de data para pegar hora local correta
-                let hour;
+                let weekday;
                 if (t.data.includes('T') || t.data.includes('Z')) {
-                    // Se é ISO string, converter para hora local
                     const date = new Date(t.data);
-                    hour = date.getHours();
+                    weekday = date.getDay();
                 } else if (t.data.includes('/')) {
-                    // Formato DD/MM/YYYY ou DD/MM/YYYY HH:mm
-                    const parts = t.data.split(' ');
-                    if (parts.length > 1) {
-                        // Tem horário
-                        const timeParts = parts[1].split(':');
-                        hour = parseInt(timeParts[0]);
-                    } else {
-                        // Não tem horário, considerar meio-dia como padrão
-                        hour = 12;
-                    }
+                    const parts = t.data.split('/');
+                    const date = new Date(parts[2], parts[1] - 1, parts[0]);
+                    weekday = date.getDay();
                 } else {
-                    // Formato YYYY-MM-DD ou outro
-                    const date = new Date(t.data + 'T12:00:00'); // Adiciona horário padrão para evitar conversão UTC
-                    hour = date.getHours();
+                    const date = new Date(t.data + 'T12:00:00');
+                    weekday = date.getDay();
                 }
                 
-                expensesByHour[hour] = (expensesByHour[hour] || 0) + 1;
+                expensesByWeekday[weekday] = (expensesByWeekday[weekday] || 0) + 1;
             });
-            const peakHour = Object.entries(expensesByHour).sort((a, b) => b[1] - a[1])[0];
             
-            if (peakHour) {
-                const hourLabel = `${peakHour[0]}h - ${parseInt(peakHour[0]) + 1}h`;
+            const peakWeekday = Object.entries(expensesByWeekday).sort((a, b) => b[1] - a[1])[0];
+            
+            if (peakWeekday) {
+                const weekdayName = weekdayNames[parseInt(peakWeekday[0])];
                 patterns.push({
                     type: '',
-                    icon: 'ph ph-clock',
-                    title: 'Horário de Pico',
-                    description: `Você costuma gastar mais entre ${hourLabel}, com ${peakHour[1]} transações nesse horário.`,
-                    value: hourLabel
+                    icon: 'ph ph-calendar',
+                    title: 'Dia com Mais Gastos',
+                    description: `${weekdayName} é o dia em que você mais gasta, com ${peakWeekday[1]} transações.`,
+                    value: weekdayName
                 });
             }
             
