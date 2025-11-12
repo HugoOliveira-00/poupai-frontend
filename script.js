@@ -3888,11 +3888,29 @@
             console.log('[DASHBOARD][STATS] === Iniciando updateDashboardStats ===');
             console.log('[DASHBOARD][STATS] Total de transações no array:', transactions.length);
             
-            //✅ CORREÇÃO: Filtra apenas transações cuja data já passou (não conta agendadas/futuras)
+            //✅ CORREÇÃO CRÍTICA: Filtra apenas transações DO MÊS ATUAL
             const hoje = new Date();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+            
+            console.log('[DASHBOARD][STATS] 📅 Mês atual:', mesAtual + 1, '/', anoAtual);
+            
+            // Filtra transações do mês atual (não conta parcelas de outros meses!)
+            const transacoesDoMes = transactions.filter(t => {
+                const dataTransacao = parseLocalDate(t.data);
+                const mesTransacao = dataTransacao.getMonth();
+                const anoTransacao = dataTransacao.getFullYear();
+                
+                // ✅ Apenas transações do mês e ano atual
+                return mesTransacao === mesAtual && anoTransacao === anoAtual;
+            });
+            
+            console.log('[DASHBOARD][STATS] 📊 Transações do mês atual:', transacoesDoMes.length, 'de', transactions.length);
+            
+            //✅ Filtra receitas do mês atual (não conta agendadas futuras)
             hoje.setHours(0, 0, 0, 0); //Zera horas para comparar só a data
             
-            const incomeTransactions = transactions.filter(t => {
+            const incomeTransactions = transacoesDoMes.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
                 //✅ Considera flag agendada
                 if (t.agendada === true) {
@@ -3903,7 +3921,7 @@
             
             const income = incomeTransactions.reduce((sum, t) => sum + Math.abs(t.valor), 0);
             
-            const expenseTransactions = transactions.filter(t => {
+            const expenseTransactions = transacoesDoMes.filter(t => {
                 const dataTransacao = parseLocalDate(t.data);
                 //✅ Considera flag agendada
                 if (t.agendada === true) {
