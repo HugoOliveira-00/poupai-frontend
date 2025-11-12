@@ -4085,31 +4085,19 @@
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
         }
 
-        /* Botão Compartilhar especial - acima do footer */
-        .sidebar-share-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.875rem 1.25rem;
-            margin: 1.5rem 0 1rem 0;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        /* Link Compartilhar com leve destaque */
+        .navigation a.nav-share-highlight {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15));
+            border-left: 3px solid #3b82f6;
+            padding-left: calc(1.25rem - 3px);
         }
 
-        .sidebar-share-btn:hover {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        .navigation a.nav-share-highlight:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(29, 78, 216, 0.25));
         }
 
-        .sidebar-share-btn i {
-            font-size: 1.25rem;
+        .navigation a.nav-share-highlight.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(29, 78, 216, 0.3));
         }
 
         .sidebar-footer {
