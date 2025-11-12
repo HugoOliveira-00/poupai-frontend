@@ -5187,6 +5187,16 @@
                 })
                 .reduce((sum, t) => sum + Math.abs(t.valor), 0);
 
+            //Receitas do mês até agora
+            const monthIncome = transactions
+                .filter(t => {
+                    const tDate = parseLocalDate(t.data);
+                    return t.tipo === 'receita' && 
+                           tDate.getMonth() === currentMonth &&
+                           tDate.getFullYear() === currentYear;
+                })
+                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+
             if (monthExpenses === 0) {
                 valueEl.textContent = 'R$ 0,00';
                 subtitleEl.textContent = 'Sem dados do mês';
@@ -5196,11 +5206,18 @@
             //Média de gastos por dia até agora
             const avgDailyExpense = monthExpenses / currentDay;
 
-            //Projeção: gasto atual + (média diária × dias restantes)
-            const projectedTotal = monthExpenses + (avgDailyExpense * daysRemaining);
+            //Projeção total de gastos do mês: gasto atual + (média diária × dias restantes)
+            const projectedTotalExpenses = monthExpenses + (avgDailyExpense * daysRemaining);
 
-            valueEl.textContent = formatCurrency(projectedTotal);
-            subtitleEl.innerHTML = `<strong>${daysRemaining}</strong> dias restantes • Média: ${formatCurrency(avgDailyExpense)}/dia`;
+            //Saldo final projetado: receitas - gastos projetados
+            const projectedBalance = monthIncome - projectedTotalExpenses;
+
+            //Mostra o SALDO FINAL projetado (não o total de gastos)
+            valueEl.textContent = formatCurrency(projectedBalance);
+            
+            //Adiciona ícone de alerta se o saldo projetado for negativo
+            const icon = projectedBalance < 0 ? '⚠️ ' : '';
+            subtitleEl.innerHTML = `${icon}<strong>${daysRemaining}</strong> dias restantes • Média: ${formatCurrency(avgDailyExpense)}/dia`;
         }
 
         //Prevê gastos do próximo mês baseado nos últimos 3 meses
