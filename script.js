@@ -3719,9 +3719,60 @@
             }
         }
 
+        //🔄 SYNC: Busca dados atualizados do usuário do backend
+        async function syncUserDataFromBackend() {
+            if (!currentUser || !currentUser.id) {
+                console.warn('[SYNC] ⚠️ Usuário não encontrado, pulando sincronização');
+                return;
+            }
+
+            try {
+                console.log('[SYNC] 🔄 Buscando dados atualizados do usuário do backend...');
+                
+                const response = await fetch(`${API_URL}/usuarios/${currentUser.id}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    console.warn('[SYNC] ⚠️ Erro ao buscar dados do usuário:', response.status);
+                    return;
+                }
+
+                const updatedUser = await response.json();
+                
+                // Atualiza currentUser com dados do backend
+                currentUser.nome = updatedUser.nome;
+                currentUser.email = updatedUser.email;
+                currentUser.ocupacao = updatedUser.ocupacao;
+                currentUser.rendaMensal = updatedUser.rendaMensal;
+                currentUser.diaRecebimento = updatedUser.diaRecebimento;
+                currentUser.objetivoPrincipal = updatedUser.objetivoPrincipal;
+                currentUser.metaMensal = updatedUser.metaMensal;
+                currentUser.categoriasFoco = updatedUser.categoriasFoco || [];
+                currentUser.categoriasPersonalizadas = updatedUser.categoriasPersonalizadas || [];
+                currentUser.lembretesSnoozeados = updatedUser.lembretesSnoozeados || {};
+                currentUser.onboardingCompleted = updatedUser.onboardingCompleted;
+                currentUser.ultimaVersaoVisualizada = updatedUser.ultimaVersaoVisualizada;
+                
+                // Atualiza localStorage com dados sincronizados
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                console.log('[SYNC] ✅ Dados do usuário sincronizados com sucesso!');
+                console.log('[SYNC] 📊 Meta mensal:', currentUser.metaMensal);
+                console.log('[SYNC] 💰 Renda mensal:', currentUser.rendaMensal);
+                
+            } catch (error) {
+                console.error('[SYNC] ❌ Erro ao sincronizar dados do usuário:', error);
+            }
+        }
+
         //DASHBOARD
         async function loadDashboardData() {
             try {
+                // 🔄 CRÍTICO: Busca dados atualizados do usuário do backend PRIMEIRO
+                await syncUserDataFromBackend();
+                
                 await loadTransactions();
                 
                 //CORREÇÃO: Sincroniza flags do localStorage com o banco de dados
