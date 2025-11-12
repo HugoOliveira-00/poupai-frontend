@@ -5133,16 +5133,15 @@
                     if (!isCurrentMonth) return false;
                     
                     //Normaliza categoria e descrição para comparação
-                    const categoryLower = (t.categoria || '').toLowerCase();
-                    const descriptionLower = (t.descricao || '').toLowerCase();
+                    const categoryLower = (t.categoria || '').toLowerCase().trim();
+                    const descriptionLower = (t.descricao || '').toLowerCase().trim();
                     
-                    //Verifica se É uma categoria essencial (comparação exata)
-                    const isEssential = essentialCategories.some(cat => 
-                        categoryLower === cat || 
-                        descriptionLower === cat ||
-                        categoryLower.startsWith(cat + ' ') ||
-                        descriptionLower.startsWith(cat + ' ')
-                    );
+                    //Verifica se É uma categoria essencial
+                    const isEssential = essentialCategories.some(cat => {
+                        return categoryLower.includes(cat) || descriptionLower.includes(cat);
+                    });
+                    
+                    console.log(`[ECONOMIA] "${t.descricao}" (${t.categoria}) - Essencial: ${isEssential}`);
                     
                     return !isEssential; //Retorna apenas despesas não essenciais
                 })
