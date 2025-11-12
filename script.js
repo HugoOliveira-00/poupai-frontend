@@ -5100,7 +5100,7 @@
                 });
         }
 
-        //Atualiza card de Sobra Estimada (quanto vai sobrar no fim do mês)
+        //Atualiza card de Economia Potencial
         function updatePotentialSavings() {
             const valueEl = document.getElementById('potentialSavings');
             const subtitleEl = document.getElementById('savingsSubtitle');
@@ -5110,53 +5110,54 @@
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
-            const currentDay = now.getDate();
-            
-            //Último dia do mês
-            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const daysRemaining = lastDayOfMonth - currentDay;
 
-            //Calcula receitas do mês
-            const monthIncome = transactions
+            //Define categorias ESSENCIAIS (que NÃO devem ser sugeridas para corte)
+            const essentialCategories = [
+                'moradia', 'aluguel', 'condomínio', 'iptu',
+                'água', 'luz', 'energia', 'gás', 'internet',
+                'saúde', 'médico', 'remédio', 'farmácia', 'plano de saúde', 'hospital', 'dentista',
+                'educação', 'escola', 'faculdade', 'curso', 'material escolar',
+                'combustível', 'gasolina', 'ônibus', 'metrô', 'passagem',
+                'mercado', 'supermercado', 'feira',
+                'higiene', 'limpeza', 'produtos de limpeza'
+            ];
+            
+            //Busca despesas do mês que NÃO são essenciais
+            const nonEssentialExpenses = transactions
                 .filter(t => {
                     const tDate = parseLocalDate(t.data);
-                    return t.tipo === 'receita' && 
+                    const isCurrentMonth = t.tipo === 'despesa' && 
                            tDate.getMonth() === currentMonth &&
                            tDate.getFullYear() === currentYear;
+                    
+                    if (!isCurrentMonth) return false;
+                    
+                    //Normaliza categoria e descrição para comparação
+                    const categoryLower = (t.categoria || '').toLowerCase();
+                    const descriptionLower = (t.descricao || '').toLowerCase();
+                    
+                    //Verifica se É uma categoria essencial (comparação exata)
+                    const isEssential = essentialCategories.some(cat => 
+                        categoryLower === cat || 
+                        descriptionLower === cat ||
+                        categoryLower.startsWith(cat + ' ') ||
+                        descriptionLower.startsWith(cat + ' ')
+                    );
+                    
+                    return !isEssential; //Retorna apenas despesas não essenciais
                 })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+                .sort((a, b) => b.valor - a.valor); //Ordena do maior para o menor
 
-            //Calcula despesas do mês até agora
-            const monthExpenses = transactions
-                .filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    return t.tipo === 'despesa' && 
-                           tDate.getMonth() === currentMonth &&
-                           tDate.getFullYear() === currentYear;
-                })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
-
-            if (monthIncome === 0) {
-                valueEl.textContent = 'R$ 0,00';
-                subtitleEl.textContent = 'Sem receitas no mês';
-                return;
-            }
-
-            //Média de gastos por dia
-            const avgDailyExpense = currentDay > 0 ? monthExpenses / currentDay : 0;
-
-            //Projeção total de gastos do mês
-            const projectedTotalExpenses = monthExpenses + (avgDailyExpense * daysRemaining);
-
-            //Sobra estimada = receitas - gastos projetados
-            const estimatedBalance = monthIncome - projectedTotalExpenses;
-
-            valueEl.textContent = formatCurrency(estimatedBalance);
-            
-            if (estimatedBalance > 0) {
-                subtitleEl.innerHTML = `Projeção baseada em <strong>${currentDay} dias</strong> de dados`;
+            if (nonEssentialExpenses.length > 0) {
+                //Pega a maior despesa NÃO essencial
+                const biggestExpense = nonEssentialExpenses[0];
+                const saving = biggestExpense.valor;
+                
+                valueEl.textContent = formatCurrency(saving);
+                subtitleEl.innerHTML = `Sem "<strong>${biggestExpense.descricao}</strong>"`;
             } else {
-                subtitleEl.innerHTML = `Atenção: gastos acima da receita`;
+                valueEl.textContent = 'R$ 0,00';
+                subtitleEl.textContent = 'Sem gastos não-essenciais';
             }
         }
 
