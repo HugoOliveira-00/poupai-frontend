@@ -4221,31 +4221,38 @@
             container.innerHTML = transactionsHTML + endMessage;
         }
 
-        //Calcula gasto médio diário (últimos 30 dias)
+        //Calcula gasto médio diário (apenas do mês atual)
         function updateAvgDailyExpense() {
             const avgValue = document.getElementById('avgDailyExpense');
             const avgSubtitle = document.getElementById('avgDailySubtitle');
             if (!avgValue) return;
 
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            const currentDay = now.getDate();
 
-            const recentExpenses = transactions.filter(t => {
+            //✅ CORREÇÃO: Filtra apenas despesas do mês atual
+            const monthExpenses = transactions.filter(t => {
                 const date = parseLocalDate(t.data);
-                return t.tipo === 'despesa' && date >= thirtyDaysAgo;
+                return t.tipo === 'despesa' && 
+                       date.getMonth() === currentMonth &&
+                       date.getFullYear() === currentYear;
             });
 
-            if (recentExpenses.length === 0) {
+            if (monthExpenses.length === 0) {
                 avgValue.textContent = 'R$ 0,00';
                 if (avgSubtitle) avgSubtitle.textContent = 'Sem dados';
                 return;
             }
 
-            const totalExpenses = recentExpenses.reduce((sum, t) => sum + Math.abs(t.valor), 0);
-            const avgDaily = totalExpenses / 30;
+            const totalExpenses = monthExpenses.reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            
+            //Calcula média diária baseada nos dias que já passaram do mês
+            const avgDaily = totalExpenses / currentDay;
 
             avgValue.textContent = formatCurrency(avgDaily);
-            if (avgSubtitle) avgSubtitle.textContent = `${recentExpenses.length} transações`;
+            if (avgSubtitle) avgSubtitle.textContent = `${monthExpenses.length} transações este mês`;
         }
 
         //Comparativo com mês anterior
