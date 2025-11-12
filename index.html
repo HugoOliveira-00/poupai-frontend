@@ -2175,76 +2175,113 @@
          <i class="ph ph-qrcode"></i> Compartilhar PoupAí
         </h2>
         <p>
-         Escaneie o QR Code e comece a usar gratuitamente
+         Escaneie o QR Code e comece a usar agora
         </p>
        </div>
 
-       <!-- QR Code Principal -->
-       <div class="chart-container" style="text-align: center; padding: 2rem;">
-        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 2rem; border-radius: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);">
-         <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">
-          <i class="ph ph-sparkle"></i> Acesso 100% Gratuito
-         </h3>
+       <!-- Layout Principal: Texto + QR Code -->
+       <div class="chart-container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; padding: 3rem 2rem;">
          
-         <!-- QR Code Container -->
-         <div style="background: white; padding: 1.5rem; border-radius: 1rem; display: inline-block; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);">
-          <img 
-           src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://poupai-frontend.vercel.app" 
-           alt="QR Code PoupAí" 
-           style="width: 300px; height: 300px; display: block;"
-          />
+         <!-- Lado Esquerdo: Chamada para Ação -->
+         <div style="text-align: left;">
+          <h1 style="font-size: 3rem; font-weight: 700; color: #111827; margin: 0 0 1rem 0; line-height: 1.1;">
+           Organize suas <span style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">finanças</span>
+          </h1>
+          <p style="font-size: 1.5rem; color: #6b7280; margin: 0 0 2rem 0; font-weight: 500;">
+           100% gratuito. Simples. Rápido.
+          </p>
+          
+          <!-- Benefícios -->
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+           <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+             <i class="ph ph-check" style="color: white; font-size: 1.5rem; font-weight: bold;"></i>
+            </div>
+            <p style="margin: 0; font-size: 1.1rem; color: #374151; font-weight: 500;">Controle total dos seus gastos</p>
+           </div>
+           <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+             <i class="ph ph-check" style="color: white; font-size: 1.5rem; font-weight: bold;"></i>
+            </div>
+            <p style="margin: 0; font-size: 1.1rem; color: #374151; font-weight: 500;">Alcance suas metas financeiras</p>
+           </div>
+           <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+             <i class="ph ph-check" style="color: white; font-size: 1.5rem; font-weight: bold;"></i>
+            </div>
+            <p style="margin: 0; font-size: 1.1rem; color: #374151; font-weight: 500;">Acesse de qualquer dispositivo</p>
+           </div>
+          </div>
+
+          <!-- URL -->
+          <div style="background: #f3f4f6; padding: 1rem; border-radius: 0.75rem; display: inline-block;">
+           <p style="color: #6b7280; margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">Acesse em:</p>
+           <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <code style="background: white; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.95rem; color: #1e40af; font-weight: 600;">poupai-frontend.vercel.app</code>
+            <button class="btn-primary" onclick="copyUrlToClipboard()" style="padding: 0.75rem 1rem; border-radius: 0.5rem;" title="Copiar URL">
+             <i class="ph ph-copy"></i>
+            </button>
+           </div>
+          </div>
          </div>
 
-         <p style="color: white; margin-top: 1.5rem; font-size: 1.1rem; font-weight: 500;">
-          <i class="ph ph-camera"></i> Aponte a câmera do seu celular
-         </p>
-        </div>
+         <!-- Lado Direito: QR Code -->
+         <div style="text-align: center;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 2.5rem; border-radius: 2rem; box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);">
+           <p style="color: white; margin: 0 0 1.5rem 0; font-size: 1.25rem; font-weight: 600;">
+            <i class="ph ph-scan" style="font-size: 1.5rem;"></i> Escaneie agora
+           </p>
+           
+           <div style="background: white; padding: 1.5rem; border-radius: 1.5rem; display: inline-block; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);">
+            <img 
+             src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=https://poupai-frontend.vercel.app" 
+             alt="QR Code PoupAí" 
+             style="width: 350px; height: 350px; display: block;"
+            />
+           </div>
 
-        <!-- URL do Site -->
-        <div style="background: #f3f4f6; padding: 1.25rem; border-radius: 1rem; margin-bottom: 1.5rem;">
-         <p style="color: #6b7280; margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">URL do site:</p>
-         <div style="display: flex; align-items: center; gap: 0.75rem; justify-content: center;">
-          <code id="siteUrl" style="background: white; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.95rem; color: #1e40af; font-weight: 600; flex: 1; max-width: 400px;">https://poupai-frontend.vercel.app</code>
-          <button class="btn-primary" onclick="copyUrlToClipboard()" style="padding: 0.75rem 1rem; border-radius: 0.5rem;">
-           <i class="ph ph-copy"></i>
-          </button>
+           <p style="color: white; margin: 1.5rem 0 0 0; font-size: 1rem; font-weight: 500; opacity: 0.95;">
+            <i class="ph ph-device-mobile"></i> Aponte a câmera do celular
+           </p>
+          </div>
          </div>
+
         </div>
 
-        <!-- Instruções -->
-        <div style="text-align: left; background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0.75rem;">
-         <h4 style="color: #1e40af; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
-          <i class="ph ph-info"></i> Como funciona?
-         </h4>
-         <ul style="color: #1e40af; margin: 0; padding-left: 1.25rem; line-height: 1.8;">
-          <li>Aponte a câmera do celular para o QR Code</li>
-          <li>Toque na notificação que aparecer</li>
-          <li>Crie sua conta gratuitamente</li>
-          <li>Comece a organizar suas finanças!</li>
-         </ul>
-        </div>
+        <!-- Versão Mobile: Layout Vertical -->
+        <div style="display: none; padding: 2rem 1rem;" class="share-mobile-layout">
+         <div style="text-align: center; margin-bottom: 2rem;">
+          <h1 style="font-size: 2rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0; line-height: 1.2;">
+           Organize suas <span style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">finanças</span>
+          </h1>
+          <p style="font-size: 1.25rem; color: #6b7280; margin: 0; font-weight: 500;">
+           100% gratuito
+          </p>
+         </div>
 
-        <!-- Recursos em Destaque -->
-        <div style="margin-top: 1.5rem;">
-         <h4 style="color: #111827; margin-bottom: 1rem; font-weight: 600;">
-          ✨ Principais recursos
-         </h4>
-         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
-           <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
-           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Dashboard Completo</p>
+         <!-- QR Code -->
+         <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 2rem; border-radius: 1.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);">
+          <p style="color: white; margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 600;">
+           <i class="ph ph-scan"></i> Escaneie agora
+          </p>
+          <div style="background: white; padding: 1.25rem; border-radius: 1rem; display: inline-block; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);">
+           <img 
+            src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https://poupai-frontend.vercel.app" 
+            alt="QR Code PoupAí" 
+            style="width: 280px; height: 280px; display: block;"
+           />
           </div>
-          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
-           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
-           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Metas Financeiras</p>
-          </div>
-          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
-           <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
-           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Multiplataforma</p>
-          </div>
-          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
-           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
-           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">100% Seguro</p>
+         </div>
+
+         <!-- URL -->
+         <div style="background: #f3f4f6; padding: 1.25rem; border-radius: 1rem; text-align: center;">
+          <p style="color: #6b7280; margin: 0 0 0.75rem 0; font-size: 0.875rem; font-weight: 600;">Ou acesse em:</p>
+          <div style="display: flex; align-items: center; gap: 0.75rem; justify-content: center;">
+           <code style="background: white; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.9rem; color: #1e40af; font-weight: 600;">poupai-frontend.vercel.app</code>
+           <button class="btn-primary" onclick="copyUrlToClipboard()" style="padding: 0.75rem 1rem; border-radius: 0.5rem;">
+            <i class="ph ph-copy"></i>
+           </button>
           </div>
          </div>
         </div>

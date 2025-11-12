@@ -22702,6 +22702,31 @@ body:has(.welcome-screen[style*='display: block']) {
     }
 }
 
+/* ============================================
+   SEÇÃO COMPARTILHAR - RESPONSIVO
+   ============================================ */
+@media (max-width: 968px) {
+    /* Em tablets e mobile, esconde layout desktop e mostra mobile */
+    #sectionShare .chart-container > div:first-child {
+        display: none !important;
+    }
+    
+    #sectionShare .share-mobile-layout {
+        display: block !important;
+    }
+}
+
+@media (min-width: 969px) {
+    /* Em desktop, mostra layout desktop e esconde mobile */
+    #sectionShare .chart-container > div:first-child {
+        display: grid !important;
+    }
+    
+    #sectionShare .share-mobile-layout {
+        display: none !important;
+    }
+}
+
 
 
 
