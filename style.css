@@ -4085,21 +4085,6 @@
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
         }
 
-        /* Link Compartilhar com leve destaque */
-        .navigation a.nav-share-highlight {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15));
-            border-left: 3px solid #3b82f6;
-            padding-left: calc(1.25rem - 3px);
-        }
-
-        .navigation a.nav-share-highlight:hover {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(29, 78, 216, 0.25));
-        }
-
-        .navigation a.nav-share-highlight.active {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(29, 78, 216, 0.3));
-        }
-
         .sidebar-footer {
             padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
