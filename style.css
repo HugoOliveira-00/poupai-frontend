@@ -22702,20 +22702,8 @@ body:has(.welcome-screen[style*='display: block']) {
     }
 }
 
-/* ============================================
-   OCULTAR "COMPARTILHAR" EM MOBILE
-   ============================================ */
-@media (max-width: 768px) {
-    /* Ocultar botão "Compartilhar" no menu "Mais" em celulares */
-    .more-menu-item[onclick*="share"] {
-        display: none !important;
-    }
-    
-    /* Ocultar seção Compartilhar em celulares */
-    #sectionShare {
-        display: none !important;
-    }
-}
+
+
 
 
 
