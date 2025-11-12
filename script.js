@@ -13971,7 +13971,8 @@
                 calendar: 'Calendário',
                 simulators: 'Simuladores',
                 education: 'Aprenda',
-                help: 'Ajuda e Suporte'
+                help: 'Ajuda e Suporte',
+                share: 'Compartilhar'
             };
             
             const headerTitle = document.getElementById('headerTitle');
@@ -18056,6 +18057,53 @@
             document.getElementById('feedbackType').value = '';
             document.getElementById('feedbackMessage').value = '';
             document.getElementById('feedbackEmail').value = '';
+        }
+
+        //============================================
+        //SHARE / QR CODE FUNCTIONS
+        //============================================
+        
+        function copyUrlToClipboard() {
+            const url = 'https://poupai-frontend.vercel.app';
+            
+            //Tenta copiar usando a API moderna
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url)
+                    .then(() => {
+                        showSuccessNotification('URL copiada! 📋');
+                    })
+                    .catch(err => {
+                        console.error('[ERROR] Erro ao copiar:', err);
+                        fallbackCopyToClipboard(url);
+                    });
+            } else {
+                fallbackCopyToClipboard(url);
+            }
+        }
+
+        function fallbackCopyToClipboard(text) {
+            //Fallback para navegadores mais antigos
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showSuccessNotification('URL copiada! 📋');
+                } else {
+                    showErrorNotification('Erro ao copiar URL');
+                }
+            } catch (err) {
+                console.error('[ERROR] Fallback copy failed:', err);
+                showErrorNotification('Erro ao copiar URL');
+            }
+            
+            document.body.removeChild(textArea);
         }
 
         //============================================

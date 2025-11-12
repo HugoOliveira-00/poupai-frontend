@@ -2161,6 +2161,89 @@
        </div>
       </section>
 
+      <!-- 📱 Seção Compartilhar -->
+      <section class="hidden" id="sectionShare">
+       <div class="section-header">
+        <h2>
+         <i class="ph ph-qrcode"></i> Compartilhar PoupAí
+        </h2>
+        <p>
+         Escaneie o QR Code e comece a usar gratuitamente
+        </p>
+       </div>
+
+       <!-- QR Code Principal -->
+       <div class="chart-container" style="text-align: center; padding: 2rem;">
+        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 2rem; border-radius: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);">
+         <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">
+          <i class="ph ph-sparkle"></i> Acesso 100% Gratuito
+         </h3>
+         
+         <!-- QR Code Container -->
+         <div style="background: white; padding: 1.5rem; border-radius: 1rem; display: inline-block; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);">
+          <img 
+           src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://poupai-frontend.vercel.app" 
+           alt="QR Code PoupAí" 
+           style="width: 300px; height: 300px; display: block;"
+          />
+         </div>
+
+         <p style="color: white; margin-top: 1.5rem; font-size: 1.1rem; font-weight: 500;">
+          <i class="ph ph-camera"></i> Aponte a câmera do seu celular
+         </p>
+        </div>
+
+        <!-- URL do Site -->
+        <div style="background: #f3f4f6; padding: 1.25rem; border-radius: 1rem; margin-bottom: 1.5rem;">
+         <p style="color: #6b7280; margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">URL do site:</p>
+         <div style="display: flex; align-items: center; gap: 0.75rem; justify-content: center;">
+          <code id="siteUrl" style="background: white; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.95rem; color: #1e40af; font-weight: 600; flex: 1; max-width: 400px;">https://poupai-frontend.vercel.app</code>
+          <button class="btn-primary" onclick="copyUrlToClipboard()" style="padding: 0.75rem 1rem; border-radius: 0.5rem;">
+           <i class="ph ph-copy"></i>
+          </button>
+         </div>
+        </div>
+
+        <!-- Instruções -->
+        <div style="text-align: left; background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0.75rem;">
+         <h4 style="color: #1e40af; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="ph ph-info"></i> Como funciona?
+         </h4>
+         <ul style="color: #1e40af; margin: 0; padding-left: 1.25rem; line-height: 1.8;">
+          <li>Aponte a câmera do celular para o QR Code</li>
+          <li>Toque na notificação que aparecer</li>
+          <li>Crie sua conta gratuitamente</li>
+          <li>Comece a organizar suas finanças!</li>
+         </ul>
+        </div>
+
+        <!-- Recursos em Destaque -->
+        <div style="margin-top: 1.5rem;">
+         <h4 style="color: #111827; margin-bottom: 1rem; font-weight: 600;">
+          ✨ Principais recursos
+         </h4>
+         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+           <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Dashboard Completo</p>
+          </div>
+          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Metas Financeiras</p>
+          </div>
+          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+           <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">Multiplataforma</p>
+          </div>
+          <div style="background: white; padding: 1rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+           <p style="margin: 0; color: #374151; font-weight: 600; font-size: 0.9rem;">100% Seguro</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+
      </div>
     </div>
    </div>
@@ -4023,6 +4106,10 @@
         </button>
       </div>
       <div class="more-menu-items">
+        <button class="more-menu-item" onclick="showSectionFromMore('share')">
+          <i class="ph ph-qrcode"></i>
+          <span>Compartilhar</span>
+        </button>
         <button class="more-menu-item" onclick="showSectionFromMore('calendar')">
           <i class="ph ph-calendar"></i>
           <span>Calendário</span>
