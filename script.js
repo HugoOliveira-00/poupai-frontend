@@ -14613,8 +14613,11 @@
         }
 
         //Carrega dados do perfil
-        function loadUserProfile() {
-            const user = JSON.parse(localStorage.getItem('user')) || {};
+        async function loadUserProfile() {
+            // 🔄 CRÍTICO: Sincroniza com backend antes de carregar perfil
+            await syncUserDataFromBackend();
+            
+            const user = currentUser || {};
             
             //Atualiza avatar
             const avatar = user.nome ? user.nome.charAt(0).toUpperCase() : 'U';
@@ -14861,7 +14864,13 @@
         async function updateProfileInfo(event) {
             event.preventDefault();
             
-            const user = JSON.parse(localStorage.getItem('user')) || {};
+            // 🔄 Usa currentUser ao invés de localStorage
+            const user = currentUser || {};
+            
+            if (!user.id) {
+                showNotification('Erro: usuário não encontrado', 'error');
+                return;
+            }
             
             const name = document.getElementById('profileNameInput').value.trim();
             const occupation = document.getElementById('profileOccupation').value.trim();
@@ -14936,7 +14945,13 @@
         async function updateFinancialInfo(event) {
             event.preventDefault();
             
-            const user = JSON.parse(localStorage.getItem('user')) || {};
+            // 🔄 Usa currentUser ao invés de localStorage
+            const user = currentUser || {};
+            
+            if (!user.id) {
+                showNotification('Erro: usuário não encontrado', 'error');
+                return;
+            }
             
             const rendaMensal = parseFloat(document.getElementById('profileIncome').value) || null;
             const diaRecebimento = parseInt(document.getElementById('profilePaymentDay').value) || null;
@@ -15042,7 +15057,13 @@
             }
 
             try {
-                const user = JSON.parse(localStorage.getItem('user')) || {};
+                // 🔄 Usa currentUser ao invés de localStorage
+                const user = currentUser || {};
+                
+                if (!user.id) {
+                    showNotification('Erro: usuário não encontrado', 'error');
+                    return;
+                }
                 
                 console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]🔐 Tentando alterar senha para usuário ID:', user.id);
                 
@@ -15094,7 +15115,13 @@
         //Carrega as perguntas de segurança atuais do usuário
         async function loadCurrentSecurityQuestions() {
             try {
-                const user = JSON.parse(localStorage.getItem('user')) || {};
+                // 🔄 Usa currentUser ao invés de localStorage
+                const user = currentUser || {};
+                
+                if (!user.id) {
+                    showNotification('Erro: usuário não encontrado', 'error');
+                    return;
+                }
                 
                 //Busca o usuário atualizado do backend para pegar as perguntas
                 const response = await fetch(`${API_URL}/usuarios/${user.id}`, {
@@ -15173,7 +15200,8 @@
             }
 
             try {
-                const user = JSON.parse(localStorage.getItem('user')) || {};
+                // 🔄 Usa currentUser ao invés de localStorage
+                const user = currentUser || {};
                 
                 if (!user.email) {
                     throw new Error('Email do usuário não encontrado. Faça login novamente.');
@@ -15941,14 +15969,17 @@
             if (savedUser) {
                 try {
                     currentUser = JSON.parse(savedUser);
-                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]✅ Sessão restaurada:', currentUser.nome, currentUser.email);
+                    console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]✅ Sessão restaurada (cache):', currentUser.nome, currentUser.email);
                     
-                    //Se está na dashboard, carrega os dados
+                    //Se está na dashboard, carrega os dados E SINCRONIZA com backend
                     const dashboard = document.getElementById('dashboard');
                     if (dashboard && dashboard.style.display !== 'none') {
-                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Dashboard ativa, carregando dados...');
-                        loadDashboardData();
-                        updateProfileUI();
+                        console.log('[REFRESH][INFO][INFO][INFO][DELETE][CLEANUP][DEBUG][INIT][WARNING][OK][ERROR]📊 Dashboard ativa, sincronizando com backend...');
+                        //🔄 CRÍTICO: Sincroniza dados do backend antes de carregar tudo
+                        syncUserDataFromBackend().then(() => {
+                            loadDashboardData();
+                            updateProfileUI();
+                        });
                     }
                 } catch (error) {
                     console.error('[ERROR]❌ Erro ao restaurar sessão:', error);
