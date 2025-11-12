@@ -5341,9 +5341,10 @@
         }
 
         //Calcula taxa de poupança (% da receita que foi economizada)
+        //Conta total de transações do mês atual
         function updateSavingsRate() {
-            const valueEl = document.getElementById('savingsRateValue');
-            const subtitleEl = document.getElementById('savingsRateSubtitle');
+            const valueEl = document.getElementById('monthTransactionsValue');
+            const subtitleEl = document.getElementById('monthTransactionsSubtitle');
             
             if (!valueEl || !subtitleEl) return;
 
@@ -5351,58 +5352,26 @@
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
 
-            //Receitas do mês atual
-            const monthIncome = transactions
-                .filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    return t.tipo === 'receita' && 
-                           tDate.getMonth() === currentMonth &&
-                           tDate.getFullYear() === currentYear;
-                })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            //Transações do mês atual (receitas + despesas)
+            const monthTransactions = transactions.filter(t => {
+                const tDate = parseLocalDate(t.data);
+                return tDate.getMonth() === currentMonth && 
+                       tDate.getFullYear() === currentYear;
+            });
 
-            //Despesas do mês atual
-            const monthExpenses = transactions
-                .filter(t => {
-                    const tDate = parseLocalDate(t.data);
-                    return t.tipo === 'despesa' && 
-                           tDate.getMonth() === currentMonth &&
-                           tDate.getFullYear() === currentYear;
-                })
-                .reduce((sum, t) => sum + Math.abs(t.valor), 0);
+            const total = monthTransactions.length;
+            const receitas = monthTransactions.filter(t => t.tipo === 'receita').length;
+            const despesas = monthTransactions.filter(t => t.tipo === 'despesa').length;
 
-            if (monthIncome === 0) {
-                valueEl.textContent = '0%';
-                subtitleEl.textContent = 'Adicione receitas';
+            valueEl.textContent = total;
+            
+            if (total === 0) {
+                subtitleEl.textContent = 'Nenhuma transação';
                 valueEl.style.color = '#6b7280';
-                return;
-            }
-
-            //Taxa de poupança = (Receita - Despesa) / Receita * 100
-            const savingsAmount = monthIncome - monthExpenses;
-            const savingsRate = (savingsAmount / monthIncome) * 100;
-
-            //Formatação com cor baseada na taxa
-            let color = '#6b7280'; //Cinza padrão
-            let subtitle = 'Do que você ganha';
-
-            if (savingsRate >= 20) {
-                color = '#059669'; //Verde - Excelente
-                subtitle = 'Excelente!';
-            } else if (savingsRate >= 10) {
-                color = '#f59e0b'; //Laranja - Bom
-                subtitle = 'Bom, pode melhorar';
-            } else if (savingsRate >= 0) {
-                color = '#dc2626'; //Vermelho - Atenção
-                subtitle = 'Tente economizar mais';
             } else {
-                color = '#dc2626'; //Vermelho - Negativo
-                subtitle = 'Gastando mais que ganha';
+                subtitleEl.textContent = `${receitas} receitas, ${despesas} despesas`;
+                valueEl.style.color = '#3b82f6';
             }
-
-            valueEl.textContent = savingsRate.toFixed(1) + '%';
-            valueEl.style.color = color;
-            subtitleEl.textContent = subtitle;
         }
 
         //Calcula dias restantes até o próximo salário
