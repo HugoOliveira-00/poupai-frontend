@@ -1024,11 +1024,18 @@
                 metaThemeColor.content = '#000000';
             }
             
-            //Mostra mobile bottom nav e menu "Mais"
+            //✅ CRÍTICO: Garante que mobile bottom nav e menu "Mais" apareçam SEMPRE
             const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
             const mobileMoreMenu = document.querySelector('.mobile-more-menu');
-            if (mobileBottomNav) mobileBottomNav.classList.remove('hidden');
-            if (mobileMoreMenu) mobileMoreMenu.classList.remove('hidden');
+            if (mobileBottomNav) {
+                mobileBottomNav.classList.remove('hidden');
+                mobileBottomNav.style.display = ''; // Remove display inline para usar CSS
+                console.log('[DASHBOARD] ✅ Bottom nav ativado');
+            }
+            if (mobileMoreMenu) {
+                mobileMoreMenu.classList.remove('hidden');
+                console.log('[DASHBOARD] ✅ Menu Mais ativado');
+            }
             
             //🔓 SCROLL: Libera scroll usando função utilitária
             enableBodyScroll();
@@ -3357,6 +3364,14 @@
                 
                 //🔓 SCROLL: Libera usando função utilitária
                 enableBodyScroll();
+                
+                //✅ CRÍTICO: Garante que o bottom nav apareça após onboarding
+                const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
+                if (mobileBottomNav) {
+                    mobileBottomNav.classList.remove('hidden');
+                    mobileBottomNav.style.display = ''; // Remove display inline para usar CSS
+                    console.log('[ONBOARDING] ✅ Bottom nav restaurado após onboarding');
+                }
 
                 //Mostra mensagem de sucesso
                 showSuccessMessage('Perfil configurado com sucesso!');
@@ -3398,6 +3413,15 @@
                 modal.style.display = 'none';
                 
                 //🔓 SCROLL: Libera usando função utilitária mesmo com erro
+                enableBodyScroll();
+                
+                //✅ CRÍTICO: Garante que o bottom nav apareça mesmo com erro
+                const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
+                if (mobileBottomNav) {
+                    mobileBottomNav.classList.remove('hidden');
+                    mobileBottomNav.style.display = ''; // Remove display inline para usar CSS
+                    console.log('[ONBOARDING] ✅ Bottom nav restaurado após erro no onboarding');
+                }
                 enableBodyScroll();
                 
                 showSuccessMessage('Perfil salvo localmente (atualize o backend)');
@@ -18063,6 +18087,16 @@
         //SHARE / QR CODE FUNCTIONS
         //============================================
         
+        //✅ FUNÇÃO UTILITÁRIA: Garante que bottom nav esteja visível
+        function ensureBottomNavVisible() {
+            const bottomNav = document.querySelector('.mobile-bottom-nav');
+            if (bottomNav) {
+                bottomNav.classList.remove('hidden');
+                bottomNav.style.display = ''; // Remove estilos inline
+                console.log('[UI] ✅ Bottom nav garantido como visível');
+            }
+        }
+        
         function copyUrlToClipboard() {
             const url = 'https://poupai-frontend.vercel.app';
             
@@ -18510,6 +18544,7 @@ function showWhatsNewModal() {
     const bottomNav = document.querySelector('.mobile-bottom-nav');
     if (bottomNav) {
         bottomNav.style.display = 'none';
+        console.log('[WHATS_NEW] ⚠️ Bottom nav ocultado para popup');
     }
 
     //Mostra modal
@@ -18522,10 +18557,12 @@ async function closeWhatsNewModal() {
     const modal = document.getElementById('whatsNewModal');
     if (!modal) return;
     
-    //Mostra bottom nav novamente
+    //✅ CRÍTICO: Restaura bottom nav SEMPRE
     const bottomNav = document.querySelector('.mobile-bottom-nav');
     if (bottomNav) {
-        bottomNav.style.display = 'flex';
+        bottomNav.style.display = ''; // Remove display inline para usar CSS
+        bottomNav.classList.remove('hidden');
+        console.log('[WHATS_NEW] ✅ Bottom nav restaurado após popup');
     }
 
     try {
@@ -19104,6 +19141,20 @@ document.addEventListener('DOMContentLoaded', () => {
         buttonSubtitle.textContent = `Versão ${CURRENT_VERSION} • ${RELEASE_DATE}`;
         console.log('[HELP] ✅ Botão de novidades atualizado');
     }
+    
+    //✅ CRÍTICO: Timeout para garantir que bottom nav apareça após carregamento
+    setTimeout(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            // Usuário logado - garante que bottom nav esteja visível
+            const bottomNav = document.querySelector('.mobile-bottom-nav');
+            if (bottomNav) {
+                bottomNav.classList.remove('hidden');
+                bottomNav.style.display = '';
+                console.log('[INIT] ✅ Bottom nav forçado como visível após timeout');
+            }
+        }
+    }, 1000);
     
     //🔍 DEBUG: Verifica se sectionTodos existe no DOM
     console.log('🔍 === VERIFICAÇÃO DO ELEMENTO sectionTodos ===');
