@@ -15035,7 +15035,7 @@
                 updateProfileStats();
                 
                 //Atualiza lembretes imediatamente
-                updateReminders();
+                updateRemindersVerticalCard();
                 
                 //Mensagem específica sobre mudanças
                 let message = 'Dados financeiros atualizados!';
