@@ -22777,6 +22777,15 @@ body:has(.welcome-screen[style*='display: block']) {
     font-size: 0.95rem;
 }
 
+/* ============================================
+   CARD QR CODE COM ANIMAÇÃO DE GRADIENTE
+   ============================================ */
+.qr-card-animated {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8, #2563eb, #1e40af);
+    background-size: 300% 300%;
+    animation: gradientShift 4s ease infinite;
+}
+
 
 
 
